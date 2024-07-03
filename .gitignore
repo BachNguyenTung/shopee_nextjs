@@ -33,19 +33,15 @@ yarn-error.log*
 # local env files
 # do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
 .env
-.env
-.env.dev
-.env.stg
-.env.production
+.env*.local
+.env*.dev
+.env*.stg
+.env*.production
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
-/.idea/.gitignore
-/.idea/codeStyles/codeStyleConfig.xml
-/.idea/modules.xml
-/.idea/inspectionProfiles/Project_Default.xml
-/.idea/shopee-nextjs.iml
-/.idea/vcs.xml
+/.idea
+/functions/serviceAccountKey.json
