@@ -1,17 +1,17 @@
-import React, {useEffect, useRef} from "react";
-import {Box, Stack, useMediaQuery} from "@mui/material";
-import {ArrowBack} from "@mui/icons-material";
-import {useUser} from "@/context/UserProvider";
+import React, { useEffect, useRef } from "react";
+import { Box, Stack, useMediaQuery } from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
+import { useUser } from "@/context/UserProvider";
 import HeaderSearch from "./HeaderSearch";
 import classNames from "classnames";
 import Link from "next/link";
-import {iconImg} from "@/services/getIcon";
-import {useRouter} from "next/router";
+import { iconImg } from "@/services/getIcon";
+import { useRouter } from "next/router";
 import MenuIcon from '@mui/icons-material/Menu';
-import {anchorElAtom} from "@/store/anchorEl.atom";
+import { anchorElAtom } from "@/store/anchorEl.atom";
 import BasicPopover from "@/components/base/Popover";
-import AccountMenu from "@/components/Account/AccountMenu";
-import {useAtom} from "jotai";
+import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
+import { useAtom } from "jotai";
 
 interface Props {
   isProductPage?: boolean,
@@ -81,7 +81,7 @@ const Header = ({
           }
           {openMenuPopover &&
             <BasicPopover id={id} open={openMenuPopover}>
-              <AccountMenu user={user}/>
+              <AccountLeftMenu user={user} />
             </BasicPopover>
           }
           {/* HeaderNav */}

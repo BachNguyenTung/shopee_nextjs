@@ -1,11 +1,11 @@
-import {useUser} from "@/context/UserProvider";
-import AccountMenu from "@/components/Account/AccountMenu";
-import {Elements} from "@stripe/react-stripe-js";
+import { useUser } from "@/context/UserProvider";
+import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
+import { Elements } from "@stripe/react-stripe-js";
 import AccountPayment from "@/components/Account/AccountPayment";
 import React from "react";
-import {loadStripe} from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import withContainer from "@/components/withContainer";
-import {useMediaQuery} from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY_TEST ?? '');
 const AccountPaymentContainer = () => {
@@ -16,7 +16,7 @@ const AccountPaymentContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountMenu user={user}/>
+        <AccountLeftMenu user={user} />
       }
       <div className="user-content">
         <Elements stripe={stripePromise}>

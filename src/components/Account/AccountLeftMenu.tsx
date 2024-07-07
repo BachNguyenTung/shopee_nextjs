@@ -1,15 +1,15 @@
 import Link from "next/link";
 import NavLink from "@/components/base/NavLink";
-import {useMediaQuery} from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import * as React from "react";
-import {useSetAtom} from "jotai";
-import {anchorElAtom} from "@/store/anchorEl.atom";
+import { useSetAtom } from "jotai";
+import { anchorElAtom } from "@/store/anchorEl.atom";
 
 interface Props {
   user: any
 }
 
-export default function AccountMenu({user}: Props) {
+export default function AccountLeftMenu({ user }: Props) {
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
   const setAnchorEl = useSetAtom(anchorElAtom)
 

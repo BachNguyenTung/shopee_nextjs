@@ -1,10 +1,10 @@
 import React from "react";
-import {FastField, Field, Form, Formik} from "formik";
-import InputField from "../../custom-fields/InputField/InputField";
-import RadioGroupField from "../../custom-fields/RadioGroupField/RadioGroupField";
-import ImageUploadField from "../../custom-fields/ImageUploadField/ImageUploadField";
+import { FastField, Field, Form, Formik } from "formik";
+import InputField from "../../../../custom-fields/InputField/InputField";
+import RadioGroupField from "../../../../custom-fields/RadioGroupField/RadioGroupField";
+import ImageUploadField from "../../../../custom-fields/ImageUploadField/ImageUploadField";
 import * as yup from "yup";
-import useNavigateAndRefreshBlocker from "../../hooks/useNavigateAndRefreshBlocker";
+import useNavigateAndRefreshBlocker from "../../../../hooks/useNavigateAndRefreshBlocker";
 import Link from "next/link";
 
 interface Props {

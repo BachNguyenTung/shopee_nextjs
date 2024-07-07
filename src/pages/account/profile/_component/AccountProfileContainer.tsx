@@ -1,16 +1,17 @@
-import {useUser} from "@/context/UserProvider";
-import React, {useEffect, useState} from "react";
+import { useUser } from "@/context/UserProvider";
+import React, { useState } from "react";
 import useModal from "@/hooks/useModal";
-import {getDoc, setDoc} from "firebase/firestore";
-import {infoDocRef} from "@/common/dbRef";
-import {updateProfile} from "firebase/auth";
-import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
-import {storage} from "@/configs/firebase";
-import AccountMenu from "@/components/Account/AccountMenu";
-import AccountProfile from "@/components/Account/AccountProfile";
+import { setDoc } from "firebase/firestore";
+import { infoDocRef } from "@/common/dbRef";
+import { updateProfile } from "firebase/auth";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "@/configs/firebase";
+import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
+import AccountProfile from "@/pages/account/profile/_component/AccountProfile";
 import PopupModal from "@/components/Modal/PopupModal";
 import withContainer from "@/components/withContainer";
-import {useMediaQuery} from "@mui/material";
+import { useMediaQuery } from "@mui/material";
+import useSetDefaultUserProfile from "@/hooks/useSetDefaultUserProfile";
 
 const AccountProfileContainer = () => {
   const {user, setIsPhotoExist} = useUser();
@@ -29,24 +30,17 @@ const AccountProfileContainer = () => {
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
 
   // set user info from db
-  useEffect(() => {
-    if (user) {
-      const userName = user.displayName;
-      const email = user.email;
-      setUserName(userName ? userName : "");
-      setEmail(email ? email : "");
-      setPreviewImage(user?.photoURL ?? '');
+  useSetDefaultUserProfile({
+    user,
+    setUserName,
+    setName,
+    setEmail,
+    setPhone,
+    setGender,
+    setBirthday,
+    setPreviewImage,
+  })
 
-      user && getDoc(infoDocRef(user.uid))
-        .then((doc) => {
-          setName(doc?.data()?.name ? doc?.data()?.name : "");
-          setGender(doc?.data()?.gender ? doc?.data()?.gender : "");
-          setBirthday(doc?.data()?.birthday ? doc?.data()?.birthday : "");
-          setPhone(doc?.data()?.phone ? doc?.data()?.phone : "");
-        })
-        .catch((err) => alert(err.message));
-    }
-  }, [user]); // rerender if upload success
   const handleInfoSubmit = async (values: any) => {
     const {
       userName,
@@ -121,7 +115,7 @@ const AccountProfileContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountMenu user={user}/>
+        <AccountLeftMenu user={user} />
       }
       <div className="user-content">
         <AccountProfile userName={userName} email={email} name={name} previewImage={previewImage}

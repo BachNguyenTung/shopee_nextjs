@@ -1,6 +1,6 @@
-import React, {ReactNode} from "react";
+import React, { ReactNode } from "react";
 import Layout from "@/components/Layout/Layout";
-import AccountProfileContainer from "@/components/Account/AccountProfileContainer";
+import AccountProfileContainer from "@/pages/account/profile/_component/AccountProfileContainer";
 
 export default function Profile() {
   return <AccountProfileContainer/>

@@ -1,6 +1,6 @@
-import {useUser} from "@/context/UserProvider";
-import {useMediaQuery} from "@mui/material";
-import AccountMenu from "@/components/Account/AccountMenu";
+import { useUser } from "@/context/UserProvider";
+import { useMediaQuery } from "@mui/material";
+import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import AccountOrder from "@/components/Account/AccountOrder";
 import React from "react";
 import withContainer from "@/components/withContainer";
@@ -12,7 +12,7 @@ const AccountPurchaseContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountMenu user={user}/>
+        <AccountLeftMenu user={user} />
       }
       <div className="user-content">
         <AccountOrder/>

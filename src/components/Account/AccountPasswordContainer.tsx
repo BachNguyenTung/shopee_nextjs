@@ -1,9 +1,9 @@
-import {useUser} from "@/context/UserProvider";
-import React, {useEffect, useState} from "react";
-import AccountMenu from "@/components/Account/AccountMenu";
+import { useUser } from "@/context/UserProvider";
+import React, { useEffect, useState } from "react";
+import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import AccountPassword from "@/components/Account/AccountPassword";
 import withContainer from "@/components/withContainer";
-import {useMediaQuery} from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 
 const AccountPasswordContainer = () => {
   const {user} = useUser();
@@ -19,7 +19,7 @@ const AccountPasswordContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountMenu user={user}/>
+        <AccountLeftMenu user={user} />
       }
       <div className="user-content">
         <AccountPassword email={email} setEmail={setEmail}/>
