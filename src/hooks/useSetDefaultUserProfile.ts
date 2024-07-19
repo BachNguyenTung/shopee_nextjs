@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { getDoc } from "firebase/firestore";
-import { infoDocRef } from "@/common/dbRef";
+import { infoDocRef } from "@/db/dbRef";
 import firebase from "firebase/compat";
 
 export default function useSetDefaultUserProfile({

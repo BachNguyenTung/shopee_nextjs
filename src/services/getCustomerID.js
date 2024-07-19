@@ -1,4 +1,4 @@
-import {userDocRef} from "@/common/dbRef";
+import {userDocRef} from "@/db/dbRef";
 import {getDoc} from "firebase/firestore";
 
 export default async function getCustomerID(user) {

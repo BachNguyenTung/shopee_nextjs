@@ -1,5 +1,5 @@
 import {createApi, fakeBaseQuery} from "@reduxjs/toolkit/query/react";
-import {cartDocRef} from "@/common/dbRef";
+import {cartDocRef} from "@/db/dbRef";
 
 export const cartApi = createApi({
   reducerPath: "cartApi",

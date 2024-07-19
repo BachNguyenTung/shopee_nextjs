@@ -2,7 +2,7 @@ import { useUser } from "@/context/UserProvider";
 import React, { useState } from "react";
 import useModal from "@/hooks/useModal";
 import { setDoc } from "firebase/firestore";
-import { infoDocRef } from "@/common/dbRef";
+import { infoDocRef } from "@/db/dbRef";
 import { updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/configs/firebase";

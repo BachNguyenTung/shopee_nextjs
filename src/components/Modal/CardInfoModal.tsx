@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import validCardCheck from "card-validator";
-import {CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
-import {Input} from "@mui/material";
-import {updateCustomerIDToFirebase} from "@/services/updateCustomerIDToFirebase";
-import {getPaymentMethodList} from "@/services/getPaymentMethodList";
-import {useCustomerID} from "@/hooks/useCustomerID";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { Input } from "@mui/material";
+import { updateCustomerIDToFirebase } from "@/services/updateCustomerIDToFirebase";
+import { getPaymentMethodList } from "@/services/getPaymentMethodList";
+import { useCustomerID } from "@/hooks/useCustomerID";
 import useNavigateAndRefreshBlocker from "../../hooks/useNavigateAndRefreshBlocker";
-import {checkCardPaymentExist} from "@/services/checkCardPaymentExist";
-import {createSetupIntentAndCustomerIDInStripe} from "@/services/createSetupIntentAndCustomerIDInStripe";
-import {checkConfirmCardSetupToStripe} from "@/services/checkConfirmCardSetupToStripe";
-import {infoDocRef} from "@/common/dbRef";
+import { checkCardPaymentExist } from "@/services/checkCardPaymentExist";
+import { createSetupIntentAndCustomerIDInStripe } from "@/services/createSetupIntentAndCustomerIDInStripe";
+import { checkConfirmCardSetupToStripe } from "@/services/checkConfirmCardSetupToStripe";
+import { infoDocRef } from "@/db/dbRef";
 import useGetUserByObserver from "@/hooks/useGetUserByObserver";
 import useGetShipInfos from "@/hooks/useGetShipInfos";
-import {getDoc} from "firebase/firestore";
-import {BaseModal} from "@/components/base";
+import { getDoc } from "firebase/firestore";
+import { BaseModal } from "@/components/base";
 
 // const StyledInput = styled("input", {
 //   shouldForwardProp: (props) => props !== "isValid",

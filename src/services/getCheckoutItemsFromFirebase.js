@@ -1,4 +1,4 @@
-import {checkoutDocRef} from "@/common/dbRef";
+import {checkoutDocRef} from "@/db/dbRef";
 import {getDoc} from "firebase/firestore";
 
 export const getCheckoutItemsFromFirebase = (user) => {

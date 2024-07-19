@@ -4183,20 +4183,6 @@ header {
   opacity: 0.7;
 }
 
-.pagination--mtb3 {
-  margin: 3rem auto;
-}
-
-.pagination-item--disabled {
-  color: #eee;
-  cursor: default;
-}
-
-.pagination-item__left:active,
-.pagination-item__right:active {
-  filter: brightness(70%);
-}
-
 @media screen and (max-width: 600px) {
   .header__nav-list:first-child {
     display: none;

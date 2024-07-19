@@ -1,5 +1,4 @@
-import { db } from "../configs/firebase";
-import {cartDocRef} from "../common/dbRef";
+import {cartDocRef} from "@/db/dbRef";
 
 const getCartItemsFromStorage = () => {
   let savedCartItems = localStorage.getItem("cartProduct");

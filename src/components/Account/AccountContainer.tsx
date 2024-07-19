@@ -1,13 +1,13 @@
-import React, {ReactNode, useEffect, useState} from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import useModal from "../../hooks/useModal";
 import PopupModal from "../Modal/PopupModal";
-import {useUser} from "@/context/UserProvider";
+import { useUser } from "@/context/UserProvider";
 import withContainer from "../withContainer";
-import {storage} from "@/configs/firebase";
-import {infoDocRef} from "@/common/dbRef";
-import {updateProfile} from "firebase/auth";
-import {getDoc, setDoc} from "firebase/firestore";
-import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
+import { storage } from "@/configs/firebase";
+import { infoDocRef } from "@/db/dbRef";
+import { updateProfile } from "firebase/auth";
+import { getDoc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 interface Props {
   children: ReactNode

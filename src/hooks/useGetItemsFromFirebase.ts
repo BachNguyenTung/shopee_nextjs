@@ -1,8 +1,6 @@
-import {useLayoutEffect, useState} from "react";
-import {
-  onSnapshot,
-} from "firebase/firestore";
-import {productQuery} from "@/common/dbRef";
+import { useLayoutEffect, useState } from "react";
+import { onSnapshot, } from "firebase/firestore";
+import { productQuery } from "@/db/dbRef";
 
 const useGetItemsFromFirebase = () => {
   const [items, setItems] = useState<any>([]);

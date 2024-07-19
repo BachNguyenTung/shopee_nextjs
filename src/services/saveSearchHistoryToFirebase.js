@@ -1,5 +1,5 @@
-import {searchHistoryDocRef} from "@/common/dbRef";
-import { setDoc } from "firebase/firestore";
+import {searchHistoryDocRef} from "@/db/dbRef";
+import {setDoc} from "firebase/firestore";
 
 export const saveSearchHistoryToFirebase = async (user, searchHistory) => {
   if (!user) return;

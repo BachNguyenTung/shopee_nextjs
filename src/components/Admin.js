@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { db } from "../configs/firebase";
-import { random } from "lodash";
-import {productQuery, productCollRef} from "../common/dbRef";
-import {addDoc, doc, getDocs} from "firebase/firestore";
+import React, {useState} from "react";
+import {random} from "lodash";
+import {productCollRef} from "@/db/dbRef";
+import {addDoc} from "firebase/firestore";
 import {data} from "../data";
 
 const Admin = () => {

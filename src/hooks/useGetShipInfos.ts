@@ -1,6 +1,6 @@
-import {useLayoutEffect, useState} from "react";
-import {getDoc, onSnapshot, setDoc, updateDoc} from "firebase/firestore";
-import {shipInfoDocRef} from "@/common/dbRef";
+import { useLayoutEffect, useState } from "react";
+import { getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { shipInfoDocRef } from "@/db/dbRef";
 
 const useGetShipInfos = (user: any) => {
   const [shipInfos, setShipInfos] = useState<any>([]);

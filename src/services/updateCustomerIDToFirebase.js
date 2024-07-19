@@ -1,4 +1,4 @@
-import {userDocRef} from "@/common/dbRef";
+import {userDocRef} from "@/db/dbRef";
 import {setDoc} from "firebase/firestore";
 
 export const updateCustomerIDToFirebase = async (user, customerID) => {

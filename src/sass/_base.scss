@@ -82,54 +82,6 @@ button[disabled] {
   filter: brightness(70%);
 }
 
-/* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-}
-.pagination-number,
-.pagination-item {
-  margin-left: 1rem;
-  margin-right: 1rem;
-  color: var(--grey-color);
-  font-size: 2rem;
-  border-radius: 0.2rem;
-  cursor: pointer;
-}
-
-.pagination-item--non-click {
-  cursor: default;
-}
-
-.pagination-item:first-child {
-  font-size: 1.6rem;
-  margin-left: 0;
-}
-
-.pagination-item:last-child {
-  font-size: 1.6rem;
-  margin-right: 0;
-}
-
-.pagination-number--active {
-  background-color: var(--primary-color);
-  color: var(--white-color);
-}
-
-.pagination-number--active:hover {
-  opacity: 0.9;
-}
-
-.pagination-item__link {
-  display: block;
-  min-width: 4rem;
-  line-height: 3rem;
-  width: 100%;
-  text-align: center;
-  color: inherit;
-  text-decoration: none;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;

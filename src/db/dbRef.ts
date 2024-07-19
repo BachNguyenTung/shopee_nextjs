@@ -1,5 +1,5 @@
-import {collection, doc, orderBy, query} from "firebase/firestore";
-import {db} from "@/configs/firebase";
+import { collection, doc, orderBy, query } from "firebase/firestore";
+import { db } from "@/configs/firebase";
 
 
 const productCollRef = () => collection(db, 'products')
