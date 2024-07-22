@@ -1,0 +1,17 @@
+{
+  "name": "@shoppe_nextjs/ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "@shoppe_nextjs/utils": "file:../utils",
+    "class-variance-authority": "^0.7.0"
+  }
+}
