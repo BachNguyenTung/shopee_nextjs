@@ -19,6 +19,7 @@
     "@mui/material": "^5.11.14",
     "@reduxjs/toolkit": "^1.9.3",
     "@shoppe_nextjs/tailwind-config": "file:packages/tailwind-config",
+    "@shoppe_nextjs/ui": "file:packages/ui",
     "@stripe/react-stripe-js": "^1.4.1",
     "@stripe/stripe-js": "^1.15.1",
     "@testing-library/jest-dom": "^5.11.10",

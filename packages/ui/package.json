@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "exports": {
+    "./Button": "./components/Button.tsx",
+    "./Input": "./components/Input.tsx"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
