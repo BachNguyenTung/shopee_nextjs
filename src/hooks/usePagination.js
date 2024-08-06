@@ -1,5 +1,4 @@
-import { useLayoutEffect } from "react";
-import { useMemo, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
 
 const usePagination = (items) => {
@@ -9,15 +8,13 @@ const usePagination = (items) => {
   const similarPageSize = 6;
   const [pageIndex, setPageIndex] = useState(defaultPageIndex);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setPageIndex(defaultPageIndex);
   }, [items]);
 
   const pageTotal = useMemo(() => {
     const getPageTotal = (numOfItems) => {
-      return Math.ceil(numOfItems / pageSize) < 1
-        ? 1
-        : Math.ceil(numOfItems / pageSize);
+      return Math.ceil(numOfItems / pageSize);
     };
     return getPageTotal(items.length);
   }, [items, pageSize]);

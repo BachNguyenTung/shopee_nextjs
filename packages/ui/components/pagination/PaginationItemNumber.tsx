@@ -2,13 +2,20 @@ import React from "react";
 import classNames from "classnames";
 
 export default function PaginationItemNumber({
-  pageIndex,
-  setPageIndex,
-  pageTotal,
+                                               pageIndex,
+                                               setPageIndex,
+                                               pageTotal,
+                                               numOfPageShowing,
+                                               numberOfPageShowingFromStart,
+                                               numberOfPageShowingFromEnd
+                                             }: {
+  pageIndex: number,
+  setPageIndex: React.Dispatch<React.SetStateAction<number>>,
+  pageTotal: number,
+  numOfPageShowing: number,
+  numberOfPageShowingFromStart: number,
+  numberOfPageShowingFromEnd: number
 }) {
-  const numOfPageShowing = 5;
-  const numberOfPageShowingFromStart = 3;
-  const numberOfPageShowingFromEnd = 3;
   let arrayOfPageIndexElements = [];
   for (let index = numberOfPageShowingFromStart; index <= pageTotal; index++) {
     //show pages from index to ... of pagination bar

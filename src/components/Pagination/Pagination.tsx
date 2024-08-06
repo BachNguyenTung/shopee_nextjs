@@ -1,15 +1,23 @@
 import React from "react";
 import PaginationItemNumber from "./PaginationItemNumber";
 import classNames from "classnames";
-import PropTypes from "prop-types";
+
+interface Props {
+  items: any[],
+  pageTotal: number,
+  pageIndex?: number,
+  setPageIndex?: React.Dispatch<React.SetStateAction<number>>,
+  pageSize?: number,
+}
 
 const Pagination = ({
   items,
-  pageIndex,
-  setPageIndex,
-  pageSize,
+                      pageIndex = 1,
+                      setPageIndex = () => {
+                      },
+                      pageSize = 10,
   pageTotal,
-}) => {
+                    }: Props) => {
   if (items.length <= pageSize) {
     return null;
   } else
@@ -48,10 +56,6 @@ const Pagination = ({
         </li>
       </ul>
     );
-};
-
-Pagination.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Pagination;
