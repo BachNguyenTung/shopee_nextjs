@@ -1,19 +1,15 @@
 import React from "react";
 import classNames from "classnames";
-import PropTypes from "prop-types";
-import {ChevronLeft, ChevronRight} from "@mui/icons-material";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
+import './miniPageControl.module.scss'
 
-const MiniPageControl = ({
-  totalItems,
-  pageIndex,
-  pageSize,
-  pageTotal,
-  setPageIndex,
-}) => {
+export default function MiniPageControl<T>({ items, pageSize }: { items: T[], pageSize: number }) {
+  const { pageTotal, pageIndex, setPageIndex } = usePagination({ items, pageSize })
   return (
     <>
       <div className="app__page-number">
-        {totalItems >= pageSize && (
+        {items.length >= pageSize && (
           <>
             <span className="app__page-index">{pageIndex}</span>/
             <span className="app__page-page-total">{pageTotal}</span>
@@ -43,12 +39,4 @@ const MiniPageControl = ({
     </>
   );
 };
-MiniPageControl.propTypes = {
-  totalItems: PropTypes.number,
-};
 
-MiniPageControl.defaultProps = {
-  totalItems: 0,
-};
-
-export default MiniPageControl;

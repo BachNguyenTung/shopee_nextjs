@@ -1,6 +1,9 @@
 import classNames from "classnames";
 import PaginationItemNumber from "./PaginationItemNumber";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
+import './pagination.module.scss'
+
+//TODO: need rewrite as module css
 
 // Define the Props interface with a generic type parameter T
 interface Props<T> {
@@ -13,7 +16,7 @@ interface Props<T> {
 
 // Use a generic type parameter T in the Pagination component
 // can use arrow type but <T> will be <T,>
-function Pagination<T>({
+export default function Pagination<T>({
                          items,
                          pageSize = 10,
                          numOfPageShowing = 5,
@@ -65,5 +68,3 @@ function Pagination<T>({
     );
   }
 }
-
-export default Pagination;

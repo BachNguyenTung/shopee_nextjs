@@ -1,16 +1,16 @@
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import PropTypes from "prop-types";
-import React, { useMemo, useRef, useState } from "react";
+import React, {useMemo, useRef, useState} from "react";
 import * as categoryType from "../../constants/category";
 import * as sortType from "../../constants/sort";
-import { useProductsContext } from "@/context/ProductsProvider";
-import usePagination from "../../hooks/usePagination";
+import {useProductsContext} from "@/context/ProductsProvider";
 import withContainer from "../withContainer";
-import Pagination from "../Pagination/Pagination";
 import ProductCategory from "./ProductCategory";
 import ProductFilter from "./ProductFilter";
 import ProductList from "./ProductList";
+import Pagination from "@shoppe_nextjs/ui/Pagination";
+import {pageSize} from "@/constants/pagination";
 
 const newestDays = 180;
 const oneDayinMs = 24 * 3600 * 1000;
@@ -96,9 +96,6 @@ const ProductContainer = ({ items }) => {
     startPrice,
   ]);
 
-  const { pageIndex, setPageIndex, pageSize, pageTotal } =
-    usePagination(filteredItems);
-
   const handleResetAll = () => {
     setCategory(categoryType.ALL_PRODUCT);
     setSort(sortType.ALL);
@@ -155,23 +152,14 @@ const ProductContainer = ({ items }) => {
           setSortPrice={setSortPrice}
           categoryItems={categoryItems}
           filteredItems={filteredItems}
-          pageIndex={pageIndex}
-          setPageIndex={setPageIndex}
-          pageSize={pageSize}
-          pageTotal={pageTotal}
         ></ProductFilter>
         <ProductList
           items={filteredItems}
-          pageIndex={pageIndex}
-          pageSize={pageSize}
         ></ProductList>
         <Box sx={{ display: { xs: "none", sm: "block" } }}>
           <Pagination
             items={filteredItems}
-            pageIndex={pageIndex}
-            setPageIndex={setPageIndex}
             pageSize={pageSize}
-            pageTotal={pageTotal}
           ></Pagination>
         </Box>
       </Grid2>

@@ -2,22 +2,23 @@ import React, {useCallback, useEffect, useState} from "react";
 // import { Link } from "react-router-dom";
 import {NumericFormat} from "react-number-format";
 import moment from "moment";
-import Pagination from "../Pagination/Pagination";
 import useGetOrderItems from "../../hooks/useGetOrderItems";
-import MiniPageControl from "../Pagination/MiniPageControl";
-import usePagination from "../../hooks/usePagination";
 import {useUser} from "../../context/UserProvider";
 import {ClipLoading} from "../ClipLoading";
 import Link from "next/link";
 import {useMediaQuery} from "@mui/material";
+import Pagination from "@shoppe_nextjs/ui/Pagination";
+import MiniPageControl from "@shoppe_nextjs/ui/MiniPageControl";
+import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
+import {pageSize} from "@/constants/pagination";
 
 const AccountOrder = () => {
-  const {user} = useUser();
-  const {orderItems, orderItemsLoading} = useGetOrderItems(user);
+  const { user } = useUser();
+  const { orderItems, orderItemsLoading } = useGetOrderItems(user);
   const [searchOrderItems, setSearchOrderItems] = useState([]);
   const [filter, setFilter] = useState("all");
   const [searchOrderItemsFiltered, setSearchOrderItemsFiltered] = useState([]);
-  const {pageIndex, setPageIndex, orderPageSize, pageTotal} = usePagination(searchOrderItemsFiltered);
+  const { pageIndex, orderPageSize } = usePagination({ items: setSearchOrderItemsFiltered, pageSize });
   const currentOrderItems = [...searchOrderItemsFiltered].slice((pageIndex - 1) * orderPageSize, pageIndex * orderPageSize);
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
 
@@ -129,11 +130,8 @@ const AccountOrder = () => {
     <div className="user-order__order-container">
       <div className="user-order__mini-page">
         <MiniPageControl
-          totalItems={searchOrderItemsFiltered.length}
-          pageIndex={pageIndex}
-          setPageIndex={setPageIndex}
+          items={searchOrderItemsFiltered}
           pageSize={orderPageSize}
-          pageTotal={pageTotal}
         ></MiniPageControl>
       </div>
       {currentOrderItems.map((item, index) => (<div key={index} className="user-order__order-item">
@@ -179,7 +177,8 @@ const AccountOrder = () => {
                 <td align={"center"} className={'flex flex-wrap gap-2'}>
                   <Link
                     href={{
-                      pathname: `/product/${basketItem.metaTitle}/${basketItem.id}`, state: {id: basketItem.id},
+                      pathname: `/product/${basketItem.metaTitle}/${basketItem.id}`,
+                      state: { id: basketItem.id },
                     }}
                     className="flex items-center no-underline text-black"
                   >
@@ -241,16 +240,14 @@ const AccountOrder = () => {
               </span>
         </div>
       </div>))}
-      {orderItems.length === 0 && !orderItemsLoading && (<div className="user-order__order-empty">Chưa có đơn hàng.</div>)}
+      {orderItems.length === 0 && !orderItemsLoading && (
+        <div className="user-order__order-empty">Chưa có đơn hàng.</div>)}
 
       {orderItemsLoading && <ClipLoading></ClipLoading>}
     </div>
     <Pagination
       items={searchOrderItemsFiltered}
-      pageIndex={pageIndex}
-      setPageIndex={setPageIndex}
       pageSize={orderPageSize}
-      pageTotal={pageTotal}
     ></Pagination>
   </>);
 };

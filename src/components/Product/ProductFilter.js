@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import classNames from "classnames";
-import MiniPageControl from "../Pagination/MiniPageControl";
 import {ArrowDownward, ArrowUpward, ExpandMore, UnfoldMore} from "@mui/icons-material";
-import { Box, useMediaQuery } from "@mui/material";
+import {Box, useMediaQuery} from "@mui/material";
 import * as sortType from "../../constants/sort";
+import MiniPageControl from "@shoppe_nextjs/ui/MiniPageControl";
+import {pageSize} from "@/constants/pagination";
 
 const ProductFilter = ({
   sort,
@@ -12,10 +13,6 @@ const ProductFilter = ({
   setSortPrice,
   filteredItems,
   categoryItems,
-  pageIndex,
-  setPageIndex,
-  pageSize,
-  pageTotal,
 }) => {
   const [isFilterPriceShow, setIsFilterPriceShow] = useState(false);
   const [
@@ -189,11 +186,8 @@ const ProductFilter = ({
       </div>
       <div className="app__filter-page">
         <MiniPageControl
-          totalItems={totalFilteredItems}
-          pageIndex={pageIndex}
-          setPageIndex={setPageIndex}
+          items={filteredItems}
           pageSize={pageSize}
-          pageTotal={pageTotal}
         ></MiniPageControl>
       </div>
     </Box>

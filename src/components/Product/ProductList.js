@@ -1,11 +1,15 @@
-import React, { useEffect, useMemo } from "react";
+import React, {useEffect, useMemo} from "react";
 import ProductItem from "./ProductItem";
-import { Box, useMediaQuery } from "@mui/material";
+import {Box, useMediaQuery} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import { useProductsContext } from "../../context/ProductsProvider";
-import { ClipLoading } from "../ClipLoading";
-function ProductList({ items, pageIndex, pageSize }) {
+import {useProductsContext} from "../../context/ProductsProvider";
+import {ClipLoading} from "../ClipLoading";
+import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
+import {pageSize} from "@/constants/pagination";
+
+function ProductList({ items }) {
   const { itemsLoading } = useProductsContext();
+  const { pageIndex } = usePagination({ items, pageSize });
 
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
 
