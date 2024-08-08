@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import useModal from "../../hooks/useModal";
 import PopupModal from "../Modal/PopupModal";
-import { useUser } from "@/context/UserProvider";
+import { useUserContext } from "@/context/UserProvider";
 import withContainer from "../withContainer";
 import { storage } from "@/configs/firebase";
 import { infoDocRef } from "@/db/dbRef";
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const AccountContainer = ({children}: Props) => {
-  const {user, setIsPhotoExist} = useUser();
+  const { user, setIsPhotoExist } = useUserContext();
   const [userName, setUserName] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

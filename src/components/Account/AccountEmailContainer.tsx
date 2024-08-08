@@ -1,4 +1,4 @@
-import { useUser } from "@/context/UserProvider";
+import { useUserContext } from "@/context/UserProvider";
 import React, { useEffect, useState } from "react";
 import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import AccountEmail from "@/components/Account/AccountEmail";
@@ -6,7 +6,7 @@ import withContainer from "@/components/withContainer";
 import { useMediaQuery } from "@mui/material";
 
 const AccountEmailContainer = () => {
-  const {user} = useUser();
+  const { user } = useUserContext();
   const [email, setEmail] = useState<string>('')
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
 

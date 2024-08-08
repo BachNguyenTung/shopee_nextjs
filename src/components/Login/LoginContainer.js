@@ -4,12 +4,12 @@ import * as Yup from "yup";
 import {Stack, TextField} from "@mui/material";
 import PropTypes from "prop-types";
 import Link from "next/link";
-import {useUser} from "@/context/UserProvider";
+import {useUserContext} from "@/context/UserProvider";
 import withContainer from "@/components/withContainer";
 import {useRouter} from "next/router";
 
 function LoginContainer({isRegisterPage, isLoginPage, submitText}) {
-  const {signIn, register} = useUser();
+  const { signIn, register } = useUserContext();
   const router = useRouter()
   const onSubmit = async (values) => {
     if (isRegisterPage) {

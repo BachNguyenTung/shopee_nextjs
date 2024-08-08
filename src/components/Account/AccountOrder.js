@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {NumericFormat} from "react-number-format";
 import moment from "moment";
 import useGetOrderItems from "../../hooks/useGetOrderItems";
-import {useUser} from "../../context/UserProvider";
+import {useUserContext} from "../../context/UserProvider";
 import {ClipLoading} from "../ClipLoading";
 import Link from "next/link";
 import {useMediaQuery} from "@mui/material";
@@ -13,7 +13,7 @@ import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 import {pageSize} from "@/constants/pagination";
 
 const AccountOrder = () => {
-  const { user } = useUser();
+  const { user } = useUserContext();
   const { orderItems, orderItemsLoading } = useGetOrderItems(user);
   const [searchOrderItems, setSearchOrderItems] = useState([]);
   const [filter, setFilter] = useState("all");

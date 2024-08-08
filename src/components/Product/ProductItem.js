@@ -3,18 +3,17 @@ import React from "react";
 import {NumericFormat} from "react-number-format";
 import Rating from "@mui/material/Rating";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {useUser} from "@/context/UserProvider";
+import {useUserContext} from "@/context/UserProvider";
 import {useDispatch, useSelector} from "react-redux";
 import {addProducts} from "@/redux/cartSlice";
 import Link from "next/link";
 import useModal from "@/hooks/useModal";
 import AddCartModal from "@/components/Modal/AddCartModal";
 import {useRouter} from "next/router";
-import {Dialog, Modal} from "@mui/material";
 
 const ProductItem = function ({item, similarDisPlay}) {
   const router = useRouter()
-  const {user} = useUser();
+  const { user } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
   const dispatch = useDispatch();
   const {id, metaTitle, imageUrl, name, price, soldAmount, location, rating} =

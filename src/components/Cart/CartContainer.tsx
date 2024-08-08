@@ -1,27 +1,27 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {NumericFormat} from "react-number-format";
+import React, { useEffect, useMemo, useState } from "react";
+import { NumericFormat } from "react-number-format";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {getItemsPriceTotal} from "@/services/getItemsPriceTotal";
-import {getVoucherDiscount} from "@/services/getVoucherDiscount";
-import {useCheckoutContext} from "@/context/CheckoutProvider";
-import {CHECKOUT_ACTIONTYPES} from "@/constants/actionType";
-import {useUser} from "@/context/UserProvider";
-import {RootStateOrAny, useDispatch, useSelector} from "react-redux";
-import {deleteProducts, deleteSelectedProducts, updateProducts,} from "@/redux/cartSlice";
-import {useAddCartToFireStoreMutation, useFetchCartQuery,} from "@/services/cartApi";
+import { getItemsPriceTotal } from "@/services/getItemsPriceTotal";
+import { getVoucherDiscount } from "@/services/getVoucherDiscount";
+import { useCheckoutContext } from "@/context/CheckoutProvider";
+import { CHECKOUT_ACTIONTYPES } from "@/constants/actionType";
+import { useUserContext } from "@/context/UserProvider";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { deleteProducts, deleteSelectedProducts, updateProducts, } from "@/redux/cartSlice";
+import { useAddCartToFireStoreMutation, useFetchCartQuery, } from "@/services/cartApi";
 import withContainer from "@/components/withContainer";
 import Link from "next/link";
 import CartItem from "@/components/Cart/CartItem";
 import CartVoucher from "@/components/Cart/CartVoucher";
-import {useRouter} from "next/router";
-import {DETAIL} from "@/constants/detail";
+import { useRouter } from "next/router";
+import { DETAIL } from "@/constants/detail";
 import useModal from "@/hooks/useModal";
 import PopupModal from "@/components/Modal/PopupModal";
 import AddCartModal from "@/components/Modal/AddCartModal";
-import {ClipLoading} from "@/components/ClipLoading";
-import {voucherStoreAtom, voucherStoreProxy} from "@/store/voucherStore.atomProxy";
-import {useAtomValue} from "jotai";
-import {useMediaQuery} from "@mui/material";
+import { ClipLoading } from "@/components/ClipLoading";
+import { voucherStoreAtom, voucherStoreProxy } from "@/store/voucherStore.atomProxy";
+import { useAtomValue } from "jotai";
+import { useMediaQuery } from "@mui/material";
 
 interface Props {
   isCartPage: boolean
@@ -30,7 +30,7 @@ interface Props {
 function CartContainer({isCartPage}: Props) {
   const {voucher} = useAtomValue(voucherStoreAtom)
   const router = useRouter();
-  const {user} = useUser();
+  const { user } = useUserContext();
   const {isLoading: cartItemsLoading} = useFetchCartQuery(user);
   const cartProducts = useSelector((state: RootStateOrAny) => state.cart.products);
   const [addCartToFireStore] = useAddCartToFireStoreMutation();

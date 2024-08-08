@@ -1,13 +1,13 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import useModal from "../../hooks/useModal";
 import useAddress from "../../hooks/useAddress";
 import AddressModal from "../Modal/AddressModal";
 import PopupModal from "../Modal/PopupModal";
 import useGetShipInfos from "../../hooks/useGetShipInfos";
-import {updateCustomerBillingAddressStripe} from "@/services/updateCustomerBillingAddressStripe";
-import {useUser} from "@/context/UserProvider";
+import { updateCustomerBillingAddressStripe } from "@/services/updateCustomerBillingAddressStripe";
+import { useUserContext } from "@/context/UserProvider";
 import useNavigateAndRefreshBlocker from "../../hooks/useNavigateAndRefreshBlocker";
-import {ClipLoading} from "../ClipLoading";
+import { ClipLoading } from "../ClipLoading";
 
 const AccountAddress = () => {
   const {
@@ -30,7 +30,7 @@ const AccountAddress = () => {
     handleProvinceChoose,
     handleWardChoose,
   } = useAddress();
-  const {user} = useUser();
+  const { user } = useUserContext();
   const {
     shipInfos,
     shipInfosLoading,

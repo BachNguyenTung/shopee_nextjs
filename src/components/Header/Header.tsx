@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Stack, useMediaQuery } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-import { useUser } from "@/context/UserProvider";
+import { useUserContext } from "@/context/UserProvider";
 import HeaderSearch from "./HeaderSearch";
 import classNames from "classnames";
 import Link from "next/link";
@@ -33,7 +33,7 @@ const Header = ({
                   headerText = '',
                 }: Props) => {
   const {user, userLoading, isPhotoExist, checkingPhotoURL, signOut} =
-    useUser();
+    useUserContext();
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
   const router = useRouter()
   const [anchorEl, setAnchorEl] = useAtom(anchorElAtom)

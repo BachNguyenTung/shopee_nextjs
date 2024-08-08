@@ -1,4 +1,4 @@
-import { useUser } from "@/context/UserProvider";
+import { useUserContext } from "@/context/UserProvider";
 import { useMediaQuery } from "@mui/material";
 import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import AccountOrder from "@/components/Account/AccountOrder";
@@ -6,7 +6,7 @@ import React from "react";
 import withContainer from "@/components/withContainer";
 
 const AccountPurchaseContainer = () => {
-  const {user} = useUser();
+  const { user } = useUserContext();
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
 
   return (

@@ -1,12 +1,11 @@
-import {useEffect, useState} from "react";
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
-import {useUser} from "../context/UserProvider";
+import {useUserContext} from "../context/UserProvider";
 import getSearchHistoryFromFirebase from "../services/getSearchHistoryFromFirebase";
 import {saveSearchHistoryToFirebase} from "../services/saveSearchHistoryToFirebase";
 
 const useSearchHistory = () => {
-  const {user} = useUser();
+  const { user } = useUserContext();
   const searchInput = useSelector((state) => state.search.searchInput);
   const [searchHistory, setSearchHistory] = useState([]);
   const suggestions = useMemo(

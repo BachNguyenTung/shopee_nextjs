@@ -1,19 +1,18 @@
 import React from "react";
-import noCartImg from "../../../public/img/no-cart.png";
 import classNames from "classnames";
 // import { Link, useLocation, useNavigate } from "react-router-dom";
-import { NumericFormat } from "react-number-format";
-import { useMediaQuery } from "@mui/material";
-import { useUser } from "@/context/UserProvider";
-import { useSelector } from "react-redux";
-import { useFetchCartQuery } from "@/services/cartApi";
+import {NumericFormat} from "react-number-format";
+import {useMediaQuery} from "@mui/material";
+import {useUserContext} from "@/context/UserProvider";
+import {useSelector} from "react-redux";
+import {useFetchCartQuery} from "@/services/cartApi";
 import {ShoppingCart} from "@mui/icons-material";
 import {useRouter} from "next/router";
 import {iconImg} from "@/services/getIcon";
 
 const HeaderCart = () => {
   const router = useRouter()
-  const { user } = useUser();
+  const { user } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
   const { isLoading: cartItemsLoading } = useFetchCartQuery(user);
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");

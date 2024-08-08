@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {Autocomplete, ButtonProps, styled, TextField, TextFieldProps,} from "@mui/material";
-import {useUser} from "@/context/UserProvider";
-import {BaseModal} from "@/components/base";
+import React, { useState } from "react";
+import { Autocomplete, ButtonProps, styled, TextField, TextFieldProps, } from "@mui/material";
+import { useUserContext } from "@/context/UserProvider";
+import { BaseModal } from "@/components/base";
 import useGetShipInfos from "@/hooks/useGetShipInfos";
 
 type StyledTextFieldProps = TextFieldProps & {
@@ -85,7 +85,7 @@ const AddressModal = ({
                         handleWardChoose,
                         shipInfoIndex,
                       }: AddressModalProps) => {
-  const {user} = useUser();
+  const { user } = useUserContext();
   const {shipInfos, updateShipInfoToFirebase} = useGetShipInfos(user);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const validateName = () => {

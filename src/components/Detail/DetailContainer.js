@@ -7,7 +7,7 @@ import DetailCheckShipPrice from "./DetailCheckShipPrice";
 import {NumericFormat} from "react-number-format";
 import {Rating} from "@mui/material";
 import {useProductsContext} from "../../context/ProductsProvider";
-import {useUser} from "../../context/UserProvider";
+import {useUserContext} from "../../context/UserProvider";
 import {ClipLoading} from "../ClipLoading";
 import {useDispatch, useSelector} from "react-redux";
 import {addProducts, updateProducts} from "../../redux/cartSlice";
@@ -18,7 +18,7 @@ import {iconImg} from "@/services/getIcon";
 import {DETAIL} from "@/constants/detail";
 
 function DetailContainer() {
-  const {user} = useUser();
+  const { user } = useUserContext();
   const router = useRouter()
   const {id} = router.query
   // const location = useLocation();

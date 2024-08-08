@@ -1,4 +1,4 @@
-import { useUser } from "@/context/UserProvider";
+import { useUserContext } from "@/context/UserProvider";
 import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import { Elements } from "@stripe/react-stripe-js";
 import AccountPayment from "@/components/Account/AccountPayment";
@@ -12,7 +12,7 @@ const AccountPaymentContainer = () => {
   if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY_TEST) console.error('NEXT_PUBLIC_STRIPE_PUBLIC_KEY_TEST environment variable is not set')
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
 
-  const {user} = useUser();
+  const { user } = useUserContext();
   return (
     <div className="main">
       {!xsBreakpointMatches &&

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useReducer} from "react";
 import {ACTIONTYPES, CHECKOUT_ACTIONTYPES} from "@/constants/actionType";
 import {getCheckoutItemsFromFirebase} from "@/services/getCheckoutItemsFromFirebase";
-import {useUser} from "./UserProvider";
+import {useUserContext} from "./UserProvider";
 
 const CheckoutContext = React.createContext();
 export const useCheckoutContext = () => {
@@ -26,7 +26,7 @@ const checkoutReducer = (state = INITIAL_STATE, action) => {
 };
 
 const CheckoutProvider = ({children}) => {
-  const {user} = useUser();
+  const { user } = useUserContext();
   const [state, dispatch] = useReducer(checkoutReducer, INITIAL_STATE);
   const {checkoutItems} = state;
 

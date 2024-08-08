@@ -6,11 +6,11 @@ import {useAddCartToFireStoreMutation} from "@/services/cartApi";
 import useGetUserByObserver from "@/hooks/useGetUserByObserver";
 import useCheckPhotoURL from "@/hooks/useCheckPhotoURL";
 import {useRouter} from "next/router";
-import {signInWithEmailAndPassword, createUserWithEmailAndPassword} from "firebase/auth"
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth"
 import {auth} from "@/configs/firebase";
 
 const UserContext = React.createContext();
-export const useUser = () => {
+export const useUserContext = () => {
   return useContext(UserContext);
 };
 

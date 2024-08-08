@@ -6,7 +6,7 @@ import usePaymentMethodList from "../../hooks/usePaymentMethodList";
 import useDefaultPaymentMethodID from "../../hooks/useDefaultPaymentMethodID";
 import {getCardImgByBrand} from "@/services/getCardImgByBrand";
 import {detachPaymentMethodID} from "@/services/detachPaymentMethodID";
-import {useUser} from "@/context/UserProvider";
+import {useUserContext} from "@/context/UserProvider";
 import getCustomerID from "../../services/getCustomerID";
 import useNavigateAndRefreshBlocker from "../../hooks/useNavigateAndRefreshBlocker";
 import {ClipLoading} from "../ClipLoading";
@@ -14,7 +14,7 @@ import {useUpdateDefaultPaymentMethodIDToStripe} from "@/hooks/useUpdateDefaultP
 import {useMediaQuery} from "@mui/material";
 
 const AccountPayment = () => {
-  const {user} = useUser();
+  const { user } = useUserContext();
   const {defaultPaymentMethodID, setDefaultPaymentMethodID} =
     useDefaultPaymentMethodID(user);
   const {

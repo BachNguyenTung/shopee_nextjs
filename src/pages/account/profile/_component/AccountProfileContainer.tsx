@@ -1,4 +1,4 @@
-import { useUser } from "@/context/UserProvider";
+import { useUserContext } from "@/context/UserProvider";
 import React, { useState } from "react";
 import useModal from "@/hooks/useModal";
 import { setDoc } from "firebase/firestore";
@@ -14,7 +14,7 @@ import { useMediaQuery } from "@mui/material";
 import useSetDefaultUserProfile from "@/hooks/useSetDefaultUserProfile";
 
 const AccountProfileContainer = () => {
-  const {user, setIsPhotoExist} = useUser();
+  const { user, setIsPhotoExist } = useUserContext();
   const [userName, setUserName] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
