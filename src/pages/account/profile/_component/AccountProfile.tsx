@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FastField, Field, Form, Formik } from "formik";
 import InputField from "../../../../custom-fields/InputField/InputField";
 import RadioGroupField from "../../../../custom-fields/RadioGroupField/RadioGroupField";
@@ -6,33 +6,146 @@ import ImageUploadField from "../../../../custom-fields/ImageUploadField/ImageUp
 import * as yup from "yup";
 import useNavigateAndRefreshBlocker from "../../../../hooks/useNavigateAndRefreshBlocker";
 import Link from "next/link";
+import useModal from "@/hooks/useModal";
+import useSetDefaultUserProfile from "@/hooks/useSetDefaultUserProfile";
+import { updateProfile } from "firebase/auth";
+import { setDoc } from "firebase/firestore";
+import { infoDocRef } from "@/db/dbRef";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "@/configs/firebase";
+import PopupModal from "@/components/Modal/PopupModal";
+import { useUserContext } from "@/context/UserProvider";
+import { phoneRegex } from "@/constants/constants";
 
-interface Props {
-  userName: string
-  name: string
-  email: string
-  phone: string
-  gender: string
-  birthday: string
-  previewImage: string
-  setFileImage: any
-  isInfoUpdating: boolean
-  handleInfoSubmit: any
+type Action = {
+  field: keyof State;
+  value: any;
+};
+
+export interface State {
+  userName: string;
+  name: string;
+  email: string;
+  phone: string;
+  gender: string;
+  birthday: string;
+  fileImage: any;  // You can replace `any` with a specific type if needed
+  previewImage: string;
+  isInfoUpdating: boolean;
+  isUserUpdateFailed: boolean;
+  isImageUploadFailed: boolean;
 }
 
-const AccountProfile = ({
-                          userName,
-                          name,
-                          email,
-                          phone,
-                          gender,
-                          birthday,
-                          previewImage,
-                          setFileImage,
-                          isInfoUpdating,
-                          handleInfoSubmit,
-                        }: Props) => {
-  const phoneRegex = /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/;
+const initialState: State = {
+  userName: "",
+  name: "",
+  email: "",
+  phone: "",
+  gender: "",
+  birthday: "",
+  fileImage: null,
+  previewImage: '',
+  isInfoUpdating: false,
+  isUserUpdateFailed: false,
+  isImageUploadFailed: false,
+};
+
+// move the state update logic from event handlers into a single function outside of our component
+function reducer(state: State, action: Action): State {
+  return { ...state, [action.field]: action.value }
+}
+
+const AccountProfile = () => {
+  const { user, setIsPhotoExist } = useUserContext();
+  const { isPopupShowing, togglePopup } = useModal();
+  const [fileImage, setFileImage] = useState<any>(null);
+  const [isInfoUpdating, setIsInfoUpdating] = useState<boolean>(false);
+  const [isUserUpdateFailed, setIsUserUpdateFailed] = useState<boolean>(false);
+  const [isImageUploadFailed, setIsImageUploadFailed] = useState<boolean>(false);
+  const [state, dispatch] = React.useReducer(reducer, initialState, () => initialState);
+
+  //make sure field is correct type
+  //can use form event as param to replace field and value but need to set other place than form
+  const handleChange = <K extends keyof State>(field: K, value: any) => {
+    dispatch({ field, value });
+  };
+
+  // set user info from db
+  useSetDefaultUserProfile({
+    user, handleChange
+  })
+
+  const handleInfoSubmit = async (values: any) => {
+    const {
+      userName,
+      name,
+      phone,
+      gender,
+      birthday,
+      previewImage,
+    } = values
+    try {
+      //upadating info
+      setIsInfoUpdating(true);
+      await updateProfile(user, {
+        displayName: userName,
+      });
+
+      await setDoc(infoDocRef(user?.uid), {
+        name: name,
+        gender: gender,
+        birthday: birthday,
+        phone: phone,
+      });
+      setIsInfoUpdating(false);
+    } catch (error) {
+      togglePopup();
+      setIsInfoUpdating(false);
+      setIsUserUpdateFailed(true);
+    }
+
+    //updating image
+    if (previewImage && fileImage) {
+      // dont upload if no fileImage or without choose fileImage again
+      const storageRef = ref(storage, `users/${user.uid}/avatar`);
+      const uploadTask = uploadBytesResumable(storageRef, fileImage);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          switch (snapshot.state) {
+            case "paused":
+              setIsInfoUpdating(false);
+              break;
+            case "running":
+              setIsInfoUpdating(true);
+              break;
+          }
+        },
+        //Handle unsuccessful uploads
+        (error) => {
+          setIsInfoUpdating(false);
+          setIsImageUploadFailed(true);
+          togglePopup();
+        },
+        //handle successful uploads
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((downloadURL) => {
+              setIsPhotoExist(true);
+              updateProfile(user, {
+                photoURL: downloadURL,
+              });
+            })
+            .then(() => {
+              setIsInfoUpdating(false);
+              togglePopup();
+            });
+        }
+      );
+    } else {
+      togglePopup();
+    }
+  };
   const validationSchema = yup.object({
     user: yup
       .string()
@@ -67,20 +180,20 @@ const AccountProfile = ({
       </div>
       <div className="user-profile__content">
         <Formik
-          enableReinitialize
+          enableReinitialize // for updated state from db
           initialValues={{
-            user: userName,
-            name,
-            phone,
-            gender,
-            birthday,
-            previewImage,
+            user: state.userName,
+            name: state.name,
+            phone: state.phone,
+            gender: state.gender,
+            birthday: state.birthday,
+            previewImage: state.previewImage,
           }}
           validationSchema={validationSchema}
           onSubmit={handleInfoSubmit}
         >
           {(formikProps) => {
-            const {values, errors, touched, dirty} = formikProps;
+            const { values, errors, touched, dirty } = formikProps;
             return (
               <Form className="user-profile__info-form">
                 {/* onSubmit={handleInfoSubmit}> */}
@@ -110,7 +223,7 @@ const AccountProfile = ({
                     ></FastField>
                     <label className="user-profile__email-label">Email</label>
                     <div className="user-profile__email-input">
-                      {email}
+                      {state.email}
                       <Link
                         href="/account/email"
                         className="user-profile__email-btn"
@@ -207,6 +320,13 @@ const AccountProfile = ({
           }}
         </Formik>
       </div>
+      <PopupModal
+        isUserUpdateFailed={isUserUpdateFailed}
+        isAccountPage={true}
+        isImageUploadFailed={isImageUploadFailed}
+        isPopupShowing={isPopupShowing}
+        togglePopup={togglePopup}
+      ></PopupModal>
     </>
   );
 };

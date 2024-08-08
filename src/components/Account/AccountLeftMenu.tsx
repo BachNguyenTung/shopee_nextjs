@@ -4,13 +4,11 @@ import { useMediaQuery } from "@mui/material";
 import * as React from "react";
 import { useSetAtom } from "jotai";
 import { anchorElAtom } from "@/store/anchorEl.atom";
+import { useUserContext } from "@/context/UserProvider";
 
-interface Props {
-  user: any
-}
-
-export default function AccountLeftMenu({ user }: Props) {
+export default function AccountLeftMenu() {
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
+  const { user, setIsPhotoExist } = useUserContext();
   const setAnchorEl = useSetAtom(anchorElAtom)
 
   const handleClose = () => {

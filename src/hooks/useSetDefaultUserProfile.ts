@@ -2,40 +2,29 @@ import { useEffect } from "react";
 import { getDoc } from "firebase/firestore";
 import { infoDocRef } from "@/db/dbRef";
 import firebase from "firebase/compat";
+import { State } from "@/pages/account/profile/_component/AccountProfile";
 
 export default function useSetDefaultUserProfile({
                                                    user,
-                                                   setUserName,
-                                                   setEmail,
-                                                   setPreviewImage,
-                                                   setName,
-                                                   setGender,
-                                                   setBirthday,
-                                                   setPhone,
+                                                   handleChange
                                                  }: {
   user: firebase.User | null
-  setUserName: React.Dispatch<React.SetStateAction<string>>
-  setEmail: React.Dispatch<React.SetStateAction<string>>
-  setPreviewImage: React.Dispatch<React.SetStateAction<string>>
-  setName: React.Dispatch<React.SetStateAction<string>>
-  setGender: React.Dispatch<React.SetStateAction<string>>
-  setBirthday: React.Dispatch<React.SetStateAction<string>>
-  setPhone: React.Dispatch<React.SetStateAction<string>>
+  handleChange: <K extends keyof State>(field: K, value: any) => void
 }) {
   useEffect(() => {
     if (user) {
       const userName = user.displayName;
       const email = user.email;
-      setUserName(userName ? userName : "");
-      setEmail(email ? email : "");
-      setPreviewImage(user?.photoURL ?? '');
+      handleChange('userName', userName ?? '')
+      handleChange('email', email ?? '')
+      handleChange('previewImage', user?.photoURL ?? '')
 
       getDoc(infoDocRef(user.uid))
         .then((doc) => {
-          setName(doc?.data()?.name ? doc?.data()?.name : "");
-          setGender(doc?.data()?.gender ? doc?.data()?.gender : "");
-          setBirthday(doc?.data()?.birthday ? doc?.data()?.birthday : "");
-          setPhone(doc?.data()?.phone ? doc?.data()?.phone : "");
+          handleChange('name', doc?.data()?.name ?? '')
+          handleChange('gender', doc?.data()?.gender ?? '')
+          handleChange('birthday', doc?.data()?.birthday ?? '')
+          handleChange('phone', doc?.data()?.phone ?? '')
         })
         .catch((err) => alert(err.message));
     }
