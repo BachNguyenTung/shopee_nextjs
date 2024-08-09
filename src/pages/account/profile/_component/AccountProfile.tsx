@@ -58,7 +58,6 @@ function reducer(state: State, action: Action): State {
 const AccountProfile = () => {
   const { user, setIsPhotoExist } = useUserContext();
   const { isPopupShowing, togglePopup } = useModal();
-  const [fileImage, setFileImage] = useState<any>(null);
   const [isInfoUpdating, setIsInfoUpdating] = useState<boolean>(false);
   const [isUserUpdateFailed, setIsUserUpdateFailed] = useState<boolean>(false);
   const [isImageUploadFailed, setIsImageUploadFailed] = useState<boolean>(false);
@@ -105,10 +104,10 @@ const AccountProfile = () => {
     }
 
     //updating image
-    if (previewImage && fileImage) {
+    if (previewImage && state.fileImage) {
       // dont upload if no fileImage or without choose fileImage again
       const storageRef = ref(storage, `users/${user.uid}/avatar`);
-      const uploadTask = uploadBytesResumable(storageRef, fileImage);
+      const uploadTask = uploadBytesResumable(storageRef, state.fileImage);
       uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -311,7 +310,7 @@ const AccountProfile = () => {
                     type="file"
                     label=""
                     disabled={false}
-                    setFileImage={setFileImage}
+                    handleChange={handleChange}
                     isInfoUpdating={isInfoUpdating}
                   ></Field>
                 </div>

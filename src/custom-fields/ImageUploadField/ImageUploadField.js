@@ -9,7 +9,7 @@ const ImageUploadField = (props) => {
     type,
     label,
     disabled,
-    setFileImage,
+    handleChange,
     isInfoUpdating,
   } = props;
   const { name, value } = field;
@@ -37,7 +37,7 @@ const ImageUploadField = (props) => {
           `Không thể tải file lớn hơn ${maxSizeFileInMB}MB !. Vui lòng thử lại`
         );
       } else {
-        setFileImage(fileImage);
+        handleChange('fileImage', fileImage);
         const previewImage = URL.createObjectURL(fileImage);
         form.setFieldValue(name, previewImage);
       }
