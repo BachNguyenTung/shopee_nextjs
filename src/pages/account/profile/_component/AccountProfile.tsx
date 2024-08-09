@@ -66,7 +66,7 @@ const AccountProfile = () => {
 
   //make sure field is correct type
   //can use form event as param to replace field and value but need to set other place than form
-  const handleChange = <K extends keyof State>(field: K, value: any) => {
+  const handleChange = <K extends keyof State>(field: K, value: State[K]) => {
     dispatch({ field, value });
   };
 

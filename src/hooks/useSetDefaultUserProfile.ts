@@ -9,7 +9,7 @@ export default function useSetDefaultUserProfile({
                                                    handleChange
                                                  }: {
   user: firebase.User | null
-  handleChange: <K extends keyof State>(field: K, value: any) => void
+  handleChange: <K extends keyof State>(field: K, value: State[K]) => void
 }) {
   useEffect(() => {
     if (user) {
