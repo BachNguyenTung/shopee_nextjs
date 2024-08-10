@@ -123,7 +123,8 @@ ImageUpload.propTypes = {
   previewImage: PropTypes.string,
   label: PropTypes.string,
   disabled: PropTypes.bool,
-  isInfoUpdating: PropTypes.bool
+  isInfoUpdating: PropTypes.bool,
+  handleChange: PropTypes.func.isRequired
 };
 
 ImageUpload.defaultProps = {

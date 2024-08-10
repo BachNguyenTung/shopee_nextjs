@@ -261,6 +261,7 @@ const AccountProfile = () => {
               label=""
               disabled={false}
               isInfoUpdating={isInfoUpdating}
+              handleChange={handleChange}
             />
           </div>
         </form>
