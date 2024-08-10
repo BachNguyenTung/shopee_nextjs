@@ -3,8 +3,8 @@ import classNames from "classnames";
 import {ArrowDownward, ArrowUpward, ExpandMore, UnfoldMore} from "@mui/icons-material";
 import {Box, useMediaQuery} from "@mui/material";
 import * as sortType from "../../constants/sort";
-import MiniPageControl from "@shoppe_nextjs/ui/MiniPageControl";
 import {pageSize} from "@/constants/pagination";
+import {MiniPageControl} from "@shoppe_nextjs/ui";
 
 const ProductFilter = ({
   sort,

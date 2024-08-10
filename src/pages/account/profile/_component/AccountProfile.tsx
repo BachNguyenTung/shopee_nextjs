@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { FastField, Field, Form, Formik } from "formik";
-import InputField from "../../../../custom-fields/InputField/InputField";
-import RadioGroupField from "../../../../custom-fields/RadioGroupField/RadioGroupField";
-import ImageUploadField from "../../../../custom-fields/ImageUploadField/ImageUploadField";
+import { useFormik } from "formik";
+import ImageUpload from "../../../../custom-fields/ImageUploadField/ImageUpload";
 import * as yup from "yup";
 import useNavigateAndRefreshBlocker from "../../../../hooks/useNavigateAndRefreshBlocker";
 import Link from "next/link";
@@ -16,6 +14,7 @@ import { storage } from "@/configs/firebase";
 import PopupModal from "@/components/Modal/PopupModal";
 import { useUserContext } from "@/context/UserProvider";
 import { phoneRegex } from "@/constants/constants";
+import { Button, Input } from "@shoppe_nextjs/ui";
 
 type Action = {
   field: keyof State;
@@ -29,7 +28,7 @@ export interface State {
   phone: string;
   gender: string;
   birthday: string;
-  fileImage: any;  // You can replace `any` with a specific type if needed
+  fileImage: File | null;  // You can replace `any` with a specific type if needed
   previewImage: string;
   isInfoUpdating: boolean;
   isUserUpdateFailed: boolean;
@@ -65,13 +64,13 @@ const AccountProfile = () => {
 
   //make sure field is correct type
   //can use form event as param to replace field and value but need to set other place than form
-  const handleChange = <K extends keyof State>(field: K, value: State[K]) => {
+  const handleChangeState = <K extends keyof State>(field: K, value: State[K]) => {
     dispatch({ field, value });
   };
 
   // set user info from db
   useSetDefaultUserProfile({
-    user, handleChange
+    user, handleChange: handleChangeState
   })
 
   const handleInfoSubmit = async (values: any) => {
@@ -165,7 +164,22 @@ const AccountProfile = () => {
     previewImage: yup.string().nullable(),
   });
 
+  const { values, handleChange, setFieldValue, handleSubmit, handleBlur, dirty, touched, errors } = useFormik({
+    enableReinitialize: true,
+    validationSchema: validationSchema,
+    initialValues: {
+      user: state.userName,
+      name: state.name,
+      phone: state.phone,
+      gender: state.gender,
+      birthday: state.birthday,
+      previewImage: state.previewImage,
+    },
+    onSubmit: handleInfoSubmit
+  })
+
   useNavigateAndRefreshBlocker(isInfoUpdating);
+
 
   return (
     <>
@@ -178,146 +192,78 @@ const AccountProfile = () => {
         </div>
       </div>
       <div className="user-profile__content">
-        <Formik
-          enableReinitialize // for updated state from db
-          initialValues={{
-            user: state.userName,
-            name: state.name,
-            phone: state.phone,
-            gender: state.gender,
-            birthday: state.birthday,
-            previewImage: state.previewImage,
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleInfoSubmit}
-        >
-          {(formikProps) => {
-            const { values, errors, touched, dirty } = formikProps;
-            return (
-              <Form className="user-profile__info-form">
-                {/* onSubmit={handleInfoSubmit}> */}
-                <div className="user-profile_info-container">
-                  <div className="user-profile__info-input">
-                    <FastField
-                      name="user"
-                      component={InputField}
-                      type="text"
-                      label="Tên Đăng Nhập"
-                      placeholder=""
-                      disabled={false}
-                      labelClassName="user-profile__user-label"
-                      inputClassName="user-profile__user-input"
-                      invalidClassName="user-profile__user-invalid"
-                    ></FastField>
-                    <FastField
-                      name="name"
-                      component={InputField}
-                      type="text"
-                      label="Tên"
-                      placeholder=""
-                      disabled={false}
-                      labelClassName="user-profile__name-label"
-                      inputClassName="user-profile__name-input"
-                      invalidClassName="user-profile__name-invalid"
-                    ></FastField>
-                    <label className="user-profile__email-label">Email</label>
-                    <div className="user-profile__email-input">
-                      {state.email}
-                      <Link
-                        href="/account/email"
-                        className="user-profile__email-btn"
-                      >
-                        Thay đổi
-                      </Link>
-                    </div>
-                    <FastField
-                      name="phone"
-                      component={InputField}
-                      type="text"
-                      label="Số Điện Thoại"
-                      placeholder=""
-                      disabled={false}
-                      labelClassName="user-profile__phone-label"
-                      inputClassName="user-profile__phone-input"
-                      invalidClassName="user-profile__phone-invalid"
-                    ></FastField>
-                    <label className="user-profile__gender-label">
-                      Giới Tính
-                    </label>
-                    <div className="user-profile__radio-container">
-                      <FastField
-                        name="gender"
-                        id="man"
-                        component={RadioGroupField}
-                        value="man"
-                        type="radio"
-                        label="Nam"
-                        labelClassName="user-profile__man-label"
-                        inputClassName="user-profile__man-radio"
-                        disabled={false}
-                      ></FastField>
-                      <FastField
-                        name="gender"
-                        id="woman"
-                        component={RadioGroupField}
-                        value="woman"
-                        type="radio"
-                        label="Nữ"
-                        labelClassName="user-profile__woman-label"
-                        inputClassName="user-profile__woman-radio"
-                        disabled={false}
-                      ></FastField>
-                      <FastField
-                        name="gender"
-                        id="other"
-                        component={RadioGroupField}
-                        value="other"
-                        type="radio"
-                        label="Khác"
-                        labelClassName="user-profile__other-label"
-                        inputClassName="user-profile__other-radio"
-                        disabled={false}
-                      ></FastField>
-                    </div>
-                    {errors.gender && touched.gender && (
-                      <div className="user-profile__radio-invalid">
-                        {errors.gender}
-                      </div>
-                    )}
-                    <FastField
-                      name="birthday"
-                      component={InputField}
-                      type="date"
-                      label="Ngày Sinh"
-                      placeholder=""
-                      disabled={false}
-                      labelClassName="user-profile__birthday-label"
-                      inputClassName="user-profile__birthday-input"
-                      invalidClassName="user-profile__birthday-invalid"
-                    ></FastField>
-                    <button
-                      disabled={isInfoUpdating || !dirty}
-                      type="submit"
-                      className="btn user-profile__info-submit"
-                    >
-                      Lưu
-                    </button>
-                  </div>
+        <form onSubmit={handleSubmit} className={'user-profile__info-form'}>
+          <div className="user-profile_info-container">
+            <div className="user-profile__info-input">
+              <label htmlFor={'user'} className={'user-profile__user-label'}>Tên Đăng Nhập</label>
+              <Input id={'user'} name={'user'} type={"text"} onChange={handleChange} onBlur={handleBlur}
+                     value={values.user} className={'user-profile__user-input'}
+                     variant={errors.user ? 'invalid' : 'default'} />
+              {errors.user && <div className={'user-profile__user-invalid'}>{errors.user}</div>}
 
-                  <Field
-                    name="previewImage"
-                    component={ImageUploadField}
-                    type="file"
-                    label=""
-                    disabled={false}
-                    handleChange={handleChange}
-                    isInfoUpdating={isInfoUpdating}
-                  ></Field>
-                </div>
-              </Form>
-            );
-          }}
-        </Formik>
+              <label htmlFor={'name'} className={'user-profile__name-label'}>Tên</label>
+              <Input id={'name'} name={'name'} type={"text"} onChange={handleChange} onBlur={handleBlur}
+                     value={values.name} className={'user-profile__name-input'}
+                     variant={errors.name ? 'invalid' : 'default'} />
+              {errors.name && <div className={'user-profile__name-invalid'}>{errors.name}</div>}
+
+              <label className="user-profile__email-label">Email</label>
+              <div className="user-profile__email-input">
+                {state.email}
+                <Link
+                  href="/account/email"
+                  className="user-profile__email-btn"
+                >
+                  Thay đổi
+                </Link>
+              </div>
+
+              <label htmlFor={'phone'} className={'user-profile__phone-label'}>Số Điện Thoại</label>
+              <Input id={'phone'} name={'phone'} type={"text"} onChange={handleChange} onBlur={handleBlur}
+                     value={values.phone} className={'user-profile__phone-input'}
+                     variant={errors.phone ? 'invalid' : 'default'} />
+              {errors.phone && <div className={'user-profile__phone-invalid'}>{errors.phone}</div>}
+
+              <label htmlFor={'gender'} className={'user-profile__birthday-label'}>Giới Tính</label>
+              <div className="user-profile__radio-container">
+                <Input id={'man'} name={'gender'} type={"radio"} onChange={handleChange} onBlur={handleBlur}
+                       value={'man'} checked={values.gender === 'man'} />
+                <label htmlFor={'man'} className={'user-profile__man-label'}>Nam</label>
+
+                <Input id={'woman'} name={'gender'} type={"radio"} onChange={handleChange} onBlur={handleBlur}
+                       value={'woman'} checked={values.gender === 'woman'} />
+                <label htmlFor={'woman'} className={'user-profile__woman-label'}>Nữ</label>
+
+                <Input id={'other'} name={'gender'} type={"radio"} onChange={handleChange} onBlur={handleBlur}
+                       value={'other'} checked={values.gender === 'other'} />
+                <label htmlFor={'other'} className={'user-profile__other-label'}>Khác</label>
+
+                {errors.gender && <div className={'user-profile__gender-invalid'}>{errors.gender}</div>}
+              </div>
+
+              <label htmlFor={'birthday'} className={'user-profile__birthday-label'}>Ngày Sinh</label>
+              <Input id={'birthday'} name={'birthday'} type={"date"} onChange={handleChange} onBlur={handleBlur}
+                     value={values.birthday} className={'user-profile__birthday-input'}
+                     variant={errors.birthday ? 'invalid' : 'default'} />
+              {errors.birthday && <div className={'user-profile__birthday-invalid'}>{errors.birthday}</div>}
+
+              <Button
+                disabled={isInfoUpdating || !dirty}
+                type="submit"
+                className="btn user-profile__info-submit"
+              >
+                Lưu
+              </Button>
+            </div>
+            <ImageUpload
+              value={values.previewImage}
+              setFieldValue={setFieldValue}
+              label=""
+              disabled={false}
+              isInfoUpdating={isInfoUpdating}
+            />
+          </div>
+        </form>
       </div>
       <PopupModal
         isUserUpdateFailed={isUserUpdateFailed}

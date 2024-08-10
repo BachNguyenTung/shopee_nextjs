@@ -1,18 +1,16 @@
 import React, {useEffect, useRef} from "react";
 import PropTypes from "prop-types";
+import {Input} from "@shoppe_nextjs/ui";
 
-const ImageUploadField = (props) => {
+const ImageUpload = (props) => {
   const {
-    field,
-    form,
-
-    type,
+    value,
+    setFieldValue,
     label,
     disabled,
     handleChange,
     isInfoUpdating,
   } = props;
-  const { name, value } = field;
   const inputEl = useRef();
   const maxSizeFileInMB = 8;
   const maxSizeFileInKB = maxSizeFileInMB * 1048576;
@@ -39,7 +37,7 @@ const ImageUploadField = (props) => {
       } else {
         handleChange('fileImage', fileImage);
         const previewImage = URL.createObjectURL(fileImage);
-        form.setFieldValue(name, previewImage);
+        setFieldValue('previewImage', previewImage);
       }
     }
   };
@@ -47,7 +45,7 @@ const ImageUploadField = (props) => {
   return (
     <>
       {label && (
-        <label htmlFor={name} className="user-profile__image-label">
+        <label htmlFor={'previewImage'} className="user-profile__image-label">
           {label}
         </label>
       )}
@@ -101,9 +99,9 @@ const ImageUploadField = (props) => {
         >
           Chọn ảnh
         </button>
-        <input
-          name={name}
-          type={type}
+        <Input
+          name="previewImage"
+          type={'file'}
           ref={inputEl}
           onChange={handleImageInputChange}
           className="user-profile__image-file"
@@ -119,20 +117,20 @@ const ImageUploadField = (props) => {
   );
 };
 
-ImageUploadField.propTypes = {
-  field: PropTypes.object.isRequired,
-  form: PropTypes.object.isRequired,
+ImageUpload.propTypes = {
+  value: PropTypes.string.isRequired,
+  setFieldValue: PropTypes.func.isRequired,
   previewImage: PropTypes.string,
-  type: PropTypes.string,
   label: PropTypes.string,
   disabled: PropTypes.bool,
+  isInfoUpdating: PropTypes.bool
 };
 
-ImageUploadField.defaultProps = {
+ImageUpload.defaultProps = {
   previewImage: null,
-  type: "file",
   label: "",
   disabled: false,
+  isInfoUpdating: false
 };
 
-export default ImageUploadField;
+export default ImageUpload;

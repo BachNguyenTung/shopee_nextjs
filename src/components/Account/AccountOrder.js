@@ -7,10 +7,9 @@ import {useUserContext} from "../../context/UserProvider";
 import {ClipLoading} from "../ClipLoading";
 import Link from "next/link";
 import {useMediaQuery} from "@mui/material";
-import Pagination from "@shoppe_nextjs/ui/Pagination";
-import MiniPageControl from "@shoppe_nextjs/ui/MiniPageControl";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 import {pageSize} from "@/constants/pagination";
+import {MiniPageControl, Pagination} from "@shoppe_nextjs/ui";
 
 const AccountOrder = () => {
   const { user } = useUserContext();

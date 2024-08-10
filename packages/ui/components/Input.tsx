@@ -12,7 +12,8 @@ const inputVariants = cva(
       variant: {
         default: "",
         primary: "",
-        secondary: ""
+        secondary: "",
+        invalid: "user-profile__user-input--invalid",
       },
     },
     defaultVariants: {
