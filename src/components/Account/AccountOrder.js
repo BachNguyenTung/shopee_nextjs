@@ -10,7 +10,7 @@ import {useMediaQuery} from "@mui/material";
 import Pagination from "@shoppe_nextjs/ui/Pagination";
 import MiniPageControl from "@shoppe_nextjs/ui/MiniPageControl";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
-import {pageSize} from "@/constants/pagination";
+import {orderPageSize} from "@/constants/pagination";
 
 const AccountOrder = () => {
   const { user } = useUserContext();
@@ -18,7 +18,7 @@ const AccountOrder = () => {
   const [searchOrderItems, setSearchOrderItems] = useState([]);
   const [filter, setFilter] = useState("all");
   const [searchOrderItemsFiltered, setSearchOrderItemsFiltered] = useState([]);
-  const { pageIndex, orderPageSize } = usePagination({ items: setSearchOrderItemsFiltered, pageSize });
+  const { pageIndex } = usePagination({ items: searchOrderItemsFiltered, pageSize: orderPageSize });
   const currentOrderItems = [...searchOrderItemsFiltered].slice((pageIndex - 1) * orderPageSize, pageIndex * orderPageSize);
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
 
