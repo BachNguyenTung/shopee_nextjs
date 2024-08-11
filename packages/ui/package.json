@@ -2,12 +2,9 @@
   "name": "@shoppe_nextjs/ui",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "exports": {
-    "./Button": "./components/Button.tsx",
-    "./Input": "./components/Input.tsx",
-    "./Pagination": "./components/pagination/Pagination.tsx",
-    "./MiniPageControl": "./components/pagination/MiniPageControl.tsx"
+    ".": "./index.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,6 +19,9 @@
   "devDependencies": {
     "@shoppe_nextjs/tailwind-config": "file:../tailwind-config",
     "@shoppe_nextjs/utils": "file:../utils",
-    "sass": "^1.77.8"
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "sass": "^1.77.8",
+    "tailwindcss": "^3.4.9"
   }
 }

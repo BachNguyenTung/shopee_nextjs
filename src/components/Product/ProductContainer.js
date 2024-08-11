@@ -9,8 +9,8 @@ import withContainer from "../withContainer";
 import ProductCategory from "./ProductCategory";
 import ProductFilter from "./ProductFilter";
 import ProductList from "./ProductList";
-import Pagination from "@shoppe_nextjs/ui/Pagination";
 import {pageSize} from "@/constants/pagination";
+import {Pagination} from "@shoppe_nextjs/ui";
 
 const newestDays = 180;
 const oneDayinMs = 24 * 3600 * 1000;
