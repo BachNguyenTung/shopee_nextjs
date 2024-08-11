@@ -28,7 +28,6 @@ const AccountContainer = ({children}: Props) => {
   const [isImageUploadFailed, setIsImageUploadFailed] = useState(false);
   const {isPopupShowing, togglePopup} = useModal();
   const userAvatar = user?.photoURL;
-
   // set user info from db
     useEffect(() => {
       if (user) {
