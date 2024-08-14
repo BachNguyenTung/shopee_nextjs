@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useTransition} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {Stack, TextField} from "@mui/material";
@@ -8,12 +8,21 @@ import {useUserContext} from "@/context/UserProvider";
 import withContainer from "@/components/withContainer";
 import {useRouter} from "next/router";
 
-function LoginContainer({isRegisterPage, isLoginPage, submitText}) {
+function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
   const { signIn, register } = useUserContext();
   const router = useRouter()
-  const onSubmit = async (values) => {
+  const [isPending, startTranstion] = useTransition()
+  console.log(isPending, 'isPending')
+  const onSubmit = (values) => {
     if (isRegisterPage) {
-      try {
+      handleReg(values)
+    }
+    handleLogin(values)
+  };
+
+  const handleReg = async (values) => {
+    try {
+      startTranstion(async () => {
         const userCredential = await register(values);
         if (userCredential) {
           const user = userCredential.user;
@@ -23,36 +32,39 @@ function LoginContainer({isRegisterPage, isLoginPage, submitText}) {
             displayName: randomName,
           });
         }
-      } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        if (errorCode === "auth/weak-password") {
-          alert("Mật khẩu quá ngắn.");
-        } else {
-          alert(errorMessage);
-        }
-      } finally {
-        formik.setSubmitting(false);
-        router.push("/");
+      })
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      if (errorCode === "auth/weak-password") {
+        alert("Mật khẩu quá ngắn.");
+      } else {
+        alert(errorMessage);
       }
+    } finally {
+      formik.setSubmitting(false);
+      router.push("/");
     }
-    if (isLoginPage) {
-      try {
+  }
+
+  const handleLogin = async (values) => {
+    try {
+      startTranstion(async () => {
         await signIn(values);
-      } catch (error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        if (errorCode === "auth/wrong-password") {
-          alert("Mật khẩu không đúng!.");
-        } else {
-          alert(errorMessage);
-        }
-      } finally {
-        formik.setSubmitting(false);
-        router.push("/");
+      })
+    } catch (error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      if (errorCode === "auth/wrong-password") {
+        alert("Mật khẩu không đúng!.");
+      } else {
+        alert(errorMessage);
       }
+    } finally {
+      formik.setSubmitting(false);
+      router.push("/");
     }
-  };
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -95,9 +107,9 @@ function LoginContainer({isRegisterPage, isLoginPage, submitText}) {
                 size="small"
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
-                InputProps={{style: {fontSize: "1.3rem"}}}
-                InputLabelProps={{style: {fontSize: "1.3rem"}}}
-                FormHelperTextProps={{style: {fontSize: "1.3rem"}}}
+                InputProps={{ style: { fontSize: "1.3rem" } }}
+                InputLabelProps={{ style: { fontSize: "1.3rem" } }}
+                FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
               />
 
               <TextField
@@ -110,9 +122,9 @@ function LoginContainer({isRegisterPage, isLoginPage, submitText}) {
                   formik.touched.password && Boolean(formik.errors.password)
                 }
                 helperText={formik.touched.password && formik.errors.password}
-                InputProps={{style: {fontSize: "1.3rem"}}}
-                InputLabelProps={{style: {fontSize: "1.3rem"}}}
-                FormHelperTextProps={{style: {fontSize: "1.3rem"}}}
+                InputProps={{ style: { fontSize: "1.3rem" } }}
+                InputLabelProps={{ style: { fontSize: "1.3rem" } }}
+                FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
               />
               {isRegisterPage && (
                 <TextField
@@ -129,9 +141,9 @@ function LoginContainer({isRegisterPage, isLoginPage, submitText}) {
                     formik.touched.confirmPassword &&
                     formik.errors.confirmPassword
                   }
-                  InputProps={{style: {fontSize: "1.3rem"}}}
-                  InputLabelProps={{style: {fontSize: "1.3rem"}}}
-                  FormHelperTextProps={{style: {fontSize: "1.3rem"}}}
+                  InputProps={{ style: { fontSize: "1.3rem" } }}
+                  InputLabelProps={{ style: { fontSize: "1.3rem" } }}
+                  FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
                 />
               )}
             </Stack>
