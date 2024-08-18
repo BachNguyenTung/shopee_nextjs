@@ -11,6 +11,7 @@ import ProductFilter from "./ProductFilter";
 import ProductList from "./ProductList";
 import {pageSize} from "@/constants/pagination";
 import {Pagination} from "@shoppe_nextjs/ui";
+import useDeferredState from "@/hooks/useDeferredState";
 
 const newestDays = 180;
 const oneDayinMs = 24 * 3600 * 1000;
@@ -18,33 +19,33 @@ const currentTimeinMs = new Date().valueOf();
 
 const ProductContainer = ({ items }) => {
   const { bestSelling } = useProductsContext();
-  const [category, setCategory] = useState(categoryType.ALL_PRODUCT);
-  const [sort, setSort] = useState(sortType.ALL);
-  const [sortPrice, setSortPrice] = useState(sortType.DEFAULT_PRICE);
-  const [startPrice, setStartPrice] = useState("");
-  const [endPrice, setEndPrice] = useState("");
-  const [ratingValue, setRatingValue] = useState(0);
+  const [category, deferCategory, setCategory] = useDeferredState(categoryType.ALL_PRODUCT)
+  const [sort, deferSort, setSort] = useDeferredState(sortType.ALL);
+  const [sortPrice, deferSortPrice, setSortPrice] = useDeferredState(sortType.DEFAULT_PRICE)
+  const [startPrice, setStartPrice] = useState('')
+  const [endPrice, setEndPrice] = useState('')
+  const [ratingValue, deferRatingValue, setRatingValue] = useDeferredState(0)
   const startPriceRef = useRef();
   const endPriceRef = useRef();
 
   const categoryItems = useMemo(() => {
     return items.filter((item) => {
       let result = true;
-      if (category !== categoryType.ALL_PRODUCT) {
-        result = item.category === category;
+      if (deferCategory !== categoryType.ALL_PRODUCT) {
+        result = item.category === deferCategory;
       }
       return result;
     });
-  }, [category, items]);
+  }, [deferCategory, items]);
 
   const filteredItems = useMemo(() => {
     return categoryItems
       .filter((item) => {
         let result = true;
-        if (sort === sortType.BEST_SELLING) {
+        if (deferSort === sortType.BEST_SELLING) {
           result = item.soldAmount >= bestSelling;
         }
-        if (sort === sortType.DATE) {
+        if (deferSort === sortType.DATE) {
           result =
             Math.floor(new Date(item.date).valueOf() / oneDayinMs) >
             Math.floor(currentTimeinMs / oneDayinMs) - newestDays;
@@ -77,22 +78,22 @@ const ProductContainer = ({ items }) => {
         return result;
       })
       .sort((a, b) => {
-        if (sortPrice === sortType.PRICE_ASC) {
+        if (deferSortPrice === sortType.PRICE_ASC) {
           return parseFloat(a.price) - parseFloat(b.price);
         }
-        if (sortPrice === sortType.PRICE_DESC) {
+        if (deferSortPrice === sortType.PRICE_DESC) {
           return parseFloat(b.price) - parseFloat(a.price);
         }
         return 0;
       })
-      .filter((item) => item.rating >= ratingValue);
+      .filter((item) => item.rating >= deferRatingValue);
   }, [
     bestSelling,
     categoryItems,
     endPrice,
-    ratingValue,
-    sort,
-    sortPrice,
+    deferRatingValue,
+    deferSort,
+    deferSortPrice,
     startPrice,
   ]);
 
