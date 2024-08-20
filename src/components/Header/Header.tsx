@@ -32,7 +32,7 @@ const Header = ({
                   isAccountPage,
                   headerText = '',
                 }: Props) => {
-  const {user, userLoading, isPhotoExist, checkingPhotoURL, signOut} =
+  const { user, userLoading, isPhotoExist, checkingPhotoURL, signOut } =
     useUserContext();
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
   const router = useRouter()
@@ -70,18 +70,18 @@ const Header = ({
       <div className={`container ${xsBreakpointMatches && isAccountPage && 'max-w-none p-0'} `}>
         <Stack
           sx={{
-            flexDirection: {xs: "row-reverse", sm: "column"},
-            alignItems: {xs: "center", sm: "initial"},
+            flexDirection: { xs: "row-reverse", sm: "column" },
+            alignItems: { xs: "center", sm: "initial" },
           }}
         >
           {xsBreakpointMatches && isAccountPage &&
             < div className={'mx-4'} aria-describedby={id} onClick={openMenuPopover ? handleClose : handleClick}>
-              <MenuIcon fontSize={'large'} className={'text-white p-0'}/>
+              <MenuIcon fontSize={'large'} className={'text-white p-0'} />
             </div>
           }
           {openMenuPopover &&
             <BasicPopover id={id} open={openMenuPopover}>
-              <AccountLeftMenu user={user} />
+              <AccountLeftMenu />
             </BasicPopover>
           }
           {/* HeaderNav */}
@@ -191,7 +191,7 @@ const Header = ({
                     }
                   }}
                 >
-                  {!user && !userLoading && (
+                  {!user && (
                     <div className="header__nav-reg">
                       <Link href="/register" className="header__nav-login">
                         Đăng ký
@@ -205,7 +205,6 @@ const Header = ({
                   <div className="header__nav-login-link">
                     {user &&
                     isPhotoExist &&
-                    !userLoading &&
                     !checkingPhotoURL ? (
                       <img
                         src={user.photoURL}
@@ -242,7 +241,7 @@ const Header = ({
 
                     <Box
                       component="span"
-                      sx={{display: {xs: "none", sm: "inline-block"}}}
+                      sx={{ display: { xs: "none", sm: "inline-block" } }}
                     >
                       {user?.displayName}
                     </Box>
@@ -283,7 +282,7 @@ const Header = ({
           )}
           {xsBreakpointMatches && !isProductPage && (
             <ArrowBack
-              sx={{fontSize: "3rem", color: "white", marginLeft: "0.6rem"}}
+              sx={{ fontSize: "3rem", color: "white", marginLeft: "0.6rem" }}
               onClick={async () => {
                 count.current += 1
                 await router.back()

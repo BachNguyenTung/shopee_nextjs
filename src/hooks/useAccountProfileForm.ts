@@ -57,6 +57,7 @@ export default function useAccountProfileForm({ state, handleChangeState, toggle
     handleChange: handleChangeState
   })
 
+  // with react-18 all state update in async func are batched to
   async function handleInfoSubmit(values: any) {
     const {
       userName,

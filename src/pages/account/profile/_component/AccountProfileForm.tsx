@@ -1,10 +1,11 @@
 import { Button, Input } from "@shoppe_nextjs/ui";
 import Link from "next/link";
 import ImageUpload from "@/custom-fields/ImageUploadField/ImageUpload";
-import React from "react";
+import React, { useId } from "react";
 import { AccountProfileState } from "@/hooks/useAccountProfileState";
 import useAccountProfileForm from "@/hooks/useAccountProfileForm";
 
+//TODO: form render twice caused by formik control state update, use react-hook-form
 export default function AccountProfileForm({ state, handleChangeState, togglePopup }: {
   state?: AccountProfileState,
   handleChangeState?: <K extends keyof AccountProfileState>(field: K, value: AccountProfileState[K]) => void,
@@ -20,19 +21,21 @@ export default function AccountProfileForm({ state, handleChangeState, togglePop
     dirty,
     touched,
   } = useAccountProfileForm({ state, handleChangeState, togglePopup });
+  const userId = useId()
+  const nameId = useId()
 
   return (
     <form onSubmit={handleSubmit} className={'user-profile__info-form'}>
       <div className="user-profile_info-container">
         <div className="user-profile__info-input">
-          <label htmlFor={'user'} className={'user-profile__user-label'}>Tên Đăng Nhập</label>
-          <Input id={'user'} name={'user'} type={"text"} onChange={handleChange} onBlur={handleBlur}
+          <label htmlFor={userId} className={'user-profile__user-label'}>Tên Đăng Nhập</label>
+          <Input id={userId} name={'user'} type={"text"} onChange={handleChange} onBlur={handleBlur}
                  value={values.user} className={'user-profile__user-input'}
                  variant={errors.user ? 'invalid' : 'default'} />
           {errors.user && <div className={'user-profile__user-invalid'}>{errors.user}</div>}
 
-          <label htmlFor={'name'} className={'user-profile__name-label'}>Tên</label>
-          <Input id={'name'} name={'name'} type={"text"} onChange={handleChange} onBlur={handleBlur}
+          <label htmlFor={nameId} className={'user-profile__name-label'}>Tên</label>
+          <Input id={nameId} name={'name'} type={"text"} onChange={handleChange} onBlur={handleBlur}
                  value={values.name} className={'user-profile__name-input'}
                  variant={errors.name ? 'invalid' : 'default'} />
           {errors.name && <div className={'user-profile__name-invalid'}>{errors.name}</div>}
