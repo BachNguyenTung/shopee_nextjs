@@ -5,6 +5,7 @@ import React, { useId } from "react";
 import { AccountProfileState } from "@/hooks/useAccountProfileState";
 import useAccountProfileForm from "@/hooks/useAccountProfileForm";
 
+//TODO: form render twice caused by formik control state update, use react-hook-form
 export default function AccountProfileForm({ state, handleChangeState, togglePopup }: {
   state?: AccountProfileState,
   handleChangeState?: <K extends keyof AccountProfileState>(field: K, value: AccountProfileState[K]) => void,
