@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {storage} from "@/configs/firebase";
-import {ref, getDownloadURL} from 'firebase/storage'
+import {getDownloadURL, ref} from 'firebase/storage'
 import {updateProfile} from "firebase/auth"
 
 const useCheckPhotoURL = (user) => {
@@ -17,8 +17,8 @@ const useCheckPhotoURL = (user) => {
     getDownloadURL(storageRef)
       .then((photoURL) => {
         setIsPhotoExist(true);
-        user.updateProfile({
-          photoURL,
+        updateProfile(user, {
+          photoURL
         });
       })
       .catch((error) => {

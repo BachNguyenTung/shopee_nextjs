@@ -94,7 +94,7 @@ export default function AccountProfileForm({ state, handleChangeState, togglePop
           label=""
           disabled={false}
           isInfoUpdating={state?.isInfoUpdating}
-          handleChange={handleChange}
+          handleChangeState={handleChangeState}
         />
       </div>
     </form>

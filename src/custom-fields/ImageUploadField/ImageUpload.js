@@ -8,7 +8,7 @@ const ImageUpload = (props) => {
     setFieldValue,
     label,
     disabled,
-    handleChange,
+    handleChangeState,
     isInfoUpdating,
   } = props;
   const inputEl = useRef();
@@ -35,7 +35,7 @@ const ImageUpload = (props) => {
           `Không thể tải file lớn hơn ${maxSizeFileInMB}MB !. Vui lòng thử lại`
         );
       } else {
-        handleChange('fileImage', fileImage);
+        handleChangeState('fileImage', fileImage);
         const previewImage = URL.createObjectURL(fileImage);
         setFieldValue('previewImage', previewImage);
       }
@@ -124,7 +124,7 @@ ImageUpload.propTypes = {
   label: PropTypes.string,
   disabled: PropTypes.bool,
   isInfoUpdating: PropTypes.bool,
-  handleChange: PropTypes.func.isRequired
+  handleChangeState: PropTypes.any
 };
 
 ImageUpload.defaultProps = {
