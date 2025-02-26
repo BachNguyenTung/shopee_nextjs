@@ -1,5 +1,7 @@
 import React from "react";
 import classNames from "classnames";
+import styles from './pagination.module.scss'
+import { cn } from "@shoppe_nextjs/utils/utils";
 
 export default function PaginationItemNumber({
                                                pageIndex,
@@ -24,11 +26,11 @@ export default function PaginationItemNumber({
         <li
           key={index}
           onClick={() => setPageIndex(index)}
-          className={classNames("pagination-number", {
-            "pagination-number--active": pageIndex === index,
+          className={classNames(styles.paginationNumber, {
+            [styles.paginationNumberActive]: pageIndex === index,
           })}
         >
-          <div className="pagination-item__link">{index}</div>
+          <div className={styles.paginationItem__link}>{index}</div>
         </li>
       );
     }
@@ -43,11 +45,11 @@ export default function PaginationItemNumber({
         <li
           key={index}
           onClick={() => setPageIndex(index)}
-          className={classNames("pagination-number", {
-            "pagination-number--active": pageIndex === index,
+          className={classNames(styles.paginationNumber, {
+            [styles.paginationNumberActive]: pageIndex === index,
           })}
         >
-          <div className="pagination-item__link">{index}</div>
+          <div className={styles.paginationItem__link}>{index}</div>
         </li>
       );
     }
@@ -61,11 +63,11 @@ export default function PaginationItemNumber({
         <li
           key={index}
           onClick={() => setPageIndex(index)}
-          className={classNames("pagination-number", {
-            "pagination-number--active": pageIndex === index,
+          className={classNames(styles.paginationNumber, {
+            [styles.paginationNumberActive]: pageIndex === index,
           })}
         >
-          <div className="pagination-item__link">{index}</div>
+          <div className={styles.paginationItem__link}>{index}</div>
         </li>
       );
     }
@@ -75,32 +77,32 @@ export default function PaginationItemNumber({
     <>
       <li
         onClick={() => setPageIndex(1)}
-        className={classNames("pagination-number", {
-          "pagination-number--active": pageIndex === 1,
+        className={classNames(styles.paginationNumber, {
+          [styles.paginationNumberActive]: pageIndex === 1,
         })}
       >
-        <div className="pagination-item__link">1</div>
+        <div className={styles.paginationItem__link}>1</div>
       </li>
       <li
         onClick={() => setPageIndex(2)}
-        className={classNames("pagination-number", {
-          "pagination-number--active": pageIndex === 2,
+        className={classNames(styles.paginationNumber, {
+          [styles.paginationNumberActive]: pageIndex === 2,
         })}
       >
-        <div className="pagination-item__link">2</div>
+        <div className={styles.paginationItem__link}>2</div>
       </li>
       {/* Show ... from the start of pagination bar  */}
       {pageIndex > numOfPageShowing && (
-        <li className="pagination-item pagination-item--non-click">
-          <div className="pagination-item__link">...</div>
+        <li className={cn(styles.paginationItem, styles.paginationItemNonClick)}>
+          <div className={styles.paginationItem__link}>...</div>
         </li>
       )}
       {arrayOfPageIndexElements}
       {/* show ... from the ending of pagination bar*/}
       {pageTotal > numOfPageShowing &&
         pageIndex <= pageTotal - numberOfPageShowingFromEnd && (
-          <li className="pagination-item pagination-item--non-click">
-            <div className="pageTotalpagination-item__link">...</div>
+          <li className={cn(styles.paginationItem, styles.paginationItemNonClick)}>
+            <div className={styles.paginationItem__link}>...</div>
           </li>
         )}
     </>

@@ -40,6 +40,7 @@ module.exports = {
         'extrabold': '800',
         'black': '900',
       },
+      colors: {},
       screens: {
         'pc3': '1600px',  // Example breakpoint, change as needed
         'pc2': '1280px',  // Example breakpoint, change as needed
