@@ -1,8 +1,9 @@
 import classNames from "classnames";
-import {NumericFormat} from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import React from "react";
-import {useMediaQuery} from "@mui/material";
-import {router} from "next/client";
+import { useMediaQuery } from "@mui/material";
+import { router } from "next/client";
+import Image from "next/image";
 
 interface Props {
   item: any,
@@ -56,9 +57,10 @@ export default function CartItem({
             // className="grid__col cart-product__overview"
             className="flex text no-underline text-black"
           >
-            <img
+            <Image
+              loading={'lazy'}
               src={item.imageUrl}
-              alt=""
+              alt={item.name}
               className="cart-product__img"
             />
             <div className="cart-product__name flex flex-col gap-2">
