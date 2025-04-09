@@ -6,48 +6,57 @@ import {useProductsContext} from "../../context/ProductsProvider";
 import {ClipLoading} from "../ClipLoading";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 import {pageSize} from "@/constants/pagination";
+import {useInView} from "react-intersection-observer";
 
 function ProductList({ items }) {
   const { itemsLoading } = useProductsContext();
-  const { pageIndex } = usePagination({ items, pageSize });
-
+  const { pageIndex, setPageIndex, pageTotal } = usePagination({ items, pageSize });
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
+  const { ref, inView } = useInView({
+    threshold: 0
+  });
 
   // scrollToTop
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const renderItemsByPagination = useMemo(() => {
-    let renderItem = [];
-    renderItem = items.slice((pageIndex - 1) * pageSize, pageIndex * pageSize);
-    if (xsBreakpointMatches) {
-      renderItem = items;
+  // Handle infinite scroll
+  useEffect(() => {
+    if (inView && xsBreakpointMatches) {
+      setPageIndex(prev => prev < pageTotal ? prev + 1 : prev);
     }
-    return renderItem;
+  }, [inView, xsBreakpointMatches, pageTotal, setPageIndex]);
+
+  const renderItemsByPagination = useMemo(() => {
+    return xsBreakpointMatches ? items.slice(0, pageIndex * pageSize)
+      : items.slice((pageIndex - 1) * pageSize, pageIndex * pageSize);
   }, [items, pageIndex, pageSize, xsBreakpointMatches]);
 
   return (
-    <Grid2 container columnSpacing="0.5rem" rowSpacing="1rem">
-      {itemsLoading && <ClipLoading></ClipLoading>}
-      {renderItemsByPagination.length === 0 && !itemsLoading && (
-        <Box
-          sx={{
-            flex: 1,
-            textAlign: "center",
-            padding: "14.5rem",
-            fontSize: "1.6rem",
-            color: "var(--primary-color)",
-            fontWeight: "600",
-          }}
-        >
-          Không có sản phẩm...
-        </Box>
-      )}
-      {renderItemsByPagination.map((item) => (
-        <ProductItem key={item.id} item={item}></ProductItem>
-      ))}
-    </Grid2>
+    <>
+      <Grid2 container columnSpacing="0.5rem" rowSpacing="1rem">
+        {itemsLoading && <ClipLoading></ClipLoading>}
+        {renderItemsByPagination.length === 0 && !itemsLoading && (
+          <Box
+            sx={{
+              flex: 1,
+              textAlign: "center",
+              padding: "14.5rem",
+              fontSize: "1.6rem",
+              color: "var(--primary-color)",
+              fontWeight: "600",
+            }}
+          >
+            Không có sản phẩm...
+          </Box>
+        )}
+        {renderItemsByPagination?.map((item) => (
+          <ProductItem key={item.id} item={item}></ProductItem>
+        ))}
+      </Grid2>
+      <div ref={ref} />
+    </>
   );
 }
 

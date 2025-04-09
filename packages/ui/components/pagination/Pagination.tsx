@@ -33,7 +33,7 @@ export default function Pagination<T>({
       <ul className={cn(styles.pagination, styles.paginationMtb3)}>
         <li
           onClick={
-            pageIndex <= 1 ? undefined : () => setPageIndex(pageIndex - 1)
+            pageIndex <= 1 ? undefined : () => setPageIndex(prev => prev - 1)
           }
           className={classNames(styles.paginationItem, styles.paginationItem__left, {
             [styles.paginationItemDisabled]: pageIndex <= 1,
@@ -55,7 +55,7 @@ export default function Pagination<T>({
           onClick={
             pageIndex >= pageTotal
               ? undefined
-              : () => setPageIndex(pageIndex + 1)
+              : () => setPageIndex(prev => prev + 1)
           }
           className={classNames("pagination-item", "pagination-item__right", {
             "pagination-item--disabled": pageIndex >= pageTotal,
