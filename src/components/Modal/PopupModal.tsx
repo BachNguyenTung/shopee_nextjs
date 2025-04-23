@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from "react";
-import {BaseModal} from "@/components/base";
-import {useRouter} from "next/router";
+'use client'
+import React, { useEffect, useState } from "react";
+import { BaseModal } from "@/components/base";
+import { useRouter } from "next/navigation";
 
 interface Props {
   isCheckoutPage?: boolean,

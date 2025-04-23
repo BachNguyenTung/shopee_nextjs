@@ -4,7 +4,6 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <title>Shoppe</title>
         <meta name="description" content="Shopee" />
         <meta property="og:title" content="Shopee" />
         <meta property="og:description" content="Ecommerce website" />

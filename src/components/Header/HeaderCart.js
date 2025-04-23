@@ -7,11 +7,12 @@ import {useUserContext} from "@/context/UserProvider";
 import {useSelector} from "react-redux";
 import {useFetchCartQuery} from "@/services/cartApi";
 import {ShoppingCart} from "@mui/icons-material";
-import {useRouter} from "next/router";
+import {usePathname, useRouter} from "next/navigation";
 import {iconImg} from "@/services/getIcon";
 
 const HeaderCart = () => {
   const router = useRouter()
+  const { pathname } = usePathname();
   const { user } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
   const { isLoading: cartItemsLoading } = useFetchCartQuery(user);
@@ -21,7 +22,7 @@ const HeaderCart = () => {
       <div
         className="header__cart-wrapper"
         onClick={() => {
-          if (router.pathname !== "/cart") {
+          if (pathname == "/cart") {
             router.push("/cart");
           }
         }}

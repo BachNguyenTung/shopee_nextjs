@@ -12,10 +12,10 @@ const AccountPurchaseContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountLeftMenu user={user} />
+        <AccountLeftMenu />
       }
       <div className="user-content">
-        <AccountOrder/>
+        <AccountOrder />
       </div>
     </div>
   )

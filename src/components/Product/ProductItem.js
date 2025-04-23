@@ -9,7 +9,7 @@ import {addProducts} from "@/redux/cartSlice";
 import Link from "next/link";
 import useModal from "@/hooks/useModal";
 import AddCartModal from "@/components/Modal/AddCartModal";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 
 const ProductItem = function ({item, similarDisPlay}) {
   const router = useRouter()

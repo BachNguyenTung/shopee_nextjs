@@ -16,7 +16,7 @@ const AccountPaymentContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountLeftMenu user={user} />
+        <AccountLeftMenu />
       }
       <div className="user-content">
         <Elements stripe={stripePromise}>

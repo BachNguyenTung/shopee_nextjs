@@ -19,10 +19,10 @@ const AccountEmailContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountLeftMenu user={user} />
+        <AccountLeftMenu />
       }
       <div className="user-content">
-        <AccountEmail email={email} setEmail={setEmail}/>
+        <AccountEmail email={email} setEmail={setEmail} />
       </div>
     </div>)
 }

@@ -5,7 +5,7 @@ import {resetCart} from "@/redux/cartSlice";
 import {useAddCartToFireStoreMutation} from "@/services/cartApi";
 import useGetUserByObserver from "@/hooks/useGetUserByObserver";
 import useCheckPhotoURL from "@/hooks/useCheckPhotoURL";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth"
 import {auth} from "@/configs/firebase";
 

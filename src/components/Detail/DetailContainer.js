@@ -12,7 +12,7 @@ import {ClipLoading} from "../ClipLoading";
 import {useDispatch, useSelector} from "react-redux";
 import {addProducts, updateProducts} from "../../redux/cartSlice";
 import withContainer from "../withContainer";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {iconImg} from "@/services/getIcon";
 import {DETAIL} from "@/constants/detail";

@@ -6,7 +6,7 @@ import HeaderSearch from "./HeaderSearch";
 import classNames from "classnames";
 import Link from "next/link";
 import { iconImg } from "@/services/getIcon";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import MenuIcon from '@mui/icons-material/Menu';
 import { anchorElAtom } from "@/store/anchorEl.atom";
 import BasicPopover from "@/components/base/Popover";
@@ -38,7 +38,7 @@ const Header = ({
   const router = useRouter()
   const [anchorEl, setAnchorEl] = useAtom(anchorElAtom)
   const count = useRef<number>(0)
-
+  const pathname = usePathname()
   useEffect(() => {
     if (!xsBreakpointMatches)
       handleClose()
@@ -186,7 +186,7 @@ const Header = ({
                       : "header__nav-item-right header__nav-item-right--reg"
                   }
                   onClick={(e) => {
-                    if (user && router.pathname !== "/account/profile") {
+                    if (user && pathname !== "/account/profile") {
                       router.push("/account/profile");
                     }
                   }}

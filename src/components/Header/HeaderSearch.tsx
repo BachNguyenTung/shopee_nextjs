@@ -1,15 +1,14 @@
 import classNames from "classnames";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HeaderCart from "./HeaderCart";
-import {Close} from "@mui/icons-material";
-import {useRef} from "react";
-import {Box, Stack} from "@mui/material";
-import {RootStateOrAny, useDispatch, useSelector} from "react-redux";
-import {changeSearchInput, changeSearchItems} from "@/redux/searchSlice";
-import {useProductsContext} from "@/context/ProductsProvider";
+import { Close } from "@mui/icons-material";
+import { Box, Stack } from "@mui/material";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { changeSearchInput, changeSearchItems } from "@/redux/searchSlice";
+import { useProductsContext } from "@/context/ProductsProvider";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
-import {useRouter} from "next/router";
+import { useRouter } from "next/navigation";
 import useSearchHistory from "@/hooks/useSearchHistory";
 
 interface Props {

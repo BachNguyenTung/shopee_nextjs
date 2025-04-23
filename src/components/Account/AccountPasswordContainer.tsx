@@ -19,7 +19,7 @@ const AccountPasswordContainer = () => {
   return (
     <div className="main">
       {!xsBreakpointMatches &&
-        <AccountLeftMenu user={user} />
+        <AccountLeftMenu />
       }
       <div className="user-content">
         <AccountPassword email={email} setEmail={setEmail}/>

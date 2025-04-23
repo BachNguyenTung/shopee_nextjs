@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import Link from "next/link";
 import {useUserContext} from "@/context/UserProvider";
 import withContainer from "@/components/withContainer";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 
 function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
   const { signIn, register } = useUserContext();

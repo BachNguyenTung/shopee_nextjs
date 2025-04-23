@@ -1,6 +1,6 @@
-import Link, {LinkProps} from "next/link";
-import {DetailedHTMLProps, FC, HTMLAttributes, HTMLProps, PropsWithChildren} from "react";
-import {useRouter} from "next/router";
+import Link, { LinkProps } from "next/link";
+import { FC, PropsWithChildren } from "react";
+import { usePathname } from "next/navigation";
 
 interface NavLinkProps extends LinkProps, PropsWithChildren {
   className?: string
@@ -19,7 +19,7 @@ const NavLink: FC<NavLinkProps> = ({
                                      className,
                                      ...props
                                    }) => {
-  const {pathname} = useRouter();
+  const pathname = usePathname()
   const isActive = exact ? pathname === href : pathname.startsWith(href as string);
 
   if (isActive) {

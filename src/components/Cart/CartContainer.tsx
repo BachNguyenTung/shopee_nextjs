@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import Grid2 from "@mui/material/Unstable_Grid2";
@@ -13,15 +14,17 @@ import withContainer from "@/components/withContainer";
 import Link from "next/link";
 import CartItem from "@/components/Cart/CartItem";
 import CartVoucher from "@/components/Cart/CartVoucher";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { DETAIL } from "@/constants/detail";
 import useModal from "@/hooks/useModal";
-import PopupModal from "@/components/Modal/PopupModal";
 import AddCartModal from "@/components/Modal/AddCartModal";
 import { ClipLoading } from "@/components/ClipLoading";
 import { voucherStoreAtom, voucherStoreProxy } from "@/store/voucherStore.atomProxy";
 import { useAtomValue } from "jotai";
 import { useMediaQuery } from "@mui/material";
+import dynamic from "next/dynamic";
+
+const PopupModal = dynamic(() => import('@/components/Modal/PopupModal'), { ssr: false })
 
 interface Props {
   isCartPage: boolean
@@ -30,6 +33,7 @@ interface Props {
 function CartContainer({isCartPage}: Props) {
   const {voucher} = useAtomValue(voucherStoreAtom)
   const router = useRouter();
+  const searchParams = useSearchParams()
   const { user } = useUserContext();
   const {isLoading: cartItemsLoading} = useFetchCartQuery(user);
   const cartProducts = useSelector((state: RootStateOrAny) => state.cart.products);
@@ -65,11 +69,12 @@ function CartContainer({isCartPage}: Props) {
 
 
   useEffect(() => {
-    if (router?.query?.name === DETAIL) {
+    const query = searchParams.get('name');
+    if (query === DETAIL) {
       toggleIsAddCardPopup(true);
+      router.push('/cart');
     }
-    // navigate(location.pathname, { replace: true });
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (selectedProduct.length > 0) {
