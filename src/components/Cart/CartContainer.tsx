@@ -30,7 +30,7 @@ interface Props {
   isCartPage: boolean
 }
 
-function CartContainer({isCartPage}: Props) {
+function CartContainer({ isCartPage }: Partial<Props>) {
   const {voucher} = useAtomValue(voucherStoreAtom)
   const router = useRouter();
   const searchParams = useSearchParams()

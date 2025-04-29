@@ -1,22 +1,22 @@
-import {Button} from "@mui/material";
-import {BaseModal, BaseModalProps} from "@/components/base/BaseModal";
+import { Button } from "@mui/material";
+import { BaseModal, BaseModalProps } from "@/components/base/BaseModal";
 
-interface BaseDeleteModalProps extends BaseModalProps, BaseDeleteModalFooter {
+interface BaseDeleteModalProps extends BaseModalProps, Partial<BaseDeleteModalFooter> {
   categoryTitle?: string
   categoryName?: string
   label?: string
 }
 
 interface BaseDeleteModalFooter {
-  handleCloseDeleteModal?: () => void
-  handleDelete?: () => void
-  isDisabled?: boolean
-  className?: string
-  submitText?: string
+  handleCloseDeleteModal: () => void
+  handleDelete: () => void
+  isDisabled: boolean
+  className: string
+  submitText: string
 }
 
 interface BaseDeleteModalInterface {
-  footer: React.FC<BaseDeleteModalFooter>;
+  footer: React.FC<Partial<BaseDeleteModalFooter>>;
 }
 
 //BaseDeleteModalProps=> interface of Props

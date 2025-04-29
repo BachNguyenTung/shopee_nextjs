@@ -23,10 +23,10 @@ export default function Pagination<T>({
                                         numOfPageShowing = 5,
                                         numberOfPageShowingFromStart = 3,
                                         numberOfPageShowingFromEnd = 3
-                                      }: Props<T>) {
+                                      }: Partial<Props<T>>) {
   const { pageTotal, pageIndex, setPageIndex } = usePagination({ items, pageSize });
 
-  if (items.length <= pageSize) {
+  if (items && items.length <= pageSize) {
     return null;
   } else {
     return (
