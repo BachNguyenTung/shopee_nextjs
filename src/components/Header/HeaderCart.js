@@ -12,17 +12,18 @@ import {iconImg} from "@/services/getIcon";
 
 const HeaderCart = () => {
   const router = useRouter()
-  const { pathname } = usePathname();
+  const pathname = usePathname();
   const { user } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
   const { isLoading: cartItemsLoading } = useFetchCartQuery(user);
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
+  console.log(pathname)
   return (
     <div className="header__cart">
       <div
         className="header__cart-wrapper"
         onClick={() => {
-          if (pathname == "/cart") {
+          if (pathname !== "/cart") {
             router.push("/cart");
           }
         }}
