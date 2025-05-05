@@ -11,14 +11,14 @@ import useModal from "@/hooks/useModal";
 import AddCartModal from "@/components/Modal/AddCartModal";
 import {useRouter} from "next/navigation";
 
-const ProductItem = function ({item, similarDisPlay}) {
+const ProductItem = function ({ item, similarDisPlay }) {
   const router = useRouter()
   const { user } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
   const dispatch = useDispatch();
-  const {id, metaTitle, imageUrl, name, price, soldAmount, location, rating} =
+  const { id, metaTitle, imageUrl, name, price, soldAmount, location, rating } =
     item;
-  const {isAddCartPopup, toggleIsAddCardPopup} = useModal();
+  const { isAddCartPopup, toggleIsAddCardPopup } = useModal();
   const isInCart = cartProducts.some((item) => item.id === id);
 
   const handleAddCart = () => {
@@ -27,7 +27,7 @@ const ProductItem = function ({item, similarDisPlay}) {
     }
     const amount = 1;
     const variation = "";
-    dispatch(addProducts({...item, amount, variation}));
+    dispatch(addProducts({ ...item, amount, variation }));
     toggleIsAddCardPopup(!isAddCartPopup);
   };
   return (
@@ -74,6 +74,7 @@ const ProductItem = function ({item, similarDisPlay}) {
             src={imageUrl}
             alt="app__product-img"
             className="app__product-img"
+            loading={"lazy"}
           />
 
           <div className="app__product-info">

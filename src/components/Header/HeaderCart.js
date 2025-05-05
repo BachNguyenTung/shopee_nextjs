@@ -57,6 +57,7 @@ const HeaderCart = () => {
                         className="header__cart-img"
                         src={item.imageUrl}
                         alt="item-ao"
+                        loading={"lazy"}
                       />
                       <div className="header__cart-name">{item.name}</div>
                       <div className="header__cart-price">

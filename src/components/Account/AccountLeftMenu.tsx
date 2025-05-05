@@ -24,6 +24,7 @@ export default function AccountLeftMenu() {
               className="user-profile__image-user"
               src={user?.photoURL}
               alt=""
+              loading={"lazy"}
             />
           ) : (
             <svg

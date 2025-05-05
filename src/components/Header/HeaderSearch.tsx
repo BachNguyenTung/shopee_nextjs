@@ -102,7 +102,7 @@ const HeaderSearch: React.FC<Props> = ({isCartPage, isCheckoutPage, xsBreakpoint
             "header__logo-link--notHome": isCartPage || isCheckoutPage,
           })}
         >
-          <img src={"/img/shoppe-logo.png"} alt="shoppe-logo"/>
+          <img src={"/img/shoppe-logo.png"} alt="shoppe-logo" fetchPriority={"high"}/>
         </Link>
         {isCartPage && <div className="header__page-name">Giỏ hàng</div>}
         {isCheckoutPage && <div className="header__page-name">Thanh Toán</div>}

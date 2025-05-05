@@ -632,6 +632,7 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
                     src={item.imageUrl}
                     alt="product__item-img"
                     className="checkout-product__item-img"
+                    loading={"lazy"}
                   ></img>
                   <span className="checkout-product__item-name">
                     {item.name}
@@ -977,6 +978,7 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
                           src={getCardImgByBrand(item.card.brand)} //if cardInfo.number => img
                           alt="card"
                           className="checkout-product__card-img"
+                          loading={"lazy"}
                         ></img>
                         <span className="checkout-product__card-type">
                           {item.card.brand}

@@ -101,6 +101,7 @@ const AccountPayment = () => {
                 src={getCardImgByBrand(item.card.brand)}
                 alt="card-brand"
                 className="payment-profile__card-logo"
+                loading={"lazy"}
               />
               <div className="payment-profile__card-name hidden md:block">
                 {item.card.brand}

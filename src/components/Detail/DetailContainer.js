@@ -565,6 +565,7 @@ function DetailContainer() {
                   src={iconImg.protectIcon}
                   alt="protect"
                   className="detail-product__protect-icon"
+                  loading={"lazy"}
                 />
                 <div className="detail-product__protect-label">
                   Shopee Đảm Bảo

@@ -185,6 +185,7 @@ const AccountOrder = () => {
                       src={basketItem.imageUrl}
                       alt="cart-product"
                       className="order-product__img "
+                      loading={"lazy"}
                     />
                     <span className="order-product__name align-middle">{basketItem.name}</span>
                   </Link>
