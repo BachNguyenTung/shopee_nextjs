@@ -33,7 +33,7 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-export default function ProductCategory({
+function ProductCategory({
                                           category,
                                           setCategory,
                                           filteredItems,
@@ -365,3 +365,5 @@ export default function ProductCategory({
     </div>
   );
 }
+
+export default React.memo(ProductCategory);

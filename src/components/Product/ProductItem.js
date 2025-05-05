@@ -192,4 +192,4 @@ const ProductItem = function ({item, similarDisPlay}) {
     </Grid2>
   );
 };
-export default React.memo(ProductItem);
+export default ProductItem

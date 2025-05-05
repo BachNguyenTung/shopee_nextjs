@@ -1,7 +1,7 @@
 import {Box} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import PropTypes from "prop-types";
-import React, {useMemo, useRef, useState} from "react";
+import React, {useCallback, useMemo, useRef, useState} from "react";
 import * as categoryType from "../../constants/category";
 import * as sortType from "../../constants/sort";
 import {useProductsContext} from "@/context/ProductsProvider";
@@ -97,7 +97,7 @@ const ProductContainer = ({ items }) => {
     startPrice,
   ]);
 
-  const handleResetAll = () => {
+  const handleResetAll = useCallback(() => {
     setCategory(categoryType.ALL_PRODUCT);
     setSort(sortType.ALL);
     setSortPrice(sortType.DEFAULT_PRICE);
@@ -106,7 +106,7 @@ const ProductContainer = ({ items }) => {
     setEndPrice("");
     startPriceRef.current.value = "";
     endPriceRef.current.value = "";
-  };
+  }, []);
 
   return (
     <Grid2

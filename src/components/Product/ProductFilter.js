@@ -194,4 +194,4 @@ const ProductFilter = ({
   );
 };
 
-export default ProductFilter;
+export default React.memo(ProductFilter);
