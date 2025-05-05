@@ -99,6 +99,7 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
     setDefaultPaymentMethodID
   );
   const {shipInfos, updateShipInfoToFirebase} = useGetShipInfos(user);
+  const [tempShipInfos, setTempShipInfos] = useState<any>([]);
   const stripe = useStripe();
   const [shipUnit, setShipUnit] = useState<ShipUnit | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -110,6 +111,10 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
   const [processing, setProcessing] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
   const [loadingOrder, setLoadingOrder] = useState(false)
+
+  useEffect(() => {
+    setTempShipInfos(shipInfos ?? []);
+  }, [shipInfos]);
 
   const shipPriceProvince = useMemo(() => {
     let shipPrice = [0, 0];
@@ -172,6 +177,7 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
   };
   const handleChangeShipInfoClick = () => {
     setIsShipInfoChoosing(!isShipInfoChoosing);
+    setTempShipInfos(shipInfos);
   };
 
   const handleShowCardInfo = () => {
@@ -320,22 +326,23 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
 
   const handleShipInfoDefaultChange = async (e: any) => {
     const index = e.target.value;
-    let tempShipInfos = [...shipInfos];
-    tempShipInfos = tempShipInfos.map((shipInfo) =>
-      tempShipInfos.indexOf(shipInfo) === Number(index)
-        ? ({...shipInfo, isDefault: true})
-        : ({...shipInfo, isDefault: false})
-    );
-    await updateShipInfoToFirebase(tempShipInfos);
+    setTempShipInfos(tempShipInfos.map((item) =>
+      tempShipInfos.indexOf(item) === Number(index)
+        ? ({...item, isDefault: true})
+        : ({...item, isDefault: false})
+    ));
   };
 
-  const handleShipInfoCancel = () => {
+  const handleShipInfoCancel = async () => {
     // getShipInfos();
+    setTempShipInfos(shipInfos);
     setIsShipInfoChoosing(!isShipInfoChoosing);
   };
 
   const handleShipInfoApply = async () => {
-    await updateCustomerBillingAddressStripe(user, shipInfos);
+    await updateShipInfoToFirebase(tempShipInfos);
+    await updateCustomerBillingAddressStripe(user, tempShipInfos);
+    setTempShipInfos(tempShipInfos);
     setIsShipInfoChoosing(!isShipInfoChoosing);
   };
 
@@ -539,7 +546,7 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
           </div>
           <div className="checkout-product__address-container">
             {isShipInfoChoosing
-              ? shipInfos?.map((item: any, index: number) => (
+              ? tempShipInfos?.map((item: any, index: number) => (
                 <div
                   key={index}
                   className="checkout-product__address-content"
