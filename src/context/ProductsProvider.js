@@ -6,11 +6,9 @@ export function useProductsContext() {
   return useContext(ProductsContext);
 }
 const ProductsProvider = ({ children }) => {
-  const { items, itemsLoading } = useGetItemsFromFirebase();
+  useGetItemsFromFirebase();
   const bestSelling = 1000;
   const value = {
-    items,
-    itemsLoading,
     bestSelling,
   };
   return (
