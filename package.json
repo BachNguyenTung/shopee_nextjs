@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
-    "analyze": "ANALYZE=true yarn build:stg"
+    "analyze": "ANALYZE=true yarn build:stg",
+    "test": "jest",
+    "test:watchAll": "jest --watchAll"
   },
   "dependencies": {
     "@emotion/react": "^11.10.0",
