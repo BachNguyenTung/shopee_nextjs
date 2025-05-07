@@ -23,6 +23,7 @@
     "@shoppe_nextjs/ui": "file:packages/ui",
     "@stripe/react-stripe-js": "^1.4.1",
     "@stripe/stripe-js": "^1.15.1",
+    "@tanstack/react-query": "^5.75.4",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",

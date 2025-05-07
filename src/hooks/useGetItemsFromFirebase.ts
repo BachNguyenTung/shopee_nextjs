@@ -1,52 +1,55 @@
-import { useLayoutEffect, useState } from "react";
-import { onSnapshot, } from "firebase/firestore";
+import { useEffect, useLayoutEffect, useTransition } from "react";
+import { onSnapshot } from "firebase/firestore";
 import { productQuery } from "@/db/dbRef";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 const itemApi = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  price: z.number()
+  price: z.number(),
 });
 
 const useGetItemsFromFirebase = () => {
-  const [items, setItems] = useState<unknown>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const [isPending, startTransition] = useTransition();
 
-  useLayoutEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-    const unsubscribeProductObserver = onSnapshot(productQuery(),
-      (snaps) => {
-        if (!isMounted) {
-          return;
+  useEffect(() => {
+    // Delay subscription until after hydration
+    const timeoutId = setTimeout(() => {
+      let isMounted = true;
+      const unsubscribeProductObserver = onSnapshot(productQuery(),
+        (snaps) => {
+          if (!isMounted) return;
+
+          const items = snaps.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
+
+          try {
+            items.forEach(item => itemApi.parse(item));
+
+            // Use startTransition to avoid interrupting hydration
+              queryClient.setQueryData(['products'], items);
+          } catch (e) {
+            console.error("Error parsing products:", e);
+          }
+        },
+        (error) => {
+          console.error("Error fetching products:", error);
         }
-        const items = snaps.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        try {
-          items.forEach(item => {
-            return itemApi.parse(item)
-          })
-        } catch (e) {
-          alert("Lỗi lấy sản phẩm");
-        }
-        setItems(items);
-        setLoading(false);
-      },
-      (error) => {
-        alert("Lỗi lấy sản phẩm:" + error.message);
-        setLoading(false);
-      }
-    );
-    return () => {
-      isMounted = false;
-      unsubscribeProductObserver();
-    };
-  }, []);
-  return {items, itemsLoading: loading};
+      );
+
+      return () => {
+        isMounted = false;
+        unsubscribeProductObserver();
+      };
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [queryClient, startTransition]);
 };
 
 export default useGetItemsFromFirebase;

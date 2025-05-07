@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import React, {useState} from "react";
 import {NumericFormat} from "react-number-format";
 import Rating from "@mui/material/Rating";
 import Grid2 from "@mui/material/Unstable_Grid2";
@@ -19,7 +19,14 @@ const ProductItem = function ({ item, similarDisPlay }) {
   const { id, metaTitle, imageUrl, name, price, soldAmount, location, rating } =
     item;
   const { isAddCartPopup, toggleIsAddCardPopup } = useModal();
-  const isInCart = cartProducts.some((item) => item.id === id);
+  const [isClientSide, setIsClientSide] = useState(false);
+  const isInCart = isClientSide && cartProducts.some((item) => item.id === id);
+
+  // Only check cart status after component is mounted on client
+  React.useEffect(() => {
+    setIsClientSide(true);
+  }, []);
+
 
   const handleAddCart = () => {
     if (!user) {

@@ -1,15 +1,16 @@
 import '@/sass/style.scss'
-import type {ReactElement, ReactNode} from 'react'
-import type {NextPage} from 'next'
-import type {AppProps} from 'next/app'
-import {store} from "@/redux/store";
-import {theme} from "@/theme";
-import {Provider} from "react-redux";
-import {ThemeProvider} from "@mui/material";
+import React, { ReactElement, ReactNode } from 'react'
+import type { NextPage } from 'next'
+import type { AppProps } from 'next/app'
+import { store } from "@/redux/store";
+import { theme } from "@/theme";
+import { Provider } from "react-redux";
+import { ThemeProvider } from "@mui/material";
 import ProductsProvider from "@/context/ProductsProvider";
 import UserProvider from "@/context/UserProvider";
 import Layout from "@/components/Layout/Layout";
 import CheckoutProvider from "@/context/CheckoutProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -20,26 +21,40 @@ type AppPropsWithLayout = AppProps & {
 }
 
 
-export default function MyApp({Component, pageProps}: AppPropsWithLayout) {
+export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   // each page define a getLayout func to render itself and layout and pass it to const getLayout variable here
   // ?? -> still use the layout defined for each page, if getLayout not call at page
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>)
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000,
+          },
+        },
+      }),
+  )
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <UserProvider>
-          <ProductsProvider>
-            <CheckoutProvider>
-              {/* use get layout variable here to return a page */}
-              {/*Component -> each page*/}
-              {getLayout(<Component {...pageProps} />)}
-              {/*{Component.getLayout ?? ((page: ReactElement) => <Layout>{page}</Layout>)}*/}
-            </CheckoutProvider>
-          </ProductsProvider>
-        </UserProvider>
-      </ThemeProvider>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <UserProvider>
+            <ProductsProvider>
+              <CheckoutProvider>
+                {/* use get layout variable here to return a page */}
+                {/*Component -> each page*/}
+                {getLayout(<Component {...pageProps} />)}
+                {/*{Component.getLayout ?? ((page: ReactElement) => <Layout>{page}</Layout>)}*/}
+              </CheckoutProvider>
+            </ProductsProvider>
+          </UserProvider>
+        </ThemeProvider>
+      </Provider>
+    </QueryClientProvider>
   )
 
 }
