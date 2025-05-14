@@ -2,16 +2,10 @@ import React from "react";
 import classNames from "classnames";
 import * as categoryType from "../../constants/category";
 import * as sortType from "../../constants/sort";
-import {
-  Box,
-  Button,
-  Rating,
-  styled,
-  TextField,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import {Box, Button, Rating, styled, TextField, Typography, useMediaQuery,} from "@mui/material";
 import {FilterAlt, List} from "@mui/icons-material";
+import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
+import {pageSize} from "@/constants/pagination";
 
 const StyledBox = styled(Box)({
   display: "flex",
@@ -54,10 +48,12 @@ function ProductCategory({
   const twoRating = 2;
   const oneRating = 1;
   const filterDisabled = filteredItems.length === 0;
+  const { setPageIndex } = usePagination({ filteredItems, pageSize });
   const handleCategoryClick = (value) => {
     setCategory(value);
     setSort(sortType.ALL);
     setSortPrice(sortType.DEFAULT_PRICE);
+    setPageIndex(1)
   };
 
   return (
