@@ -778,28 +778,27 @@ function DetailContainer() {
             </div>
             <div className="detail-content__hot-list">
               {bestSellingItems.map((item, index) => {
-                // if (index <= 7) {
-                //   return (
-                //     <Link
-                //       onClick={handleScrollTop}
-                //       to={`/product/${item.metaTitle}/${item.id}`}
-                //       key={index}
-                //       className="detail-content__hot-item"
-                //     >
-                //       <img
-                //         src={item.imageUrl}
-                //         alt="hot-img"
-                //         className="detail-content__hot-img"
-                //       />
-                //       <div className="detail-content__hot-name">
-                //         {item.name}
-                //       </div>
-                //       <div className="detail-content__hot-price">
-                //         {item.price}
-                //       </div>
-                //     </Link>
-                //   );
-                // } else return null;
+                if (index <= 7) {
+                  return (
+                    <Link
+                      onClick={handleScrollTop}
+                      key={index}
+                      className="detail-content__hot-item"
+                      href={`/product/${item.id}`}>
+                      <img
+                        src={item.imageUrl}
+                        alt="hot-img"
+                        className="detail-content__hot-img"
+                      />
+                      <div className="detail-content__hot-name">
+                        {item.name}
+                      </div>
+                      <div className="detail-content__hot-price">
+                        {item.price}
+                      </div>
+                    </Link>
+                  );
+                } else return null;
               })}
             </div>
           </div>
