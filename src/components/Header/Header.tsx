@@ -193,10 +193,10 @@ const Header = ({
                 >
                   {!user && (
                     <div className="header__nav-reg">
-                      <Link href="/register" className="header__nav-login">
+                      <Link prefetch href="/register" className="header__nav-login">
                         Đăng ký
                       </Link>
-                      <Link href="/login" className="header__nav-register">
+                      <Link prefetch href="/login" className="header__nav-register">
                         Đăng nhập
                       </Link>
                     </div>

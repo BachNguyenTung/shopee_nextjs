@@ -17,9 +17,9 @@ interface Props {
   xsBreakpointMatches: boolean
 }
 
-const HeaderSearch: React.FC<Props> = ({isCartPage, isCheckoutPage, xsBreakpointMatches}) => {
-  const {items} = useProductsContext();
-  const {addToSearchHistory, deleteFromSearchHistory, suggestions} =
+const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpointMatches }) => {
+  const { items } = useProductsContext();
+  const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
     useSearchHistory();
   const searchInput = useSelector((state: RootStateOrAny) => state.search.searchInput);
   const dispatch = useDispatch();
@@ -102,7 +102,7 @@ const HeaderSearch: React.FC<Props> = ({isCartPage, isCheckoutPage, xsBreakpoint
             "header__logo-link--notHome": isCartPage || isCheckoutPage,
           })}
         >
-          <img src={"/img/shoppe-logo.png"} alt="shoppe-logo" fetchPriority={"high"}/>
+          <img src={"/img/shoppe-logo.png"} alt="shoppe-logo" />
         </Link>
         {isCartPage && <div className="header__page-name">Giỏ hàng</div>}
         {isCheckoutPage && <div className="header__page-name">Thanh Toán</div>}
@@ -132,7 +132,7 @@ const HeaderSearch: React.FC<Props> = ({isCartPage, isCheckoutPage, xsBreakpoint
                 onClick={() => handleSearchIconClick(searchInput)}
                 className="header__search-icon"
               >
-                <SearchIcon sx={{fontSize: '2rem', color: 'white'}}></SearchIcon>
+                <SearchIcon sx={{ fontSize: '2rem', color: 'white' }}></SearchIcon>
               </div>
               {isHistory && (
                 <ul className="header__history-list">
@@ -160,7 +160,7 @@ const HeaderSearch: React.FC<Props> = ({isCartPage, isCheckoutPage, xsBreakpoint
                       <Box
                         sx={{
                           marginRight: "0.6rem",
-                          "& :hover": {color: "var(--primary-color)"},
+                          "& :hover": { color: "var(--primary-color)" },
                           cursor: "pointer",
                           textAlign: "center",
                           display: "flex",

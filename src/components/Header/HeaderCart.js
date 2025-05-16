@@ -9,6 +9,7 @@ import {useFetchCartQuery} from "@/services/cartApi";
 import {ShoppingCart} from "@mui/icons-material";
 import {usePathname, useRouter} from "next/navigation";
 import {iconImg} from "@/services/getIcon";
+import Link from "next/link";
 
 const HeaderCart = () => {
   const router = useRouter()
@@ -20,13 +21,10 @@ const HeaderCart = () => {
   console.log(pathname)
   return (
     <div className="header__cart">
-      <div
+      <Link
         className="header__cart-wrapper"
-        onClick={() => {
-          if (pathname !== "/cart") {
-            router.push("/cart");
-          }
-        }}
+        href={"/cart"}
+        prefetch
       >
         <div className="header__cart-icon-link">
           <ShoppingCart className="header__cart-icon">
@@ -87,7 +85,7 @@ const HeaderCart = () => {
             {/*</Link>*/}
           </div>
         )}
-      </div>
+      </Link>
     </div>
   );
 };

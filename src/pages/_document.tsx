@@ -8,6 +8,12 @@ export default function Document() {
         <meta property="og:title" content="Shopee" />
         <meta property="og:description" content="Ecommerce website" />
         <meta property="og:image" content="/img/shopee-logo.png" />
+        <link
+          rel="preload"
+          href="/img/shoppe-logo.png"
+          as="image"
+          type="image/png"
+        />
       </Head>
       <body>
       <Main />
