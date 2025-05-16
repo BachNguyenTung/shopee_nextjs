@@ -1,8 +1,10 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, Suspense } from "react";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
-
 import type { Metadata, ResolvingMetadata } from 'next'
+import { ClipLoading } from "@/components/ClipLoading";
+import { dehydrate, DehydratedState, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { fetchProduct } from "@/services/fetchProduct";
 
 type Props = {
   params: Promise<{ id: string }>
@@ -44,12 +46,33 @@ export async function generateMetadata(
 // }
 
 
-export default function ProductDetail() {
+export default function ProductDetail({ dehydratedState }: { dehydratedState: DehydratedState }) {
   return (
-    <DetailContainer></DetailContainer>
+    <HydrationBoundary state={dehydratedState}>
+      <Suspense fallback={<ClipLoading />}>
+        <DetailContainer />
+      </Suspense>
+    </HydrationBoundary>
   );
 }
 
 ProductDetail.getLayout = function (page: ReactNode) {
   return <Layout>{page}</Layout>
+}
+
+export async function getServerSideProps() {
+  // Fetch data from external API
+
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['products'],
+    queryFn: fetchProduct,
+  })
+
+  // Pass data to the page via props
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  }
 }

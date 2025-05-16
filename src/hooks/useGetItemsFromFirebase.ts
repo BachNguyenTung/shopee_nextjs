@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { onSnapshot } from "firebase/firestore";
 import { productQuery } from "@/db/dbRef";
 import { z } from "zod";
@@ -32,7 +32,9 @@ const useGetItemsFromFirebase = () => {
             items.forEach(item => itemApi.parse(item));
 
             // Use startTransition to avoid interrupting hydration
-              queryClient.setQueryData(['products'], items);
+            startTransition(async () => {
+              await queryClient.setQueryData(['products'], items);
+            })
           } catch (e) {
             console.error("Error parsing products:", e);
           }
