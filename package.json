@@ -7,6 +7,7 @@
     "node-dev": "NODE_OPTIONS='--inspect' env-cmd -f .env.dev next dev",
     "build:stg": "env-cmd -f .env.stg next build",
     "build:production": "env-cmd -f .env.production next build",
+    "build:debug": "env-cmd -f .env.production next build --debug",
     "start": "next start",
     "lint": "next lint",
     "export": "next export",

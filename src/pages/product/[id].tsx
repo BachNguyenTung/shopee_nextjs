@@ -1,50 +1,14 @@
 import React, { ReactNode, Suspense } from "react";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
-import type { Metadata, ResolvingMetadata } from 'next'
 import { ClipLoading } from "@/components/ClipLoading";
 import { dehydrate, DehydratedState, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { fetchProduct } from "@/services/fetchProduct";
-
-type Props = {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
+import { fetchProducts } from "@/services/fetchProducts";
+import { fetchProduct } from "@/services/fetchProductById";
 
 //TODO: generateMetadata for dynamic routes in nextjs app router
-export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // read route params
-  const { id } = await params
-
-  // fetch data
-  const product = await fetch(`https://.../${id}`).then((res) => res.json())
-
-  // optionally access and extend (rather than replace) parent metadata
-  const previousImages = (await parent).openGraph?.images || []
-
-  return {
-    title: product.name,
-    description: product.description,
-    openGraph: {
-      title: product.name,
-      description: product.description,
-      images: ['/some-specific-page-image.jpg', ...previousImages],
-    },
-  }
-}
 
 //TODO: generate static params for product
-// export async function generateStaticParams() {
-//   // const products = await fetch('https://.../product').then((res) => res.json())
-//   //
-//   // return products.map((product) => ({
-//   //   id: product.id,
-//   // }))
-// }
-
 
 export default function ProductDetail({ dehydratedState }: { dehydratedState: DehydratedState }) {
   return (
@@ -60,14 +24,22 @@ ProductDetail.getLayout = function (page: ReactNode) {
   return <Layout>{page}</Layout>
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: { params: { id: string } }) {
   // Fetch data from external API
-
+  const { id } = context.params;
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ['products'],
-    queryFn: fetchProduct,
-  })
+
+  await Promise.all([
+      await queryClient.prefetchQuery({
+        queryKey: ['products'],
+        queryFn: fetchProducts,
+      }),
+      await queryClient.prefetchQuery({
+        queryKey: ['product', id],
+        queryFn: () => fetchProduct(id),
+      })
+    ]
+  )
 
   // Pass data to the page via props
   return {

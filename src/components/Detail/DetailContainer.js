@@ -14,8 +14,8 @@ import Link from "next/link";
 import {iconImg} from "@/services/getIcon";
 import {DETAIL} from "@/constants/detail";
 import {useSuspenseQuery} from "@tanstack/react-query";
-import {fetchProduct} from "@/services/fetchProduct";
 import {bestSelling} from "@/configs/product";
+import {fetchProduct} from "@/services/fetchProductById";
 
 function DetailContainer() {
   const { user } = useUserContext();
@@ -28,6 +28,10 @@ function DetailContainer() {
     queryKey: ['products'],
     queryFn: fetchProduct,
   })
+  const { data: fetchedItem } = useSuspenseQuery({
+    queryKey: ['product', id],
+    queryFn: () => fetchProduct(id.toString()),
+  })
   const cartProducts = useSelector((state) => state.cart.products);
   const dispatch = useDispatch();
   const { isAddCartPopup, toggleIsAddCardPopup } = useModal();
@@ -38,15 +42,15 @@ function DetailContainer() {
   const [lookupShipPrice, setLookupShipPrice] = useState([]);
   // set rendering item with amount + soldAmount
   const item = useMemo(() => {
-    if (!items) return null;
+    if (!fetchedItem) return null;
     return {
-      ...items.find((i) => i.id === id),
+      ...fetchedItem,
       amount: 1,
       variation: "",
       variationDisPlay: false,
       similarDisPlay: false,
     };
-  }, [id, items]);
+  }, [fetchedItem]);
 
   const images = useMemo(() => [
     {

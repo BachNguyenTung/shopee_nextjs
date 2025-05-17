@@ -326,7 +326,7 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
 
   const handleShipInfoDefaultChange = async (e: any) => {
     const index = e.target.value;
-    setTempShipInfos(tempShipInfos.map((item) =>
+    setTempShipInfos(tempShipInfos.map((item: any) =>
       tempShipInfos.indexOf(item) === Number(index)
         ? ({...item, isDefault: true})
         : ({...item, isDefault: false})

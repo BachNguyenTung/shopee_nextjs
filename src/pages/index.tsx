@@ -4,7 +4,7 @@ import Product from '@/components/Product'
 import Layout from "@/components/Layout/Layout";
 import { NextPageWithLayout } from "@/pages/_app";
 import { dehydrate, DehydratedState, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { fetchProduct } from "@/services/fetchProduct";
+import { fetchProducts } from "@/services/fetchProducts";
 import { ClipLoading } from "@/components/ClipLoading";
 
 
@@ -34,7 +34,7 @@ export async function getStaticProps() {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ['products'],
-    queryFn: fetchProduct,
+    queryFn: fetchProducts,
   })
 
   // Pass data to the page via props

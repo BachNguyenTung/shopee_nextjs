@@ -1,12 +1,12 @@
 import React from "react";
 import ProductContainer from "@/components/Product/ProductContainer";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { fetchProduct } from "@/services/fetchProduct";
+import { fetchProducts } from "@/services/fetchProducts";
 
 export default function Product() {
   const {data} = useSuspenseQuery({
     queryKey: ['products'],
-    queryFn: fetchProduct,
+    queryFn: fetchProducts,
     staleTime: Infinity,
   })
   return (
