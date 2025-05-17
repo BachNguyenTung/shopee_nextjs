@@ -24,7 +24,6 @@ const HeaderCart = () => {
       <Link
         className="header__cart-wrapper"
         href={"/cart"}
-        prefetch
       >
         <div className="header__cart-icon-link">
           <ShoppingCart className="header__cart-icon">
