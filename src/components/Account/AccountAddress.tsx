@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import useModal from "../../hooks/useModal";
-import useAddress from "../../hooks/useAddress";
 import AddressModal from "../Modal/AddressModal";
 import PopupModal from "../Modal/PopupModal";
 import useGetShipInfos from "../../hooks/useGetShipInfos";
@@ -10,26 +9,7 @@ import useNavigateAndRefreshBlocker from "../../hooks/useNavigateAndRefreshBlock
 import { ClipLoading } from "../ClipLoading";
 
 const AccountAddress = () => {
-  const {
-    name,
-    setName,
-    phone,
-    setPhone,
-    street,
-    setStreet,
-    province,
-    setProvince,
-    district,
-    setDistrict,
-    ward,
-    setWard,
-    provinces,
-    districts,
-    wards,
-    handleDistrictChoose,
-    handleProvinceChoose,
-    handleWardChoose,
-  } = useAddress();
+
   const { user } = useUserContext();
   const {
     shipInfos,
@@ -37,47 +17,30 @@ const AccountAddress = () => {
     shipInfosUpdateLoading,
     updateShipInfoToFirebase,
   } = useGetShipInfos(user);
-  const {isAddressAddShowing, toggleAddressAdd} = useModal();
+  const { isAddressAddShowing, toggleAddressAdd } = useModal();
   const [shipInfoIndex, setShipInfoIndex] = useState<number | null>(null);
-  const {isPopupShowing, togglePopup} = useModal();
-
+  const { isPopupShowing, togglePopup } = useModal();
+  const [editShipInfo, setEditShipInfo] = useState<any>(null)
   useNavigateAndRefreshBlocker(shipInfosUpdateLoading);
 
   const handleDefaultClick = async (index: any) => {
     let tempShipInfos: any = [...shipInfos];
     tempShipInfos = tempShipInfos.map(
-      (shipInfo: any) => ({...shipInfo, isDefault: false})
+      (shipInfo: any) => ({ ...shipInfo, isDefault: false })
     );
-    tempShipInfos[index] = {...tempShipInfos[index], isDefault: true};
+    tempShipInfos[index] = { ...tempShipInfos[index], isDefault: true };
     await updateShipInfoToFirebase(tempShipInfos);
     await updateCustomerBillingAddressStripe(user, tempShipInfos); // TODO: refactor??
   };
 
   const handleAddressAddClick = () => {
     toggleAddressAdd();
-    setName("");
-    setPhone("");
-    setStreet("");
-    setProvince(null);
-    setDistrict(null);
-    setWard(null);
     setShipInfoIndex(null);
   };
 
   const handleEditClick = (index: any) => {
     toggleAddressAdd();
-    const name = shipInfos[index].name;
-    const phone = shipInfos[index].phone;
-    const street = shipInfos[index].street;
-    const province = shipInfos[index].province;
-    const district = shipInfos[index].district;
-    const ward = shipInfos[index].ward;
-    setName(name);
-    setPhone(phone);
-    setStreet(street);
-    setProvince(province);
-    setDistrict(district);
-    setWard(ward);
+    setEditShipInfo(shipInfos[index])
     setShipInfoIndex(index);
   };
 
@@ -107,21 +70,7 @@ const AccountAddress = () => {
               Thêm địa chỉ mới
             </button>
             <AddressModal
-              name={name}
-              setName={setName}
-              street={street}
-              setStreet={setStreet}
-              district={district}
-              province={province}
-              ward={ward}
-              phone={phone}
-              setPhone={setPhone}
-              provinces={provinces}
-              districts={districts}
-              wards={wards}
-              handleDistrictChoose={handleDistrictChoose}
-              handleProvinceChoose={handleProvinceChoose}
-              handleWardChoose={handleWardChoose}
+              editShipInfo={editShipInfo}
               isAddressAddShowing={isAddressAddShowing}
               toggleAddressAdd={toggleAddressAdd}
               shipInfoIndex={shipInfoIndex}

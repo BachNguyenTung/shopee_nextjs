@@ -3,6 +3,7 @@ import { Autocomplete, ButtonProps, styled, TextField, TextFieldProps, } from "@
 import { useUserContext } from "@/context/UserProvider";
 import { BaseModal } from "@/components/base";
 import useGetShipInfos from "@/hooks/useGetShipInfos";
+import useAddress from "@/hooks/useAddress";
 
 type StyledTextFieldProps = TextFieldProps & {
   isValid: boolean
@@ -45,46 +46,38 @@ const StyleAutocomplete = styled(Autocomplete, {
 type RefButtonProps = ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement> & {}
 
 interface AddressModalProps {
+  editShipInfo: any
   isAddressAddShowing: boolean
   toggleAddressAdd: () => void
-  phone: string
-  setPhone: React.Dispatch<React.SetStateAction<string>>
-  name: string
-  setName: React.Dispatch<React.SetStateAction<string>>
-  street: string
-  setStreet: React.Dispatch<React.SetStateAction<string>>
-  ward: any
-  province: any
-  district: any
-  provinces: any[]
-  districts: any[]
-  wards: any[]
-  handleDistrictChoose: any
-  handleProvinceChoose: any
-  handleWardChoose: any
   shipInfoIndex?: number | null
 }
 
 const AddressModal = ({
+                        editShipInfo,
                         isAddressAddShowing,
                         toggleAddressAdd,
-                        phone,
-                        setPhone,
-                        name,
-                        setName,
-                        street,
-                        setStreet,
-                        ward,
-                        province,
-                        district,
-                        provinces,
-                        districts,
-                        wards,
-                        handleDistrictChoose,
-                        handleProvinceChoose,
-                        handleWardChoose,
                         shipInfoIndex,
                       }: AddressModalProps) => {
+  const {
+    name,
+    setName,
+    phone,
+    setPhone,
+    street,
+    setStreet,
+    province,
+    setProvince,
+    district,
+    setDistrict,
+    ward,
+    setWard,
+    provinces,
+    districts,
+    wards,
+    handleDistrictChoose,
+    handleProvinceChoose,
+    handleWardChoose,
+  } = useAddress(editShipInfo, isAddressAddShowing, shipInfoIndex);
   const { user } = useUserContext();
   const {shipInfos, updateShipInfoToFirebase} = useGetShipInfos(user);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -169,16 +162,16 @@ const AddressModal = ({
   //TODO use formik
   const handleBack = () => {
     toggleAddressAdd();
-    // setIsNameValid(null);
-    // setIsPhoneValid(null);
-    // setIsStreetValid(null);
-    // setIsProvinceValid(null);
-    // setIsDistrictValid(null);
-    // setIsWardsValid(null);
     setErrors({});
+    setName("");
+    setPhone("");
+    setStreet("");
+    setProvince(null);
+    setDistrict(null);
+    setWard(null);
   };
 
-  const handleApply = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleApply = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isNameValid = validateName();
     const isPhoneValid = validatePhone();
@@ -189,11 +182,18 @@ const AddressModal = ({
     if (!isNameValid || !isPhoneValid || !isProvinceValid || !isDistrictValid || !isWardsValid || !isStreetValid) return
 
     if (shipInfoIndex !== null) {
-      updateShipInfo().then();
+      await updateShipInfo().then();
     } else {
-      addNewShipInfo().then();
+      await addNewShipInfo().then();
     }
     toggleAddressAdd();
+    setErrors({});
+    setName("");
+    setPhone("");
+    setStreet("");
+    setProvince(null);
+    setDistrict(null);
+    setWard(null);
   };
 
   const updateShipInfo = async () => {
@@ -310,7 +310,7 @@ const AddressModal = ({
                 onBlur={validateProvince}
                 // disablePortal
                 id="province"
-                options={provinces.map((province) => province.name)}
+                options={provinces.map((province: any) => province.name)}
                 renderInput={(params) => (
                   <TextField {...params} label="Thành phố"/>
                 )}
@@ -333,7 +333,7 @@ const AddressModal = ({
                 onBlur={validateDistrict}
                 // disablePortal
                 id="district"
-                options={districts.map((district) => district.name)}
+                options={districts.map((district: any) => district.name)}
                 renderInput={(params) => (
                   <TextField {...params} label="Quận/Huyện"/>
                 )}
@@ -355,7 +355,7 @@ const AddressModal = ({
                 onBlur={validateWard}
                 // disablePortal
                 id="ward"
-                options={wards.map((ward) => ward.name)}
+                options={wards.map((ward: any) => ward.name)}
                 renderInput={(params) => (
                   <TextField {...params} label="Phường/Xã"/>
                 )}
