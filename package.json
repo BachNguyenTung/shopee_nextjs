@@ -57,6 +57,7 @@
     "react-redux": "^7.2.9",
     "react-scripts": "^5.0.1",
     "react-spinners": "^0.13.4",
+    "react-virtuoso": "^4.12.7",
     "redux": "^4.1.1",
     "sass": "^1.60.0",
     "stripe": "^10.8.0",
