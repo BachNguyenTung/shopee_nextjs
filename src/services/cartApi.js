@@ -4,6 +4,7 @@ import {cartDocRef} from "@/db/dbRef";
 export const cartApi = createApi({
   reducerPath: "cartApi",
   baseQuery: fakeBaseQuery(),
+  tagTypes: ['Cart'],
   endpoints: (builder) => ({
     fetchCart: builder.query({
       async queryFn(user) {
@@ -45,6 +46,19 @@ export const cartApi = createApi({
           return {error: error};
         }
       },
+      // Optimistic update
+      // onQueryStarted({user, product}, { dispatch, queryFulfilled }) {
+      //   // Optimistically update the cache
+      //   const patchResult = dispatch(
+      //     cartApi.util.updateQueryData('fetchCart', user, draft => {
+      //       draft.push(product)
+      //     })
+      //   )
+      //
+      //   // Handle potential error & rollback
+      //   queryFulfilled.catch(() => patchResult.undo())
+      // },
+      invalidatesTags: ['Cart']
     }),
   }),
 });
