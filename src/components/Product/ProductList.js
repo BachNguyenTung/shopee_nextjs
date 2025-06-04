@@ -2,14 +2,11 @@ import React, {useEffect, useMemo} from "react";
 import ProductItem from "./ProductItem";
 import {Box, useMediaQuery} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {useProductsContext} from "../../context/ProductsProvider";
-import {ClipLoading} from "../ClipLoading";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 import {pageSize} from "@/constants/pagination";
 import {useInView} from "react-intersection-observer";
 
 function ProductList({ items }) {
-  const { itemsLoading } = useProductsContext();
   const { pageIndex, setPageIndex, pageTotal } = usePagination({ items, pageSize });
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
   const { ref, inView } = useInView({
@@ -36,8 +33,7 @@ function ProductList({ items }) {
   return (
     <>
       <Grid2 container columnSpacing="0.5rem" rowSpacing="1rem">
-        {itemsLoading && <ClipLoading></ClipLoading>}
-        {renderItemsByPagination.length === 0 && !itemsLoading && (
+        {renderItemsByPagination.length === 0 && (
           <Box
             sx={{
               flex: 1,
