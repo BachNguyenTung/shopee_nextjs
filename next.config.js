@@ -5,7 +5,9 @@ const cspHeader = `
     connect-src 'self'
         https://*.googleapis.com
         https://us-central1-shopee-demo-c6d2b.cloudfunctions.net
-        https://*.stripe.com;
+        https://*.stripe.com
+        http://localhost:*
+        https://localhost:*;
     script-src 'self' 'unsafe-eval' 'unsafe-inline'
         https://*.stripe.com;
     style-src 'self' 'unsafe-inline';

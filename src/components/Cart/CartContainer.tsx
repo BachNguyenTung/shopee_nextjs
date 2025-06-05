@@ -23,6 +23,7 @@ import { voucherStoreAtom, voucherStoreProxy } from "@/store/voucherStore.atomPr
 import { useAtomValue } from "jotai";
 import { useMediaQuery } from "@mui/material";
 import dynamic from "next/dynamic";
+import { formatValidationErrors, validateCart } from "@/services/validateCart";
 
 const PopupModal = dynamic(() => import('@/components/Modal/PopupModal'), { ssr: false })
 
@@ -59,7 +60,8 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     isVoucherShowing, toggleVoucher, isAddCartPopup, toggleIsAddCardPopup, isPopupShowing, togglePopup,
   } = useModal();
   const [domLoaded, setDomLoaded] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   useEffect(() => {
     setDomLoaded(true);
   }, []);
@@ -73,7 +75,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
 
 
   useEffect(() => {
-    const query = searchParams.get('name');
+    const query = searchParams?.get('name');
     if (query === DETAIL) {
       toggleIsAddCardPopup(true);
       router.push('/cart');
@@ -106,22 +108,63 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     changeCartItemsVariation(variation, id);
   };
   const handleCheckout = async (event: any) => {
+    //Client cart validate
     if (selectedProduct?.length === 0 || !isVariationChoose) {
       event.preventDefault();
       togglePopup();
-    } else {
-      const checkoutItems = selectedProduct.map((item: any) => {
-        // return checkedItem without uneccessary field
+      return;
+    }
+
+    try {
+      // Show loading state
+      setIsLoading(true);
+
+      console.log("Validating cart items:", selectedProduct);
+
+      // Validate cart items api before proceeding
+      const validationResult = await validateCart(selectedProduct);
+
+      console.log("Validation result:", validationResult);
+
+      if (!validationResult.isValid) {
+        // Handle validation errors
+        const errorMessages = formatValidationErrors(validationResult.errors || []);
+        setValidationErrors(errorMessages);
+        // toggleValidationErrorPopup();
+        togglePopup();
+        setIsLoading(false);
+        return;
+      }
+
+      // If valid, prepare checkout items with validated data
+      const checkoutItems = validationResult?.validatedItems?.map((item: any) => {
+        const _item = { ...item }
+        delete _item.similarDisPlay
+        delete _item.variationDisPlay
+        return _item;
+      }) || selectedProduct.map((item: any) => {
+        // Fallback to original items if validation didn't return validatedItems
         const _item = {...item}
         delete _item.similarDisPlay
         delete _item.variationDisPlay
         return _item;
       });
+
+      // Proceed with checkout
       checkoutDispatch({
         type: CHECKOUT_ACTIONTYPES.ADD_CHECKOUT, payload: checkoutItems,
       });
-      addCartToFireStore({user, cartProducts});
-      await router.push('/checkout')
+      //!TODO: save validate cart(checkout) to user, add searchParam to checkout url to get validate cart
+
+      // Update cart in Firestore
+      await addCartToFireStore({ user, cartProducts });
+
+      // Navigate to checkout
+      await router.push('/checkout');
+    } catch (error) {
+      togglePopup();
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -497,6 +540,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       handleDeleteSelectionTrue={handleDeleteSelectionTrue}
       isDeleteSelected={isDeleteSelected}
       setIsDeleteSelected={setIsDeleteSelected}
+      //!TODO: using validationErrors
     />
   </div>);
 }
