@@ -1,7 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { setupListeners } from "@reduxjs/toolkit/dist/query";
-import { cartApi } from "@/services/cartApi";
-import {cartReducer} from "@/redux/cartSlice";
+import {configureStore} from "@reduxjs/toolkit";
+import {setupListeners} from "@reduxjs/toolkit/dist/query";
+import {cartApi} from "@/services/cartApi";
+import {cartReducer, setStoreInstance} from "@/redux/cartSlice";
 import {searchReducer} from "@/redux/searchSlice";
 
 const rootReducer = {
@@ -17,4 +17,8 @@ export const store = configureStore({
       cartApi.middleware
     ),
 });
+
+// Register the store instance for cross-tab communication
+setStoreInstance(store);
+
 setupListeners(store.dispatch);

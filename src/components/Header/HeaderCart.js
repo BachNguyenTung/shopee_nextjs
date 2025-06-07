@@ -16,7 +16,7 @@ const HeaderCart = () => {
   const pathname = usePathname();
   const { user } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
-  const { isLoading: cartItemsLoading } = useFetchCartQuery(user, {
+  const { isLoading: cartItemsLoading } = useFetchCartQuery(user?.uid, {
     refetchOnMountOrArgChange: true, // Refetch when component mounts or user changes
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true        // Refetch on network reconnection

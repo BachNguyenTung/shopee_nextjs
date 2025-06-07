@@ -36,7 +36,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const router = useRouter();
   const searchParams = useSearchParams()
   const { user } = useUserContext();
-  const { isLoading: cartItemsLoading } = useFetchCartQuery(user, {
+  const { isLoading: cartItemsLoading } = useFetchCartQuery(user?.uid, {
     refetchOnMountOrArgChange: true, // Refetch when component mounts or user changes
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true        // Refetch on network reconnection

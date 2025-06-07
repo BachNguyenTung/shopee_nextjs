@@ -7,9 +7,10 @@ export const cartApi = createApi({
   tagTypes: ['Cart'],
   endpoints: (builder) => ({
     fetchCart: builder.query({
-      async queryFn(user) {
+      async queryFn(uid) {
+        if (!uid) return { data: [] }
         try {
-          const doc = await cartDocRef(user?.uid).get();
+          const doc = await cartDocRef(uid).get();
           let products = [];
           if (doc.exists) {
             products = doc.data().basket.map((item) => ({
@@ -18,32 +19,32 @@ export const cartApi = createApi({
               variationDisPlay: false,
             }));
           }
-          return {data: products};
+          return { data: products };
         } catch (error) {
           // alert("Lỗi lấy giỏ hàng từ firestore:" + error.message);
-          return {error: error};
+          return { error: error };
         }
       },
     }),
     addCartToFireStore: builder.mutation({
-      async queryFn({user, cartProducts}) {
+      async queryFn({ user, cartProducts }) {
         try {
           let savedCartItems = [];
           const created = Date.now();
           if (cartProducts?.length > 0) {
             savedCartItems = cartProducts.map((item) => {
-              const {similarDisPlay, variationDisPlay, ...rest} = item;
+              const { similarDisPlay, variationDisPlay, ...rest } = item;
               return rest;
             });
           }
           await cartDocRef(user?.uid).set({
-              basket: savedCartItems,
-              created: created,
-            });
-          return {data: "ok"};
+            basket: savedCartItems,
+            created: created,
+          });
+          return { data: "ok" };
         } catch (error) {
           //   alert("Lỗi lưu giỏ hàng:" + error.message);
-          return {error: error};
+          return { error: error };
         }
       },
       // Optimistic update
@@ -62,4 +63,4 @@ export const cartApi = createApi({
     }),
   }),
 });
-export const {useFetchCartQuery, useAddCartToFireStoreMutation} = cartApi;
+export const { useFetchCartQuery, useAddCartToFireStoreMutation } = cartApi;
