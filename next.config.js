@@ -4,7 +4,9 @@ const cspHeader = `
     default-src 'self';
     connect-src 'self'
         https://*.googleapis.com
-        https://us-central1-shopee-demo-c6d2b.cloudfunctions.net
+        https://*.cloudfunctions.net
+        https://*.firebase.com
+        https://*.firebaseio.com
         https://*.stripe.com
         http://localhost:*
         https://localhost:*;
@@ -13,7 +15,10 @@ const cspHeader = `
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data:
         res.cloudinary.com
-        fakestoreapi.com;
+        fakestoreapi.com
+        firebasestorage.googleapis.com
+        *.googleusercontent.com
+        storage.googleapis.com;
     font-src 'self' data:;
     object-src 'none';
     base-uri 'self';

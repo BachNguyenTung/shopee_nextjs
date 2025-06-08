@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://us-central1-shopee-demo-c6d2b.cloudfunctions.net/api";
+const BASE_URL = "https://asia-east1-shopee-demo-c6d2b.cloudfunctions.net/api";
 //http://localhost:5001/shopee-demo-c6d2b/us-central1/api
 //https://us-central1-shopee-demo-c6d2b.cloudfunctions.net/api
 

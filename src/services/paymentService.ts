@@ -73,6 +73,8 @@ export const processCardPayment = async ({
         paymentMethodID: defaultPaymentMethodID,
         customerID,
         email: user.email,
+        userId: user.uid,
+        orderItems: checkoutItems,
         shipping: {
           name: defaultShipInfo?.name,
           phone: defaultShipInfo?.phone,
@@ -189,9 +191,27 @@ export const handleCardPaymentResponse = async ({
     handleCardDeclined(result, setSucceeded, setProcessing);
     return false;
   }
-  // Payment succeeded
-  else if (result.data.succeeded) {
-    await handleOrderSucceeded(result.data.paymentIntent);
+  // Immediate success feedback (final confirmation will come via webhook)
+  else if (result.data.status === "succeeded") {
+    // Create a simplified paymentIntent for UI feedback
+    // No need to do database operations here as webhook will handle it
+    const paymentIntent = {
+      id: result.data.paymentIntent.id,
+      amount: result.data.paymentIntent.amount,
+      created: Date.now(),
+      orderId: result.data.orderId
+    };
+
+    // Just update UI state - actual order processing happens in webhook
+    await handleOrderSucceeded(paymentIntent);
+    setProcessing(false);
+    return true;
+  }
+  // Payment requires further action (webhook will track final status)
+  else if (result.data.status === "requires_action" ||
+    result.data.status === "requires_confirmation") {
+    // Show user that payment is being processed
+    setSucceeded(true); // Show success UI even though technically still processing
     setProcessing(false);
     return true;
   }

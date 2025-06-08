@@ -257,20 +257,25 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
   const handleOrderSucceeded = async ({id, amount, created}: { id: any, amount: number, created: any }) => {
     try {
       setLoadingOrder(true)
+      // Most database operations are now handled by the webhook
+      // We just need to update the UI for immediate feedback
+
+      // Still save the order locally for immediate UI feedback
+      // The webhook will handle the full processing in the background
       await saveOrdersToFirebase(id, amount, created);
-      await updateSoldAmount();
-      await updateCustomerBillingAddressStripe(user, shipInfos);
+
+      // Clear local state
       dispatch(resetCart);
       checkoutDispatch({});
-      addCartToFireStore({user, cartProducts: []});
-      await saveCheckoutItemsToFirebase([]);
-    } catch (e) {
-      console.log(e)
-    } finally {
+
+      // Show success message to user
       setSucceeded(true);
       setProcessing(false);
       setLoadingOrder(false)
       togglePopup();
+    } catch (e) {
+      console.log(e)
+      setLoadingOrder(false)
     }
   };
 
