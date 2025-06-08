@@ -1,0 +1,17 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build:production",
+  "outputDirectory": ".next",
+  "rewrites": [],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; connect-src 'self' https://*.googleapis.com https://*.cloudfunctions.net https://*.firebase.com https://*.firebaseio.com https://*.stripe.com http://localhost:* https://localhost:*; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: res.cloudinary.com fakestoreapi.com firebasestorage.googleapis.com *.googleusercontent.com storage.googleapis.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src https://*.stripe.com; frame-ancestors 'none'; upgrade-insecure-requests;"
+        }
+      ]
+    }
+  ]
+} 
