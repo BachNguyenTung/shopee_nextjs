@@ -8,6 +8,7 @@
     "build:stg": "env-cmd -f .env.stg next build",
     "build:production": "env-cmd -f .env.production next build",
     "build:debug": "env-cmd -f .env.production next build --debug",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
