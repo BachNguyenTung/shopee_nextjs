@@ -3,7 +3,6 @@ import classNames from "classnames";
 import useModal from "../../hooks/useModal";
 import { NumericFormat } from "react-number-format";
 import { useStripe } from "@stripe/react-stripe-js";
-import { db } from "@/configs/firebase";
 import "firebase/firestore";
 import useAddress from "../../hooks/useAddress";
 import AddressModal from "../Modal/AddressModal";
@@ -21,10 +20,9 @@ import { ClipLoading } from "../ClipLoading";
 import { useUpdateDefaultPaymentMethodIDToStripe } from "@/hooks/useUpdateDefaultPaymentMethodIDToStripe";
 import { resetCart } from "@/redux/cartSlice";
 import { useDispatch } from "react-redux";
-import { useAddCartToFireStoreMutation } from "@/services/cartApi";
 import withContainer from "../withContainer";
-import { checkoutDocRef, orderDocRef, productDocRef } from "@/db/dbRef";
-import { runTransaction, setDoc } from "firebase/firestore";
+import { orderDocRef } from "@/db/dbRef";
+import { setDoc } from "firebase/firestore";
 import ErrorModal from "@/components/Modal/ErrorModal";
 import { ShipUnitsModal } from "@/components/Modal/ShipUnitsModal";
 import VoucherModal from "@/components/Modal/VoucherModal";
@@ -56,31 +54,18 @@ interface ShipUnit {
 
 function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
   const {voucher} = useAtomValue(voucherStoreAtom)
-  const [addCartToFireStore] = useAddCartToFireStoreMutation();
   const dispatch = useDispatch();
   const {updateDefaultPaymentMethodID, updateDefaultPaymentMethodIDLoading} =
     useUpdateDefaultPaymentMethodIDToStripe();
   const {checkoutState, checkoutDispatch} = useCheckoutContext();
   const {checkoutItems, loading} = checkoutState;
   const {
-    name,
     setName,
-    phone,
     setPhone,
-    street,
     setStreet,
-    province,
     setProvince,
-    district,
     setDistrict,
-    ward,
     setWard,
-    provinces,
-    districts,
-    wards,
-    handleDistrictChoose,
-    handleProvinceChoose,
-    handleWardChoose,
   } = useAddress();
 
   const {
@@ -152,25 +137,6 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
 
   useNavigateAndRefreshBlocker(processing);
 
-  // useEffect(() => {
-  //   let shipPrice = [];
-  //   shipInfos?.forEach((item) => {
-  //     if (item.isDefault) {
-  //       shipPrice = item.province.shipPrice;
-  //     }
-  //   });
-
-  //   setShipPriceProvince(shipPrice);
-  // }, [setShipPriceProvince, shipInfos]);
-  // useEffect(() => {
-  //   const setCheckout = async () => {
-  //     setLoading(true);
-  //     await setCheckoutItemsFromFirebase();
-  //     setLoading(false);
-  //   };
-  //   setCheckout();
-  // }, [setCheckoutItemsFromFirebase]);
-
   //Get and set province and set districts and district depend on province
   const getShipPrice = (shipUnit: ShipUnit | null) =>
     Number(shipUnit?.price) ? Number(shipUnit?.price) : 0;
@@ -189,39 +155,6 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
     toggleCardInfo(true);
   };
 
-  const updateSoldAmount = async () => {
-    // transaction need to read first and write
-    runTransaction(db, (transaction) => {
-      // make an docsId (array of doc name) first by checkoutItem.id
-      // Promise.all([transaction.get(docsId)])
-      // or forEach checkut and run multi transaction
-      let promises = checkoutItems.map((checkoutItem: any) => {
-        return transaction.get(productDocRef(checkoutItem.id));
-      });
-      return Promise.all(promises).then((docs) => {
-        checkoutItems.forEach((checkoutItem: any) =>
-          docs.forEach((doc) => {
-            if (!doc.exists) {
-              throw new Error("Document does not exist!");
-            }
-            if (doc.id === checkoutItem.id) {
-              const updatedSoldAmount =
-                doc.data().soldAmount + Number(checkoutItem.amount);
-              transaction.update(productDocRef(checkoutItem.id), {
-                soldAmount: updatedSoldAmount,
-              });
-            }
-          })
-        );
-        // return data;
-      });
-    })
-      .then((data) => {
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const saveOrdersToFirebase = async (id: any, amount: number, created: any) => {
     try {
       let shipInfo = {};
@@ -239,18 +172,6 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
       });
     } catch (e) {
       console.log(e)
-    }
-  };
-
-  const saveCheckoutItemsToFirebase = async (checkoutItems: any) => {
-    try {
-      const created = Date.now();
-      user?.uid && await setDoc(checkoutDocRef(user.uid), {
-        basket: checkoutItems,
-        created: created,
-      });
-    } catch (error) {
-      alert(error);
     }
   };
 
@@ -344,7 +265,6 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
   };
 
   const handleShipInfoCancel = async () => {
-    // getShipInfos();
     setTempShipInfos(shipInfos);
     setIsShipInfoChoosing(!isShipInfoChoosing);
   };
