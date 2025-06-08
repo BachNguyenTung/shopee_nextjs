@@ -443,21 +443,6 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
                   Thêm địa chỉ mới
                 </button>
                 <AddressModal
-                  name={name}
-                  setName={setName}
-                  street={street}
-                  setStreet={setStreet}
-                  district={district}
-                  province={province}
-                  ward={ward}
-                  phone={phone}
-                  setPhone={setPhone}
-                  provinces={provinces}
-                  districts={districts}
-                  wards={wards}
-                  handleDistrictChoose={handleDistrictChoose}
-                  handleProvinceChoose={handleProvinceChoose}
-                  handleWardChoose={handleWardChoose}
                   isAddressAddShowing={isAddressAddShowing}
                   toggleAddressAdd={toggleAddressAdd}
                 ></AddressModal>

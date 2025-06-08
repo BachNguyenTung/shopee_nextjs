@@ -46,7 +46,7 @@ const StyleAutocomplete = styled(Autocomplete, {
 type RefButtonProps = ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement> & {}
 
 interface AddressModalProps {
-  editShipInfo: any
+  editShipInfo?: any
   isAddressAddShowing: boolean
   toggleAddressAdd: () => void
   shipInfoIndex?: number | null
@@ -181,7 +181,7 @@ const AddressModal = ({
     const isStreetValid = validateStreet();
     if (!isNameValid || !isPhoneValid || !isProvinceValid || !isDistrictValid || !isWardsValid || !isStreetValid) return
 
-    if (shipInfoIndex !== null) {
+    if (!!shipInfoIndex) {
       await updateShipInfo().then();
     } else {
       await addNewShipInfo().then();
@@ -225,6 +225,7 @@ const AddressModal = ({
   };
 
   const addNewShipInfo = async () => {
+    console.log('234234')
     try {
       let tempShipInfos = shipInfos ? [...shipInfos] : [];
       const created = Date.now();

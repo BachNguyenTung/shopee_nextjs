@@ -20,7 +20,7 @@ const NavLink: FC<NavLinkProps> = ({
                                      ...props
                                    }) => {
   const pathname = usePathname()
-  const isActive = exact ? pathname === href : pathname.startsWith(href as string);
+  const isActive = exact ? pathname === href : pathname?.startsWith(href as string);
 
   if (isActive) {
     className += ' active';
