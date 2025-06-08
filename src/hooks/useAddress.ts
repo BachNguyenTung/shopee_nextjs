@@ -1,34 +1,51 @@
-import { useEffect, useState } from "react";
-import ProvincesCitiesVN from "pc-vn";
+import { SyntheticEvent, useEffect, useState } from "react";
+import ProvincesCitiesVN, { District, Province, Ward } from "pc-vn";
 
+interface AddressInfo {
+  name?: string;
+  phone?: string;
+  street?: string;
+  province?: Province | null;
+  district?: District | null;
+  ward?: Ward | null;
+}
 
-const useAddress = (editShipInfo?: any, isAddressAddShowing?: boolean, shipInfoIndex?: number | null) => {
+interface ProvinceWithShipPrice extends Province {
+  shipPrice: number[];
+  name: string;
+}
+
+const useAddress = (
+  editShipInfo?: AddressInfo,
+  isAddressAddShowing?: boolean,
+  shipInfoIndex?: number | null
+) => {
   //TODO: change to 1 state address, update multiple state with cb func
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [street, setStreet] = useState("");
-  const [province, setProvince] = useState<any>(null);
-  const [district, setDistrict] = useState<any>(null);
-  const [ward, setWard] = useState<any>(null);
-  const [provinces, setProvinces] = useState<any>([]);
-  const [districts, setDistricts] = useState<any>([]);
-  const [wards, setWards] = useState<any>([]);
+  const [province, setProvince] = useState<Province | null>(null);
+  const [district, setDistrict] = useState<District | null>(null);
+  const [ward, setWard] = useState<Ward | null>(null);
+  const [provinces, setProvinces] = useState<ProvinceWithShipPrice[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [wards, setWards] = useState<Ward[]>([]);
 
-  const handleProvinceChoose = (e, value) => {
-    const province = provinces.find((province: any) => province.name === value);
+  const handleProvinceChoose = (e: SyntheticEvent, value: string) => {
+    const province = provinces.find((province) => province.name === value);
     setDistrict(null);
     setWard(null);
     setProvince(province || null);
   };
 
-  const handleDistrictChoose = (e, value) => {
-    const district = districts.find((district: any) => district.name === value);
+  const handleDistrictChoose = (e: SyntheticEvent, value: string) => {
+    const district = districts.find((district) => district.name === value);
     setWard(null);
     setDistrict(district || null);
   };
 
-  const handleWardChoose = (e, value) => {
-    const ward = wards.find((ward: any) => ward.name === value);
+  const handleWardChoose = (e: SyntheticEvent, value: string) => {
+    const ward = wards.find((ward) => ward.name === value);
     setWard(ward || null);
   };
 
@@ -37,17 +54,17 @@ const useAddress = (editShipInfo?: any, isAddressAddShowing?: boolean, shipInfoI
       setName("");
       setPhone("");
       setStreet("");
-      setProvince("");
-      setDistrict("");
-      setWard("");
-      return
+      setProvince(null);
+      setDistrict(null);
+      setWard(null);
+      return;
     }
     const name = editShipInfo?.name ?? "";
     const phone = editShipInfo?.phone ?? "";
     const street = editShipInfo?.street ?? "";
-    const province = editShipInfo?.province ?? "";
-    const district = editShipInfo?.district ?? "";
-    const ward = editShipInfo?.ward ?? "";
+    const province = editShipInfo?.province ?? null;
+    const district = editShipInfo?.district ?? null;
+    const ward = editShipInfo?.ward ?? null;
     setName(name);
     setPhone(phone);
     setStreet(street);
@@ -59,7 +76,7 @@ const useAddress = (editShipInfo?: any, isAddressAddShowing?: boolean, shipInfoI
   //Get and set province and set districts and district depend on province
   useEffect(() => {
     const provinces = ProvincesCitiesVN.getProvinces();
-    const provincesWithShipPrice = provinces.map((item: any, index: number) => {
+    const provincesWithShipPrice = provinces.map((item: Province, index: number) => {
       return {
         ...item,
         shipPrice: [10000 + 2000 * index, 15000 + 2000 * index],

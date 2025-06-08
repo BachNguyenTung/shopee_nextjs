@@ -46,4 +46,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 /.idea
+/.firebase
 /functions/serviceAccountKey.json
+.firebase/
