@@ -2,14 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import useModal from "../../hooks/useModal";
 import { NumericFormat } from "react-number-format";
-import axios from "../../configs/axios";
 import { useStripe } from "@stripe/react-stripe-js";
 import { db } from "@/configs/firebase";
 import "firebase/firestore";
 import useAddress from "../../hooks/useAddress";
 import AddressModal from "../Modal/AddressModal";
 import useGetShipInfos from "../../hooks/useGetShipInfos";
-import getCustomerID from "../../services/getCustomerID";
 import usePaymentMethodList from "../../hooks/usePaymentMethodList";
 import useDefaultPaymentMethodID from "../../hooks/useDefaultPaymentMethodID";
 import useGetUserByObserver from "../../hooks/useGetUserByObserver";
@@ -35,6 +33,13 @@ import PopupModal from "@/components/Modal/PopupModal";
 import Link from "next/link";
 import { voucherStoreAtom, voucherStoreProxy } from "@/store/voucherStore.atomProxy";
 import { useAtomValue } from "jotai";
+import {
+  getDefaultShippingInfo,
+  handleCardPaymentResponse,
+  processCardPayment,
+  processDeliveryPayment,
+  validateOrderRequirements
+} from "@/services/paymentService";
 
 interface CheckoutContainerProps {
   isCheckoutPage: boolean
@@ -355,131 +360,51 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
   };
 
   const handleOrder = async () => {
-    if (
-      !isCardInfoShowing && shipUnit && Object.keys(shipUnit).length > 0 &&
-      paymentMethod.length > 0
-    ) {
-      if (isCardPayment && defaultPaymentMethodID.length === 0) {
-        togglePopup();
-      }
-
-      if (isCardPayment && defaultPaymentMethodID) {
-        setProcessing(true);
-        let defaultshipInfo: any;
-        shipInfos.forEach((item: any) => {
-          if (item.isDefault) {
-            defaultshipInfo = {...item};
-          }
-        });
-        // Thanh toán off-season vơi thẻ được lưu ( setupIntent PaymentMethod ID)
-        const customerID = await getCustomerID(user);
-        axios({
-          method: "POST",
-          url: `/charge-card-off-session?total=${getItemsPriceFinal(
-            checkoutItems,
-            shipUnit,
-            voucher
-          )}`,
-          data: {
-            paymentMethodID: defaultPaymentMethodID,
-            customerID,
-            email: user.email,
-            shipping: {
-              // shipping detail when confirm paymentIntent-> charge card
-              name: defaultshipInfo?.name,
-              phone: defaultshipInfo?.phone,
-              address: {
-                state: defaultshipInfo?.province.name,
-                city: defaultshipInfo?.district.name,
-                line1: defaultshipInfo?.ward.name,
-                line2: defaultshipInfo?.street,
-                country: "VN",
-                postal_code: 10000,
-              },
-            },
-          }, // sub currency usd-> cent *100
-          // paymentMethodID was choose and set from radio
-        }).then((result) => {
-          if (
-            result.data.error &&
-            result.data.error === "authentication_required"
-          ) {
-            // Card needs to be authenticatied
-            // Reuse the card details we have to use confirmCardPayment() to prompt for authentication
-            // showAuthenticationView(data);
-            alert(
-              "Thẻ cần xác thực để thanh toán. Vui lòng nhấn ok và đợi cửa sổ xác thực"
-            );
-            // Tương đương với sd PPaymentIntents method to confirm paymentIntent
-
-            stripe?.confirmCardPayment(result.data.clientSecret, {
-              payment_method: result.data.paymentMethod,
-            })
-              .then((stripeJsResult) => {
-                if (
-                  stripeJsResult.error &&
-                  stripeJsResult.error.code ===
-                  "payment_intent_authentication_failure"
-                ) {
-                  // Authentication failed -- prompt for a new payment method since this one is failing to authenticate
-                  // hideEl(".requires-auth");
-                  // showEl(".requires-pm");
-                  alert(
-                    `Xác thực thẻ ${result.data.card.brand} **** ${result.data.card.last4} thất bại. Vui lòng chọn phương thức thanh toán khác hoặc thử lại.`
-                  );
-                  setSucceeded(false);
-                  setProcessing(false);
-                } else if (
-                  stripeJsResult.paymentIntent &&
-                  stripeJsResult.paymentIntent.status === "succeeded"
-                ) {
-                  // Order was authenticated and the card was charged
-                  // There's a risk your customer will drop-off or close the browser before this callback executes
-                  // We recommend handling any business-critical post-payment logic in a webhook
-                  // paymentIntentSucceeded(clientSecret, ".requires-auth");
-                  handleOrderSucceeded(stripeJsResult.paymentIntent);
-                  setProcessing(false);
-                }
-                // paymentIntent = payment confirmation
-                // SetSuccess(true);
-                // SetError(null);
-                //SetProcessing(false);
-                // history.replace("/cart");
-                // result.token.card.last4
-              });
-          } else if (result.data.error) {
-            // Card was declined off-session -- ask customer for a new card
-            // showEl(".requires-pm");
-            alert(
-              `${result.data.card?.brand ? result.data.card.brand : null} ${
-                result.data.card?.last4
-                  ? "****" + result.data.card.last4
-                  : "Thẻ"
-              } bị từ chối thanh toán hoặc không đủ tiền. Vui lòng sử dụng thẻ khác`
-            );
-            setSucceeded(false);
-            setProcessing(false);
-          } else if (result.data.succeeded) {
-            // Card was successfully charged off-session
-            // No recovery flow needed
-            // paymentIntentSucceeded(data.clientSecret, ".sr-select-pm");
-            handleOrderSucceeded(result.data.paymentIntent);
-            setProcessing(false);
-          }
-        });
-      }
-
-      if (isDeliveryPayment) {
-        // payment in delivery
-        const paymentIntent = {
-          id: `Pi_delivery_${Math.random().toString(36).substring(2)}`,
-          amount: getItemsPriceFinal(checkoutItems, shipUnit, voucher),
-          created: Math.floor(Date.now() / 1000),
-        };
-        await handleOrderSucceeded(paymentIntent);
-      }
-    } else {
+    if (!validateOrderRequirements(isCardInfoShowing, shipUnit, paymentMethod)) {
       togglePopup();
+      return;
+    }
+
+    // Case 1: Card payment selected but no default payment method
+    if (isCardPayment && defaultPaymentMethodID.length === 0) {
+      togglePopup();
+      return;
+    }
+
+    // Case 2: Card payment with default payment method
+    if (isCardPayment && defaultPaymentMethodID) {
+      const defaultShipInfo = getDefaultShippingInfo(shipInfos);
+      const response = await processCardPayment({
+        user,
+        defaultPaymentMethodID,
+        defaultShipInfo,
+        checkoutItems,
+        shipUnit,
+        voucher,
+        setProcessing,
+        setSucceeded
+      });
+
+      if (response) {
+        await handleCardPaymentResponse({
+          result: response,
+          stripe,
+          setSucceeded,
+          setProcessing,
+          handleOrderSucceeded
+        });
+      }
+      return;
+    }
+
+    // Case 3: Cash on delivery payment
+    if (isDeliveryPayment) {
+      await processDeliveryPayment(
+        checkoutItems,
+        shipUnit,
+        voucher,
+        handleOrderSucceeded
+      );
     }
   };
 
