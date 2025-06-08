@@ -134,7 +134,7 @@ export default function PopupModal(props: Props) {
       if (isCheckoutPage && shipInfos?.length <= 0) {
         isBackBtnHidden = true;
         title = "Bạn vẫn chưa nhập địa chỉ nhận hàng.";
-      } else if (isCheckoutPage && !Object.keys(shipUnit)?.length) {
+      } else if (isCheckoutPage && !shipUnit) {
         isBackBtnHidden = true;
         title = "Vui lòng chọn đơn vị vận chuyển.";
       } else if (isCheckoutPage && paymentMethod?.length === 0) {
@@ -205,7 +205,7 @@ export default function PopupModal(props: Props) {
     if (isCheckoutPage && shipInfos?.length <= 0) {
       window.scrollTo({top: 0, left: 0, behavior: "smooth"});
     }
-    if (isCheckoutPage && !Object.keys(shipUnit)?.length) {
+    if (isCheckoutPage && !shipUnit) {
       window.scrollTo({top: 300, left: 0, behavior: "smooth"});
     }
     if (isCheckoutPage && defaultPaymentMethodID.length === 0) {
