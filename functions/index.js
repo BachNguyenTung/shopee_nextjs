@@ -42,31 +42,73 @@ app.use(cors({
   credentials: true
 }));
 
-// Special handling for Stripe webhook
-app.use((req, res, next) => {
-  if (req.originalUrl === '/webhook') {
-    // Raw body needed for Stripe signature verification
-    let rawBody = '';
-    req.on('data', (chunk) => {
-      rawBody += chunk.toString();
-    });
-    req.on('end', () => {
-      req.rawBody = rawBody;
-      next();
-    });
-  } else {
-    express.json()(req, res, next);
-  }
-});
+// Special handling for Stripe webhook - must come BEFORE any other middleware
+app.post('/webhook',
+  express.raw({ type: 'application/json' }),
+  async (request, response) => {
+    // Immediately send a 200 response to acknowledge receipt before processing
+    // This prevents timeouts from Stripe's perspective
+    response.status(200).send({ received: true });
 
-// Regular JSON parsing for other routes
-app.use((req, res, next) => {
-  if (req.originalUrl !== '/webhook') {
-    express.json()(req, res, next);
-  } else {
-    next();
+    const sig = request.headers['stripe-signature'];
+    const endpointSecret = stripeWebhookSecret;
+
+    if (!endpointSecret) {
+      console.error('Webhook Error: Missing Stripe webhook secret');
+      return; // Already sent response above
+    }
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    } catch (err) {
+      console.log(`Webhook Error: ${err.message}`);
+      return; // Already sent response above
+    }
+
+    // Handle the event asynchronously (response already sent)
+    try {
+      switch (event.type) {
+        // Payment intent events
+        case 'payment_intent.succeeded':
+          await handlePaymentIntentSucceeded(event.data.object);
+          break;
+
+        case 'payment_intent.payment_failed':
+          await handlePaymentIntentFailed(event.data.object);
+          break;
+
+        // Setup intent events
+        case 'setup_intent.succeeded':
+          console.log('SetupIntent was successful!');
+          break;
+
+        case 'setup_intent.setup_failed':
+          console.log('SetupIntent failed');
+          break;
+
+        // Customer events
+        case 'customer.subscription.created':
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+          const subscription = event.data.object;
+          console.log(`Subscription status: ${subscription.status}`);
+          break;
+
+        default:
+          // Unexpected event type
+          console.log(`Unhandled event type ${event.type}`);
+      }
+    } catch (error) {
+      console.error(`Error processing webhook event ${event.type}:`, error);
+      // No need to send response, already sent
+    }
   }
-});
+);
+
+// Regular JSON parsing for other routes - place AFTER the webhook route
+app.use(express.json());
 
 // API routes
 
@@ -305,69 +347,6 @@ app.post("/charge-card-off-session", async (request, response) => {
       console.log("Unknown error occurred", error);
       response.status(500).send({ error: "Payment processing failed" });
     }
-  }
-});
-
-// Stripe webhook endpoint
-app.post('/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
-  const sig = request.headers['stripe-signature'];
-  const endpointSecret = stripeWebhookSecret;
-
-  if (!endpointSecret) {
-    console.error('Webhook Error: Missing Stripe webhook secret');
-    return response.status(400).send('Webhook Error: Missing Stripe webhook secret');
-  }
-
-  let event;
-
-  try {
-    // Instead of using request.rawBody (which might not be available),
-    // we're setting up express.raw middleware specifically for this route
-    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-  } catch (err) {
-    console.log(`Webhook Error: ${err.message}`);
-    return response.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  // Handle the event
-  try {
-    switch (event.type) {
-      // Payment intent events
-      case 'payment_intent.succeeded':
-        await handlePaymentIntentSucceeded(event.data.object);
-        break;
-
-      case 'payment_intent.payment_failed':
-        await handlePaymentIntentFailed(event.data.object);
-        break;
-
-      // Setup intent events
-      case 'setup_intent.succeeded':
-        console.log('SetupIntent was successful!');
-        break;
-
-      case 'setup_intent.setup_failed':
-        console.log('SetupIntent failed');
-        break;
-
-      // Customer events
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-      case 'customer.subscription.deleted':
-        const subscription = event.data.object;
-        console.log(`Subscription status: ${subscription.status}`);
-        break;
-
-      default:
-        // Unexpected event type
-        console.log(`Unhandled event type ${event.type}`);
-    }
-
-    // Return a 200 response to acknowledge receipt of the event
-    response.send({ received: true });
-  } catch (error) {
-    console.error(`Error processing webhook event ${event.type}:`, error);
-    response.status(500).send({ error: 'Webhook processing failed' });
   }
 });
 
