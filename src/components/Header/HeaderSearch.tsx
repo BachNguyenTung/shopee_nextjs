@@ -5,11 +5,11 @@ import { Close } from "@mui/icons-material";
 import { Box, Stack } from "@mui/material";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { changeSearchInput, changeSearchItems } from "@/redux/searchSlice";
-import { useProductsContext } from "@/context/ProductsProvider";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSearchHistory from "@/hooks/useSearchHistory";
+import { useProductsQuery } from "@/hooks/useProductsQuery";
 
 interface Props {
   isCartPage: boolean,
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpointMatches }) => {
-  const { items } = useProductsContext();
+  const { data: items } = useProductsQuery();
   const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
     useSearchHistory();
   const searchInput = useSelector((state: RootStateOrAny) => state.search.searchInput);
