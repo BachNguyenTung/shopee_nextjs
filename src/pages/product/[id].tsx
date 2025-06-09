@@ -2,7 +2,7 @@ import React, { ReactNode, Suspense } from "react";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
 import { ClipLoading } from "@/components/ClipLoading";
-import { dehydrate, DehydratedState, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { fetchProduct } from "@/services/fetchProductById";
 
@@ -10,13 +10,11 @@ import { fetchProduct } from "@/services/fetchProductById";
 
 //TODO: generate static params for product
 
-export default function ProductDetail({ dehydratedState }: { dehydratedState: DehydratedState }) {
+export default function ProductDetail() {
   return (
-    <HydrationBoundary state={dehydratedState}>
       <Suspense fallback={<ClipLoading />}>
         <DetailContainer />
       </Suspense>
-    </HydrationBoundary>
   );
 }
 

@@ -3,18 +3,17 @@ import Product from '@/components/Product'
 
 import Layout from "@/components/Layout/Layout";
 import { NextPageWithLayout } from "@/pages/_app";
-import { dehydrate, DehydratedState, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { ClipLoading } from "@/components/ClipLoading";
 
 
-const Home: NextPageWithLayout<{ dehydratedState: DehydratedState }> = ({ dehydratedState }) => {
+const Home: NextPageWithLayout = () => {
   return (
-    <HydrationBoundary state={dehydratedState}>
-      <Suspense fallback={<ClipLoading />}>
-        <Product />
-      </Suspense>
-    </HydrationBoundary>
+    /** Your content */
+    <Suspense fallback={<ClipLoading />}>
+      <Product />
+    </Suspense>
   )
 }
 

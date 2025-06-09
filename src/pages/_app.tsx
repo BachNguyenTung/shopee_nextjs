@@ -10,7 +10,7 @@ import ProductsProvider from "@/context/ProductsProvider";
 import UserProvider from "@/context/UserProvider";
 import Layout from "@/components/Layout/Layout";
 import CheckoutProvider from "@/context/CheckoutProvider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -40,20 +40,22 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <UserProvider>
-            <ProductsProvider>
-              <CheckoutProvider>
-                {/* use get layout variable here to return a page */}
-                {/*Component -> each page*/}
-                {getLayout(<Component {...pageProps} />)}
-                {/*{Component.getLayout ?? ((page: ReactElement) => <Layout>{page}</Layout>)}*/}
-              </CheckoutProvider>
-            </ProductsProvider>
-          </UserProvider>
-        </ThemeProvider>
-      </Provider>
+      <HydrationBoundary state={pageProps.dehydratedState}>
+        <Provider store={store}>
+          <ThemeProvider theme={theme}>
+            <UserProvider>
+              <ProductsProvider>
+                <CheckoutProvider>
+                  {/* use get layout variable here to return a page */}
+                  {/*Component -> each page*/}
+                  {getLayout(<Component {...pageProps} />)}
+                  {/*{Component.getLayout ?? ((page: ReactElement) => <Layout>{page}</Layout>)}*/}
+                </CheckoutProvider>
+              </ProductsProvider>
+            </UserProvider>
+          </ThemeProvider>
+        </Provider>
+      </HydrationBoundary>
     </QueryClientProvider>
   )
 
