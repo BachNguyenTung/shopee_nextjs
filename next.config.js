@@ -50,6 +50,32 @@ const nextConfig = {
           }
         ],
       },
+      {
+        source: '/robots.txt',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/api/sitemap.xml',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/xml',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, must-revalidate',
+          },
+        ],
+      },
     ]
   },
 };
