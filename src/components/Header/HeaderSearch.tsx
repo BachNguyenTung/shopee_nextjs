@@ -3,13 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 import HeaderCart from "./HeaderCart";
 import { Close } from "@mui/icons-material";
 import { Box, Stack } from "@mui/material";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import { changeSearchInput, changeSearchItems } from "@/redux/searchSlice";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useSearchHistory from "@/hooks/useSearchHistory";
-import { useProductsQuery } from "@/hooks/useProductsQuery";
 
 interface Props {
   isCartPage: boolean,
@@ -18,15 +15,30 @@ interface Props {
 }
 
 const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpointMatches }) => {
-  const { data: items } = useProductsQuery();
+  const [searchInput, setSearchInput] = useState<string>('')
   const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
-    useSearchHistory();
-  const searchInput = useSelector((state: RootStateOrAny) => state.search.searchInput);
-  const dispatch = useDispatch();
+    useSearchHistory(searchInput);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const router = useRouter()
-
   const [isHistory, setIsHistory] = useState(false);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const text = event.target.value.trim();
+    setSearchInput(text);
+  };
+
+  const replaceUrlWithSearchText = (text: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (text) {
+      params.set('query', text);
+      replace(`/search?${params.toString()}`);
+    } else {
+      params.delete('query');
+    }
+  }
 
   const handleInputClick = () => {
     if (!xsBreakpointMatches) {
@@ -34,24 +46,17 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
     }
   };
 
-  const handleInputChange = (e: any) => {
-    const text = e.target.value;
-    // setSearchInput(text);
-    dispatch(changeSearchInput(text));
-  };
-
   const handleSuggestionClick = (text: string) => {
-    // setSearchInput(text);
-    dispatch(changeSearchInput(text));
-    handleSearchIconClick(text);
+    replaceUrlWithSearchText(text)
+    if (inputRef?.current)
+      inputRef.current.value = text; // Update input value
+    setIsHistory(false);
   };
 
-  const handleSearchIconClick = (text: string) => {
-    addToSearchHistory(text);
-    // handleSearchInputChange(text);
-    dispatch(changeSearchItems(items));
+  const handleSearchIconClick = () => {
+    addToSearchHistory(searchInput);
+    replaceUrlWithSearchText(searchInput);
     setIsHistory(false);
-    router.push(`/search?keyword=${searchInput}`)
   };
 
   const handleHistoryDelete = (item: string) => {
@@ -62,7 +67,9 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
     const enter = 13;
     if (event.keyCode === enter) {
       event.currentTarget.blur();
-      handleSearchIconClick(event.target.value);
+      addToSearchHistory(event.target.value);
+      replaceUrlWithSearchText(event.target.value);
+      setIsHistory(false);
     }
   };
 
@@ -120,16 +127,17 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
             <div className="header__search-wrapper">
               <input
                 type="text"
-                onChange={handleInputChange}
+                onChange={handleChange}
                 onClick={handleInputClick}
                 // onBlur={handleSearchBlur}
                 onKeyUp={inputOnKeyUp}
                 className="header__search-input"
                 placeholder="Tìm sản phẩm, thương hiệu, và tên shop"
-                value={searchInput}
+                defaultValue={searchParams.get('query')?.toString()}
+                ref={inputRef}
               />
               <div
-                onClick={() => handleSearchIconClick(searchInput)}
+                onClick={handleSearchIconClick}
                 className="header__search-icon"
               >
                 <SearchIcon sx={{ fontSize: '2rem', color: 'white' }}></SearchIcon>

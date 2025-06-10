@@ -22,7 +22,6 @@ const HeaderCart = () => {
     refetchOnReconnect: true        // Refetch on network reconnection
   });
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
-  console.log(pathname)
   return (
     <div className="header__cart">
       <Link
