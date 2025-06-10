@@ -1,12 +1,13 @@
 import {useEffect, useMemo, useState} from "react";
-import {useSelector} from "react-redux";
 import {useUserContext} from "../context/UserProvider";
 import getSearchHistoryFromFirebase from "../services/getSearchHistoryFromFirebase";
 import {saveSearchHistoryToFirebase} from "../services/saveSearchHistoryToFirebase";
+import {useSearchParams} from "next/navigation";
 
 const useSearchHistory = () => {
   const { user } = useUserContext();
-  const searchInput = useSelector((state) => state.search.searchInput);
+  const searchParams = useSearchParams()
+  const query = searchParams.get('query')?.trim().toLowerCase()
   const [searchHistory, setSearchHistory] = useState([]);
   const suggestions = useMemo(
     () =>
@@ -14,9 +15,9 @@ const useSearchHistory = () => {
         return item
           .trim()
           .toLowerCase()
-          .includes(searchInput.trim().toLowerCase());
+          .includes(query);
       }),
-    [searchHistory, searchInput]
+    [searchHistory, query]
   );
 
   useEffect(() => {

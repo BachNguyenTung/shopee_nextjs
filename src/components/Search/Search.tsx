@@ -1,17 +1,15 @@
-import React, { useEffect } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import { changeSearchInput } from "@/redux/searchSlice";
+import React from "react";
 import ProductContainer from "@/components/Product/ProductContainer";
+import { useProductsQuery } from "@/hooks/useProductsQuery";
+import { useSearchParams } from "next/navigation";
 
 export default function Search() {
-  const searchItems = useSelector((state: RootStateOrAny) => state.search.searchItems);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    return () => {
-      dispatch(changeSearchInput(""));
-    };
-  }, [dispatch]);
+  const { data } = useProductsQuery()
+  const searchParams = useSearchParams()
+  const query = searchParams.get('query')
+  const searchItems = data.filter((item: any) =>
+    item.name.toLowerCase().includes(query?.trim().toLowerCase())
+  );
   return (
     <ProductContainer items={searchItems}></ProductContainer>
   );
