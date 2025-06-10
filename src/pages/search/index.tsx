@@ -1,30 +1,36 @@
-import React, {useEffect} from "react";
-import {DefaultRootState, RootStateOrAny, useDispatch, useSelector} from "react-redux";
-import {changeSearchInput} from "@/redux/searchSlice";
-import ProductContainer from "@/components/Product/ProductContainer";
-import {ReactElement} from "react";
+import React, { ReactElement, Suspense } from "react";
 import Layout from "@/components/Layout/Layout";
+import { dehydrate, DehydratedState, QueryClient } from "@tanstack/react-query";
+import { fetchProducts } from "@/services/fetchProducts";
+import { NextPageWithLayout } from "@/pages/_app";
+import { ClipLoading } from "@/components/ClipLoading";
+import Search from "@/components/Search/Search";
 
-const Search = () => {
-  const searchItems = useSelector((state: RootStateOrAny) => state.search.searchItems);
-  const dispatch = useDispatch();
-  // const [searchParams, setSearchParams] = useSearchParams();
-
-  // useEffect(() => {
-  //   setSearchParams({ keyword: searchInput }, { replace: true });
-  // }, [searchInput, setSearchParams]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(changeSearchInput(""));
-    };
-  }, [dispatch]);
-
+const Page: NextPageWithLayout<{ dehydratedState: DehydratedState }> = ({ dehydratedState }) => {
   return (
-    <ProductContainer items={searchItems}></ProductContainer>
-  );
+    <Suspense fallback={<ClipLoading />}>
+      <Search />
+    </Suspense>
+  )
 };
-Search.getLayout = function (page: ReactElement) {
+Page.getLayout = function (page: ReactElement) {
   return <Layout>{page}</Layout>
 }
-export default Search;
+export default Page;
+
+export async function getServerSideProps() {
+  // Fetch data from external API
+
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+  })
+
+  // Pass data to the page via props
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  }
+}
