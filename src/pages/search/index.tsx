@@ -1,12 +1,12 @@
 import React, { ReactElement, Suspense } from "react";
 import Layout from "@/components/Layout/Layout";
-import { dehydrate, DehydratedState, QueryClient } from "@tanstack/react-query";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { NextPageWithLayout } from "@/pages/_app";
 import { ClipLoading } from "@/components/ClipLoading";
 import Search from "@/components/Search/Search";
 
-const Page: NextPageWithLayout<{ dehydratedState: DehydratedState }> = ({ dehydratedState }) => {
+const Page: NextPageWithLayout = () => {
   return (
     <Suspense fallback={<ClipLoading />}>
       <Search />
@@ -18,7 +18,7 @@ Page.getLayout = function (page: ReactElement) {
 }
 export default Page;
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   // Fetch data from external API
 
   const queryClient = new QueryClient();

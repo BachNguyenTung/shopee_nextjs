@@ -1,13 +1,10 @@
 import {useEffect, useMemo, useState} from "react";
-import {useUserContext} from "../context/UserProvider";
-import getSearchHistoryFromFirebase from "../services/getSearchHistoryFromFirebase";
-import {saveSearchHistoryToFirebase} from "../services/saveSearchHistoryToFirebase";
-import {useSearchParams} from "next/navigation";
+import {useUserContext} from "@/context/UserProvider";
+import {saveSearchHistoryToFirebase} from "@/services/saveSearchHistoryToFirebase";
+import getSearchHistoryFromFirebase from "@/services/getSearchHistoryFromFirebase";
 
-const useSearchHistory = () => {
+const useSearchHistory = (searchInput) => {
   const { user } = useUserContext();
-  const searchParams = useSearchParams()
-  const query = searchParams.get('query')?.trim().toLowerCase()
   const [searchHistory, setSearchHistory] = useState([]);
   const suggestions = useMemo(
     () =>
@@ -15,9 +12,9 @@ const useSearchHistory = () => {
         return item
           .trim()
           .toLowerCase()
-          .includes(query);
+          .includes(searchInput.trim().toString().toLowerCase());
       }),
-    [searchHistory, query]
+    [searchHistory, searchInput]
   );
 
   useEffect(() => {
@@ -34,8 +31,9 @@ const useSearchHistory = () => {
     if (text.length > 0) {
       const newSearchHistory = [...searchHistory, text];
       const uniqueNewSearchHistory = [...new Set(newSearchHistory)];
-      saveSearchHistoryToFirebase(user, uniqueNewSearchHistory).then();
-      setSearchHistory(uniqueNewSearchHistory);
+      saveSearchHistoryToFirebase(user, uniqueNewSearchHistory).then(() =>
+        setSearchHistory(uniqueNewSearchHistory)
+      );
     }
   };
 

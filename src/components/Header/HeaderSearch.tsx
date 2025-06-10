@@ -5,7 +5,7 @@ import { Close } from "@mui/icons-material";
 import { Box, Stack } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useSearchHistory from "@/hooks/useSearchHistory";
 
 interface Props {
@@ -15,21 +15,30 @@ interface Props {
 }
 
 const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpointMatches }) => {
+  const [searchInput, setSearchInput] = useState<string>('')
   const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
-    useSearchHistory();
+    useSearchHistory(searchInput);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [isHistory, setIsHistory] = useState(false);
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const { replace } = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const text = event.target.value.trim();
+    setSearchInput(text);
+  };
+
   const replaceUrlWithSearchText = (text: string) => {
     const params = new URLSearchParams(searchParams);
     if (text) {
       params.set('query', text);
+      replace(`/search?${params.toString()}`);
     } else {
       params.delete('query');
+      replace(pathname);
     }
-    replace(`/search?${params.toString()}`);
   }
 
   const handleInputClick = () => {
@@ -41,12 +50,13 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   const handleSuggestionClick = (text: string) => {
     replaceUrlWithSearchText(text)
     handleSearchIconClick();
+    if (inputRef?.current)
+      inputRef.current.value = text; // Update input value
   };
 
   const handleSearchIconClick = () => {
-    const text = inputRef.current?.value.trim() || '';
-    addToSearchHistory(text);
-    replaceUrlWithSearchText(text);
+    addToSearchHistory(searchInput);
+    replaceUrlWithSearchText(searchInput);
     setIsHistory(false);
   };
 
@@ -58,8 +68,9 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
     const enter = 13;
     if (event.keyCode === enter) {
       event.currentTarget.blur();
-      handleSearchIconClick();
+      addToSearchHistory(event.target.value);
       replaceUrlWithSearchText(event.target.value);
+      setIsHistory(false);
     }
   };
 
@@ -117,6 +128,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
             <div className="header__search-wrapper">
               <input
                 type="text"
+                onChange={handleChange}
                 onClick={handleInputClick}
                 // onBlur={handleSearchBlur}
                 onKeyUp={inputOnKeyUp}
