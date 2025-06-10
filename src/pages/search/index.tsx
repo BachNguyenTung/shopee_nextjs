@@ -18,9 +18,13 @@ Page.getLayout = function (page: ReactElement) {
 }
 export default Page;
 
-export async function getStaticProps() {
+export async function getServerSideProps(context: any) {
   // Fetch data from external API
-
+  if (!context.query.query) {
+    return {
+      notFound: true,
+    }
+  }
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ['products'],

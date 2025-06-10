@@ -37,7 +37,6 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
       replace(`/search?${params.toString()}`);
     } else {
       params.delete('query');
-      replace(pathname);
     }
   }
 
@@ -49,9 +48,9 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
 
   const handleSuggestionClick = (text: string) => {
     replaceUrlWithSearchText(text)
-    handleSearchIconClick();
     if (inputRef?.current)
       inputRef.current.value = text; // Update input value
+    setIsHistory(false);
   };
 
   const handleSearchIconClick = () => {
