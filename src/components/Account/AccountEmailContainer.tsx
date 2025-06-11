@@ -1,8 +1,6 @@
 import { useUserContext } from "@/context/UserProvider";
 import React, { useEffect, useState } from "react";
-import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import AccountEmail from "@/components/Account/AccountEmail";
-import withContainer from "@/components/withContainer";
 import { useMediaQuery } from "@mui/material";
 
 const AccountEmailContainer = () => {
@@ -17,13 +15,9 @@ const AccountEmailContainer = () => {
     }
   }, [user])
   return (
-    <div className="main">
-      {!xsBreakpointMatches &&
-        <AccountLeftMenu />
-      }
-      <div className="user-content">
-        <AccountEmail email={email} setEmail={setEmail} />
-      </div>
-    </div>)
+    <div className="user-content">
+      <AccountEmail email={email} setEmail={setEmail} />
+    </div>
+  )
 }
-export default withContainer(AccountEmailContainer, true)
+export default AccountEmailContainer

@@ -8,7 +8,9 @@ const withContainer = (WrappedContainer, IsBackgroundColorChange) => {
         className="container"
         style={{ background: IsBackgroundColorChange === true ? "#f5f5f5" : "" }}
       >
-        <WrappedContainer {...props} />
+        <WrappedContainer {...props}>
+          {props.children}
+        </WrappedContainer>
       </div>
     );
   };
