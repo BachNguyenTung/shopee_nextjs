@@ -33,6 +33,7 @@
     "card-validator": "^8.1.1",
     "classnames": "^2.3.1",
     "firebase": "9.17.1",
+    "firebase-admin": "^13.4.0",
     "formik": "^2.2.9",
     "jotai": "^2.2.2",
     "jotai-valtio": "^0.3.0",
