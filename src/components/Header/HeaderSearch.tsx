@@ -5,8 +5,9 @@ import { Close } from "@mui/icons-material";
 import { Box, Stack } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import useSearchHistory from "@/hooks/useSearchHistory";
+import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 
 interface Props {
   isCartPage: boolean,
@@ -21,20 +22,25 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [isHistory, setIsHistory] = useState(false);
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const { replace } = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { setPageIndex } = usePagination({})
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const text = event.target.value.trim();
     setSearchInput(text);
   };
 
+  const setFirstPage = () => {
+    setPageIndex(1); // Reset to first page when search changes
+  }
+
   const replaceUrlWithSearchText = (text: string) => {
     const params = new URLSearchParams(searchParams);
     if (text) {
       params.set('query', text);
       replace(`/search?${params.toString()}`);
+      setFirstPage()
     } else {
       params.delete('query');
     }

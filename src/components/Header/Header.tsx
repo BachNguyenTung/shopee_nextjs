@@ -191,7 +191,7 @@ const Header = ({
                     }
                   }}
                 >
-                  {!user && (
+                  {!user && !userLoading && (
                     <div className="header__nav-reg">
                       <Link href="/register" className="header__nav-login">
                         Đăng ký
