@@ -12,7 +12,6 @@ function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
   const { signIn, register } = useUserContext();
   const router = useRouter()
   const [isPending, startTranstion] = useTransition()
-  console.log(isPending, 'isPending')
   const onSubmit = (values) => {
     if (isRegisterPage) {
       handleReg(values)

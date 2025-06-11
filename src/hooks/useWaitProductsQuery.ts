@@ -1,12 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 
-export const useProductsQuery = () => {
-  const { data } = useSuspenseQuery({
+export const useWaitProductsQuery = () => {
+  const { data, isPending } = useSuspenseQuery({
     queryKey: ['products'],
     queryFn: fetchProducts,
-    staleTime: Infinity,
   });
 
-  return { data };
+  return { data, isPending };
 }

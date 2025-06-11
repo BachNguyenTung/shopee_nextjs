@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import React, {useCallback, useMemo, useRef, useState} from "react";
 import * as categoryType from "../../constants/category";
 import * as sortType from "../../constants/sort";
-import {useProductsContext} from "@/context/ProductsProvider";
 import withContainer from "../withContainer";
 import ProductCategory from "./ProductCategory";
 import ProductFilter from "./ProductFilter";
@@ -12,13 +11,13 @@ import ProductList from "./ProductList";
 import {pageSize} from "@/constants/pagination";
 import {Pagination} from "@shoppe_nextjs/ui";
 import useDeferredState from "@/hooks/useDeferredState";
+import {bestSelling} from "@/configs/product";
 
 const newestDays = 180;
 const oneDayinMs = 24 * 3600 * 1000;
 const currentTimeinMs = new Date().valueOf();
 
 const ProductContainer = ({ items }) => {
-  const { bestSelling } = useProductsContext();
   const [category, deferCategory, setCategory] = useDeferredState(categoryType.ALL_PRODUCT)
   const [sort, deferSort, setSort] = useDeferredState(sortType.ALL);
   const [sortPrice, deferSortPrice, setSortPrice] = useDeferredState(sortType.DEFAULT_PRICE)

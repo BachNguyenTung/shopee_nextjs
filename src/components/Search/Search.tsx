@@ -1,10 +1,10 @@
 import React from "react";
 import ProductContainer from "@/components/Product/ProductContainer";
-import { useProductsQuery } from "@/hooks/useProductsQuery";
+import { useWaitProductsQuery } from "@/hooks/useWaitProductsQuery";
 import { useSearchParams } from "next/navigation";
 
 export default function Search() {
-  const { data } = useProductsQuery()
+  const { data } = useWaitProductsQuery()
   const searchParams = useSearchParams()
   const query = searchParams.get('query')
   const searchItems = data.filter((item: any) =>

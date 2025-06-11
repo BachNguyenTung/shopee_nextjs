@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { fetchProducts } from '@/services/fetchProducts'
 
-const BASE_URL = 'https://shopee-nextjs-ecru.vercel.app'
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
 function generateSiteMap(products: any[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>

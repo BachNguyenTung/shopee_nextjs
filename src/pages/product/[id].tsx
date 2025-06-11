@@ -1,7 +1,6 @@
-import React, { ReactNode, Suspense } from "react";
+import React, { ReactNode } from "react";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
-import { ClipLoading } from "@/components/ClipLoading";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { fetchProduct } from "@/services/fetchProductById";
@@ -12,9 +11,7 @@ import { fetchProduct } from "@/services/fetchProductById";
 
 export default function ProductDetail() {
   return (
-      <Suspense fallback={<ClipLoading />}>
         <DetailContainer />
-      </Suspense>
   );
 }
 
