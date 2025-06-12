@@ -11,7 +11,8 @@ const cspHeader = `
         http://localhost:*
         https://localhost:*;
     script-src 'self' 'unsafe-eval' 'unsafe-inline'
-        https://*.stripe.com;
+        https://*.stripe.com
+        https://*.vercel.live;
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data:
         res.cloudinary.com
