@@ -171,6 +171,4 @@ ProductContainer.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
-ProductContainer.defaultProps = {};
-
 export default withContainer(ProductContainer);
