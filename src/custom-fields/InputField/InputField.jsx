@@ -59,13 +59,4 @@ InputField.propTypes = {
   inputClassName: PropTypes.string,
 };
 
-InputField.defaultProps = {
-  type: "text",
-  label: "",
-  placeholder: "",
-  disabled: false,
-  labelClassName: "",
-  inputClassName: "",
-};
-
 export default InputField;

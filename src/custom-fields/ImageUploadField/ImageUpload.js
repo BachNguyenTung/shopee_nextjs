@@ -127,11 +127,4 @@ ImageUpload.propTypes = {
   handleChangeState: PropTypes.any
 };
 
-ImageUpload.defaultProps = {
-  previewImage: null,
-  label: "",
-  disabled: false,
-  isInfoUpdating: false
-};
-
 export default ImageUpload;

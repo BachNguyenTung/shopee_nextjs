@@ -190,10 +190,5 @@ LoginContainer.propTypes = {
   isRegisterPage: PropTypes.bool,
   submitText: PropTypes.string,
 };
-LoginContainer.defaultProps = {
-  isLoginPage: false,
-  isRegisterPage: false,
-  submitText: "",
-};
 
 export default withContainer(LoginContainer);
