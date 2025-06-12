@@ -1,4 +1,5 @@
 import '@/sass/style.scss'
+import "/node_modules/bootstrap-icons/font/bootstrap-icons.css";
 import React, { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
