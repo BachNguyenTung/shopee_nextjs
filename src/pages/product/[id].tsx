@@ -2,21 +2,17 @@ import React, { ReactNode } from "react";
 import Head from "next/head";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
-import { dehydrate, QueryClient, useQuery } from "@tanstack/react-query";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { fetchProduct } from "@/services/fetchProductById";
 import { useRouter } from "next/router";
-import { Product } from "@/types/types";
+import { useProductQuery } from "@/hooks/useProductQuery";
 
 export default function ProductDetail() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: product } = useQuery<Product, Error>({
-    queryKey: ['product', id],
-    queryFn: () => fetchProduct(id as string) as Promise<Product>,
-    enabled: !!id
-  });
+  const { data: product } = useProductQuery(id)
   return (
     <>
       <Head>
