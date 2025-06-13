@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, Suspense } from "react";
 import Head from "next/head";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
@@ -6,13 +6,14 @@ import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { fetchProduct } from "@/services/fetchProductById";
 import { useRouter } from "next/router";
-import { useProductQuery } from "@/hooks/useProductQuery";
+import { useWaitProductQuery } from "@/hooks/useWaitProductQuery";
+import { ClipLoading } from "@/components/ClipLoading";
 
 export default function ProductDetail() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: product } = useProductQuery(id)
+  const { data: product } = useWaitProductQuery(id?.toString())
   return (
     <>
       <Head>
@@ -21,7 +22,9 @@ export default function ProductDetail() {
         <meta property="og:title" content={product?.name ?? 'Product Detail'} />
         <meta property="og:description" content={product?.description ?? 'Product description'} />
       </Head>
-      <DetailContainer />
+      <Suspense fallback={<ClipLoading />}>
+        <DetailContainer />
+      </Suspense>
     </>
   );
 }

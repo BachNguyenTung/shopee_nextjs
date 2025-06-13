@@ -1,10 +1,11 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, Suspense } from "react";
 import Product from '@/components/Product'
 import { NextSeo } from 'next-seo';
 import Layout from "@/components/Layout/Layout";
 import { NextPageWithLayout } from "@/pages/_app";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
+import { ClipLoading } from "@/components/ClipLoading";
 
 
 const Home: NextPageWithLayout = () => {
@@ -72,7 +73,9 @@ const Home: NextPageWithLayout = () => {
           }
         ]}
       />
+      <Suspense fallback={<ClipLoading />}>
         <Product />
+      </Suspense>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

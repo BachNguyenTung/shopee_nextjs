@@ -14,9 +14,9 @@ import {useRouter} from "next/router";
 import Link from "next/link";
 import {iconImg} from "@/services/getIcon";
 import {DETAIL} from "@/constants/detail";
-import {useSuspenseQuery} from "@tanstack/react-query";
 import {bestSelling} from "@/configs/product";
-import {fetchProduct} from "@/services/fetchProductById";
+import {useWaitProductsQuery} from "@/hooks/useWaitProductsQuery";
+import {useWaitProductQuery} from "@/hooks/useWaitProductQuery";
 
 function DetailContainer() {
   const { user } = useUserContext();
@@ -25,14 +25,8 @@ function DetailContainer() {
   // const location = useLocation();
   const scrolltoEl = useRef();
   // const navigate = useNavigate();
-  const { data: items } = useSuspenseQuery({
-    queryKey: ['products'],
-    queryFn: fetchProduct,
-  })
-  const { data: fetchedItem } = useSuspenseQuery({
-    queryKey: ['product', id],
-    queryFn: () => fetchProduct(id.toString()),
-  })
+  const { data: items } = useWaitProductsQuery()
+  const { data: fetchedItem } = useWaitProductQuery(id.toString());
   const cartProducts = useSelector((state) => state.cart.products);
   const dispatch = useDispatch();
   const { isAddCartPopup, toggleIsAddCardPopup } = useModal();
