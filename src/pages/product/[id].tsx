@@ -1,23 +1,32 @@
 import React, { ReactNode } from "react";
+import Head from "next/head";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { dehydrate, QueryClient, useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { fetchProduct } from "@/services/fetchProductById";
-
-interface Product {
-  id: string;
-
-  [key: string]: any; // Allow for other product properties
-}
-
-//TODO: generateMetadata for dynamic routes in nextjs app router
-
-//TODO: generate static params for product
+import { useRouter } from "next/router";
+import { Product } from "@/types/types";
 
 export default function ProductDetail() {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const { data: product } = useQuery<Product, Error>({
+    queryKey: ['product', id],
+    queryFn: () => fetchProduct(id as string) as Promise<Product>,
+    enabled: !!id
+  });
   return (
-        <DetailContainer />
+    <>
+      <Head>
+        <title>{product?.name ?? 'Product Detail'}</title>
+        <meta name="description" content={product?.description ?? 'Product description'} />
+        <meta property="og:title" content={product?.name ?? 'Product Detail'} />
+        <meta property="og:description" content={product?.description ?? 'Product description'} />
+      </Head>
+      <DetailContainer />
+    </>
   );
 }
 
