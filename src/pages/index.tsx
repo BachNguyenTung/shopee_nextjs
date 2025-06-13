@@ -117,16 +117,10 @@ export async function getStaticProps() {
   // Fetch data from external API
 
   const queryClient = new QueryClient();
-  try {
-    await queryClient.prefetchQuery({
-      queryKey: ['products'],
-      queryFn: fetchProducts,
-    })
-  } catch (error) {
-    console.error('Error prefetching products:', error);
-    return 'Error prefetching products:' + error
-  }
-
+  queryClient.prefetchQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+  })
 
   // Pass data to the page via props
   return {

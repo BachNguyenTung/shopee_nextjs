@@ -1,10 +1,17 @@
-import React from "react";
-import ProductContainer from "@/components/Product/ProductContainer";
-import { useWaitProductsQuery } from "@/hooks/useWaitProductsQuery";
+import React, { Suspense } from "react";
+import dynamic from "next/dynamic";
+import { ClipLoading } from "@/components/ClipLoading";
+
+// Create client-only ProductContent component
+const ProductContent = dynamic(
+  () => import("./ProductContent"),
+  { ssr: false, loading: () => <ClipLoading /> }
+);
 
 export default function Product() {
-  const { data, isPending } = useWaitProductsQuery()
   return (
-    <ProductContainer items={data}></ProductContainer>
+    <Suspense fallback={<ClipLoading />}>
+      <ProductContent />
+    </Suspense>
   );
 }
