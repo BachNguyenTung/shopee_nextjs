@@ -9,7 +9,8 @@ const cspHeader = `
         https://*.firebaseio.com
         https://*.stripe.com
         http://localhost:*
-        https://localhost:*;
+        https://localhost:*
+        https://shopee-nextjs-git-*-nguyentungbach1992-gmailcoms-projects.vercel.app;
     script-src 'self' 'unsafe-eval' 'unsafe-inline'
         https://*.stripe.com
         https://*.vercel.live;
