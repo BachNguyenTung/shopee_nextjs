@@ -7,8 +7,8 @@ import { getVoucherDiscount } from "@/services/getVoucherDiscount";
 import { useCheckoutContext } from "@/context/CheckoutProvider";
 import { CHECKOUT_ACTIONTYPES } from "@/constants/actionType";
 import { useUserContext } from "@/context/UserProvider";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import { deleteProducts, deleteSelectedProducts, updateProducts, } from "@/redux/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProducts, } from "@/redux/cartSlice";
 import { useAddCartToFireStoreMutation, useFetchCartQuery, } from "@/services/cartApi";
 import withContainer from "@/components/withContainer";
 import Link from "next/link";
@@ -24,11 +24,24 @@ import { useAtomValue } from "jotai";
 import { useMediaQuery } from "@mui/material";
 import dynamic from "next/dynamic";
 import { formatValidationErrors, validateCart } from "@/services/validateCart";
+import { useDebounceCallback } from "@/hooks/useDebounceCallback";
+import { CartProduct } from "@/types/types";
 
 const PopupModal = dynamic(() => import('@/components/Modal/PopupModal'), { ssr: false })
 
 interface Props {
   isCartPage: boolean
+}
+
+interface RootState {
+  cart: {
+    products: CartProduct[];
+  };
+}
+
+interface DebounceArgs {
+  user: any; // Will be replaced with proper user type once available
+  cartProducts: CartProduct[];
 }
 
 function CartContainer({ isCartPage }: Partial<Props>) {
@@ -41,7 +54,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true        // Refetch on network reconnection
   });
-  const cartProducts = useSelector((state: RootStateOrAny) => state.cart.products);
+  const cartProducts = useSelector((state: RootState) => state.cart.products);
   const [addCartToFireStore] = useAddCartToFireStoreMutation();
   const dispatch = useDispatch();
   const {checkoutDispatch} = useCheckoutContext();
@@ -50,7 +63,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const [deleteID, setDeleteID] = useState<string>('');
   const [deleteVariation, setDeleteVariation] = useState<string>('');
   const [isDeleteSelected, setIsDeleteSelected] = useState<boolean>(false);
-  const [selectedIdVariation, setSelectedIdVariation] = useState<any[]>([]);
+  const [selectedIdVariation, setSelectedIdVariation] = useState<{ id: string; variation: string }[]>([]);
   const selectedProduct = useMemo(() => {
     return cartProducts.filter((item: any) => selectedIdVariation.some((e: any) => e.id === item.id && e.variation === item.variation));
   }, [cartProducts, selectedIdVariation]);
@@ -62,6 +75,23 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const [domLoaded, setDomLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  // Helper function to update cart and sync with Firebase
+  const updateCartAndSync = (updatedProducts: CartProduct[]) => {
+    dispatch(updateProducts(updatedProducts));
+    if (user?.uid && updatedProducts?.length >= 0) {
+      cancelUpdate?.();
+      debounceAddCartToFireStore({ user, cartProducts: updatedProducts });
+    }
+  };
+
+  const [debounceAddCartToFireStore, cancelUpdate] = useDebounceCallback<[DebounceArgs]>(
+    async ({ user, cartProducts }: DebounceArgs) => {
+      await addCartToFireStore({ user, cartProducts });
+    },
+    2000 // Reduced debounce time
+  );
+
   useEffect(() => {
     setDomLoaded(true);
   }, []);
@@ -170,10 +200,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
 
   const delCartItems = () => {
     const newCartProducts = cartProducts.filter((item: any) => selectedIdVariation.every((e) => e.id !== item.id || e.variation !== item.variation));
-    dispatch(deleteSelectedProducts(newCartProducts));
-    // if (newCartItems.length === 0) {
-    //   await saveCartItemsToFirebase(newCartItems);
-    // }
+    updateCartAndSync(newCartProducts);
   };
 
   const handleDelete = (id: string, variation: string) => {
@@ -183,9 +210,14 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   };
 
   const handleDeleteCartTrue = () => {
-    dispatch(deleteProducts({id: deleteID, variation: deleteVariation}));
+    const newProducts = cartProducts.filter(
+      (item) =>
+        item.id !== deleteID ||
+        item.variation !== deleteVariation
+    );
     const newCheckedId = selectedIdVariation.filter((e) => e.id !== deleteID || e.variation !== deleteVariation);
     setSelectedIdVariation(newCheckedId);
+    updateCartAndSync(newProducts);
   };
 
   const handleDeleteSelection = () => {
@@ -203,46 +235,66 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const changeAmountCartItem = (id: string, variation: string, amount: number) => {
     const newCartProducts = [...cartProducts];
     const indexOfItem = newCartProducts.findIndex((item) => item.id === id && item.variation === variation);
-    newCartProducts[indexOfItem] = {
-      ...newCartProducts[indexOfItem], amount,
-    };
-    dispatch(updateProducts(newCartProducts));
+    if (indexOfItem !== -1) {
+      newCartProducts[indexOfItem] = {
+        ...newCartProducts[indexOfItem],
+        amount
+      };
+      updateCartAndSync(newCartProducts);
+    }
   };
+
 
   const incrCartItem = (id: string, variation: string) => {
     const newCartProducts = [...cartProducts];
     const indexOfItem = newCartProducts.findIndex((item) => item.id === id && item.variation === variation);
-    newCartProducts[indexOfItem] = {
-      ...newCartProducts[indexOfItem], amount: newCartProducts[indexOfItem].amount + 1,
-    };
-    dispatch(updateProducts(newCartProducts));
+    if (indexOfItem !== -1) {
+      newCartProducts[indexOfItem] = {
+        ...newCartProducts[indexOfItem],
+        amount: newCartProducts[indexOfItem].amount + 1,
+      };
+      updateCartAndSync(newCartProducts);
+    }
   };
 
   const decrCartItem = (id: string, variation: string) => {
     const newCartProducts = [...cartProducts];
     const indexOfItem = newCartProducts.findIndex((item) => item.id === id && item.variation === variation);
-    if (newCartProducts[indexOfItem].amount > 1) {
+    if (indexOfItem !== -1 && newCartProducts[indexOfItem].amount > 1) {
       newCartProducts[indexOfItem] = {
-        ...newCartProducts[indexOfItem], amount: newCartProducts[indexOfItem].amount - 1,
+        ...newCartProducts[indexOfItem],
+        amount: newCartProducts[indexOfItem].amount - 1,
       };
-      dispatch(updateProducts(newCartProducts));
+      updateCartAndSync(newCartProducts);
     }
   };
 
   const changeVariationDisPlayCartItems = (variation: string, id: string) => {
-    const newCartProducts = cartProducts.map((item: any) => item.id === id && item.variation === variation ? {
-      ...item,
-      variationDisPlay: !item.variationDisPlay
-    } : item);
-    dispatch(updateProducts(newCartProducts));
+    const newCartProducts = cartProducts.map((item: CartProduct) =>
+      item.id === id && item.variation === variation
+        ? {
+          ...item,
+          variationDisPlay: !item.variationDisPlay
+        }
+        : item
+    );
+    updateCartAndSync(newCartProducts);
   };
 
   const changeCartItemsVariation = (oldVariation: string, id: string) => {
-    const newCartProducts = cartProducts.map((item: any) => item.id === id && item.variation === oldVariation ? {
-      ...item, variation: variation, variationDisPlay: !item.variationDisPlay,
-    } : item);
-    dispatch(updateProducts(newCartProducts));
-    const newCheckedId = selectedIdVariation.map((item: any) => item.id === id ? {...item, variation} : item);
+    const newCartProducts = cartProducts.map((item: CartProduct) =>
+      item.id === id && item.variation === oldVariation
+        ? {
+          ...item,
+          variation: variation,
+          variationDisPlay: !item.variationDisPlay,
+        }
+        : item
+    );
+    updateCartAndSync(newCartProducts);
+    const newCheckedId = selectedIdVariation.map(item =>
+      item.id === id ? { ...item, variation } : item
+    );
     setSelectedIdVariation(newCheckedId);
   };
 
