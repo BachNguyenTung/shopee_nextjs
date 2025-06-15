@@ -2,43 +2,35 @@ import { useEffect } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useQueryClient } from '@tanstack/react-query';
 
-// Global socket instance
-let globalSocket: Socket | null = null;
-let refCount = 0; // Track active component instances
+let socket: Socket | null = null;
 
 export const useWebSocket = (productId: string) => {
   const queryClient = useQueryClient();
 
+  // Initialize socket connection
   useEffect(() => {
-    console.log(`Initializing WebSocket for product: ${productId}`);
-
     const initSocket = async () => {
-      if (!globalSocket) {
-        console.log('Creating new socket connection');
-        await fetch('/api/socket');
+      // call api to create socketIO server if not already running
+      await fetch('/api/socket');
 
-        globalSocket = io({
-          path: '/api/socketio',
-          addTrailingSlash: false,
-        });
+      // Socket.IO client create connects to /api/socketio
+      socket = io({
+        path: '/api/socketio',
+        addTrailingSlash: false,
+      });
 
-        globalSocket.on('connect', () => {
-          console.log('WebSocket connected ID:', globalSocket?.id);
-        });
-
-        globalSocket.on('disconnect', () => {
-          console.log('WebSocket disconnected');
-        });
-      }
+      //Listening to event
+      socket.on('product-price-updated', handlePriceUpdate);
     };
 
-    initSocket();
-    refCount++;
+    if (!socket) {
+      initSocket();
+    }
 
-    // Event handler
-    const handlePriceUpdate = (data: { productId: string; newPrice: number }) => {
-      console.log('Received price update:', data);
+    // Listen for price updates for this specific product
+    function handlePriceUpdate(data: { productId: string; newPrice: number }) {
       if (data.productId === productId) {
+        // Update React Query cache with new price
         queryClient.setQueryData(['product', productId], (oldData: any) => ({
           ...oldData,
           price: data.newPrice,
@@ -46,26 +38,18 @@ export const useWebSocket = (productId: string) => {
       }
     };
 
-    // Attach listener
-    globalSocket?.on('product-price-updated', handlePriceUpdate);
-    console.log(`Listener attached for product ${productId}`);
 
     return () => {
-      console.log(`Cleaning up WebSocket for product: ${productId}`);
-      globalSocket?.off('product-price-updated', handlePriceUpdate);
-      refCount--;
-
-      // Disconnect only when last component unmounts
-      if (refCount === 0 && globalSocket) {
-        console.log('Disconnecting global socket');
-        globalSocket.disconnect();
-        globalSocket = null;
+      socket?.off('product-price-updated', handlePriceUpdate);
+      // Only disconnect if this is the last component using the socket
+      if (socket && document.querySelectorAll('[data-product-id]').length === 1) {
+        socket.disconnect();
+        socket = null;
       }
     };
   }, [productId, queryClient]);
 
   return {
-    socket: globalSocket,
-    isConnected: globalSocket?.connected ?? false
+    isConnected: socket?.connected ?? false,
   };
 };

@@ -15,19 +15,11 @@ export const useWebSocketAmin = (productId: string) => {
         addTrailingSlash: false,
       });
 
-      socket.on('connect', () => {
-        console.log('WebSocket connected');
-      });
-
-      socket.on('disconnect', () => {
-        console.log('WebSocket disconnected');
-      });
     };
 
     if (!socket) {
       initSocket();
     }
-
 
     return () => {
       // Only disconnect if this is the last component using the socket

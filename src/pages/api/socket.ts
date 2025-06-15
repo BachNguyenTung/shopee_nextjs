@@ -32,19 +32,12 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
     console.log(`⚡ Client connected: ${socket.id}`);
     console.log(`   Total clients: ${io.engine.clientsCount}`);
 
-    // Diagnostic handler (temporary)
-    socket.onAny((event, ...args) => {
-      console.log(`📨 Received event: ${event}`, args);
-    });
-
     // Your original price-update handler
     socket.on('price-update', (data: { productId: string; newPrice: number }) => {
 
-      // Additional diagnostic log
-      console.log(data);
-
-      // socket.broadcast.emit('product-price-updated', data);
-      io.emit('product-price-updated', data);  // Broadcast to ALL connected clients
+      //send price update to all connected clients except the sender
+      socket.broadcast.emit('product-price-updated', data);
+      console.log(`📢 Broadcasted to ${io.engine.clientsCount} clients`);
     });
 
     socket.on('disconnect', (reason) => {
@@ -52,7 +45,6 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
     });
   });
 
-  console.log('Socket.IO server initialized at /api/socketio');
   res.end();
 };
 

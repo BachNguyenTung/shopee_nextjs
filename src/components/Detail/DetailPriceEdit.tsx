@@ -15,11 +15,6 @@ export const DetailPriceEdit: React.FC<DetailPriceEditProps> = ({ productId, cur
   const { socket } = useWebSocketAmin(productId);
 
   const handleUpdatePrice = async () => {
-    console.log("🚀 Emitting price-update. Socket status:",
-      socket ? `exists (id: ${socket.id})` : "null",
-      socket?.connected ? "CONNECTED" : "DISCONNECTED"
-    );
-
     if (!socket || !socket.connected) {
       console.error("❌ Cannot emit - socket not ready");
       return;
@@ -28,17 +23,10 @@ export const DetailPriceEdit: React.FC<DetailPriceEditProps> = ({ productId, cur
     try {
       await updateDoc(doc(db, 'products', productId), { price: newPrice });
 
-      // Add detailed emit with callback
       socket.emit('price-update', {
         productId,
         newPrice,
         timestamp: Date.now()
-      }, (ack: any) => {
-        if (ack) {
-          console.log("✅ Server acknowledged:", ack);
-        } else {
-          console.log("❌ No acknowledgement from server");
-        }
       });
 
       setIsEditing(false);
