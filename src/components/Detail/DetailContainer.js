@@ -17,6 +17,8 @@ import {DETAIL} from "@/constants/detail";
 import {bestSelling} from "@/configs/product";
 import {useWaitProductsQuery} from "@/hooks/useWaitProductsQuery";
 import {useWaitProductQuery} from "@/hooks/useWaitProductQuery";
+import {useWebSocket} from "@/hooks/useWebSocket";
+import {DetailPriceAdminEdit} from "@/components/Detail/DetailPriceAdminEdit";
 
 function DetailContainer() {
   const { user } = useUserContext();
@@ -35,7 +37,11 @@ function DetailContainer() {
   const [isPickerShow, setIsPickerShow] = useState(false);
   const [address, setAddress] = useState("Tra cứu địa điểm");
   const [lookupShipPrice, setLookupShipPrice] = useState([]);
-  // set rendering item with amount + soldAmount
+
+  // Initialize WebSocket connection for real-time price updates
+  useWebSocket(id?.toString());
+
+  // Rest of your existing code...
   const item = useMemo(() => {
     if (!fetchedItem) return null;
     return {
@@ -49,40 +55,40 @@ function DetailContainer() {
 
   const images = useMemo(() => [
     {
-      original: item.imageUrl,
-      thumbnail: item.imageUrl,
+      original: item?.imageUrl,
+      thumbnail: item?.imageUrl,
     },
     {
       original:
         item?.imageUrlList?.length > 0 && item.imageUrlList[0]
           ? item.imageUrlList[0]
-          : item.imageUrl,
+          : item?.imageUrl,
       thumbnail:
         item?.imageUrlList?.length > 0 && item.imageUrlList[0]
           ? item.imageUrlList[0]
-          : item.imageUrl,
+          : item?.imageUrl,
     },
     {
       original:
         item?.imageUrlList?.length > 0 && item.imageUrlList[1]
           ? item.imageUrlList[1]
-          : item.imageUrl,
+          : item?.imageUrl,
       thumbnail:
         item?.imageUrlList?.length > 0 && item.imageUrlList[1]
           ? item.imageUrlList[1]
-          : item.imageUrl,
+          : item?.imageUrl,
     },
     {
       original:
         item?.imageUrlList?.length > 0 && item.imageUrlList[2]
           ? item.imageUrlList[2]
-          : item.imageUrl,
+          : item?.imageUrl,
       thumbnail:
         item?.imageUrlList?.length > 0 && item.imageUrlList[2]
           ? item.imageUrlList[2]
-          : item.imageUrl,
+          : item?.imageUrl,
     },
-  ], [item])
+  ], [item]);
 
   const bestSellingItems = useMemo(() => {
     if (!items) return [];
@@ -171,7 +177,7 @@ function DetailContainer() {
   // };
 
   return (
-    <div className="container bg-lighter-grey">
+    <div className="container bg-lighter-grey" data-product-id={id}>
       <div className="detail-breadcrumb">
         <Link href="/" className="detail-breadcrumb__home">
           Shopee
@@ -545,6 +551,10 @@ function DetailContainer() {
                 Mua ngay
               </button>
             </div>
+            <DetailPriceAdminEdit
+              productId={id?.toString() ?? ''}
+              currentPrice={item?.price ?? 0}
+            />
             <div className="detail-product__protect-wrapper">
               <img
                 src={iconImg.protectIcon}
