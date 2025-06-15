@@ -1,5 +1,6 @@
 import {createApi, fakeBaseQuery} from "@reduxjs/toolkit/query/react";
 import {cartDocRef} from "@/db/dbRef";
+import {getDoc, setDoc} from "firebase/firestore";
 
 export const cartApi = createApi({
   reducerPath: "cartApi",
@@ -10,10 +11,11 @@ export const cartApi = createApi({
       async queryFn(uid) {
         if (!uid) return { data: [] }
         try {
-          const doc = await cartDocRef(uid).get();
+          const docRef = cartDocRef(uid);
+          const snapshot = await getDoc(docRef);
           let products = [];
-          if (doc.exists) {
-            products = doc.data().basket.map((item) => ({
+          if (snapshot.exists()) {
+            products = snapshot.data().basket.map((item) => ({
               ...item,
               similarDisPlay: false,
               variationDisPlay: false,
@@ -21,13 +23,13 @@ export const cartApi = createApi({
           }
           return { data: products };
         } catch (error) {
-          // alert("Lỗi lấy giỏ hàng từ firestore:" + error.message);
           return { error: error };
         }
       },
     }),
     addCartToFireStore: builder.mutation({
       async queryFn({ user, cartProducts }) {
+        if (!user?.uid) return { error: new Error('No user ID provided') };
         try {
           let savedCartItems = [];
           const created = Date.now();
@@ -37,29 +39,30 @@ export const cartApi = createApi({
               return rest;
             });
           }
-          await cartDocRef(user?.uid).set({
+          const docRef = cartDocRef(user?.uid);
+          await setDoc(docRef, {
             basket: savedCartItems,
             created: created,
           });
           return { data: "ok" };
         } catch (error) {
-          //   alert("Lỗi lưu giỏ hàng:" + error.message);
           return { error: error };
         }
       },
       // Optimistic update
-      // onQueryStarted({user, product}, { dispatch, queryFulfilled }) {
-      //   // Optimistically update the cache
-      //   const patchResult = dispatch(
-      //     cartApi.util.updateQueryData('fetchCart', user, draft => {
-      //       draft.push(product)
-      //     })
-      //   )
-      //
-      //   // Handle potential error & rollback
-      //   queryFulfilled.catch(() => patchResult.undo())
-      // },
-      invalidatesTags: ['Cart']
+      onQueryStarted({ user, cartProducts }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cartApi.util.updateQueryData('fetchCart', user?.uid, draft => {
+            return cartProducts;
+          })
+        )
+        queryFulfilled.catch(() => {
+          patchResult.undo();
+        })
+      },
+      invalidatesTags: (result, error) => {
+        return error ? [] : ['Cart'];
+      }
     }),
   }),
 });

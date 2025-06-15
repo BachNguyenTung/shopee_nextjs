@@ -5,3 +5,13 @@ export interface Product {
 
   [key: string]: any;
 }
+
+export interface CartProduct extends Product {
+  variation: string;
+  amount: number;
+  similarDisPlay: boolean;
+  variationDisPlay: boolean;
+  variationList: string[];
+
+  [key: string]: any;  // For other potential properties
+}

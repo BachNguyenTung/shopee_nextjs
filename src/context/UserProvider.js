@@ -1,8 +1,7 @@
 import React, {useCallback, useContext} from "react";
 import {useCheckFirebaseIdTokenAuthTime} from "@/hooks/useCheckFirebaseIdTokenAuthTime";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {resetCart} from "@/redux/cartSlice";
-import {useAddCartToFireStoreMutation} from "@/services/cartApi";
 import useGetUserByObserver from "@/hooks/useGetUserByObserver";
 import useCheckPhotoURL from "@/hooks/useCheckPhotoURL";
 import {useRouter} from "next/navigation";
@@ -19,15 +18,12 @@ const UserProvider = ({children}) => {
   const {user, userLoading} = useGetUserByObserver();
   const {checkingPhotoURL, isPhotoExist, setIsPhotoExist} =
     useCheckPhotoURL(user);
-  const cartProducts = useSelector((state) => state.cart.products);
-  const [addCartToFireStore] = useAddCartToFireStoreMutation();
   const dispatch = useDispatch();
   const signOut = useCallback(async () => {
-    addCartToFireStore({user, cartProducts});
     dispatch(resetCart());
     await auth.signOut();
-    await router.replace('/login')
-  }, [addCartToFireStore, dispatch, user]);
+    router.replace('/login')
+  }, [dispatch, user]);
 
   useCheckFirebaseIdTokenAuthTime(user, signOut);
 

@@ -62,19 +62,6 @@ const cartSlice = createSlice({
       state.products = action.payload;
       saveCartItemsToStorage(state.products);
     },
-    deleteProducts: (state, action) => {
-      const newProducts = state.products.filter(
-        (item) =>
-          item.id !== action.payload.id ||
-          item.variation !== action.payload.variation
-      );
-      state.products = newProducts;
-      saveCartItemsToStorage(state.products);
-    },
-    deleteSelectedProducts: (state, action) => {
-      state.products = action.payload;
-      saveCartItemsToStorage(state.products);
-    },
     resetCart: (state) => {
       state.products = [];
       localStorage.removeItem(CART_STORAGE_KEY);
@@ -101,7 +88,6 @@ export const {
   addProducts,
   updateProducts,
   deleteProducts,
-  deleteSelectedProducts,
   resetCart,
   updateFromOtherTab,
 } = cartSlice.actions;
