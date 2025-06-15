@@ -3,16 +3,18 @@ import { NumericFormat } from 'react-number-format';
 import { useWebSocketAmin } from "@/hooks/useWebSocketAdmin";
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from "@/configs/firebase";
+import { useUserContext } from "@/context/UserProvider";
 
-interface DetailPriceEditProps {
+interface DetailPriceAdminEditProps {
   productId: string;
   currentPrice: number;
 }
 
-export const DetailPriceEdit: React.FC<DetailPriceEditProps> = ({ productId, currentPrice }) => {
+export const DetailPriceAdminEdit: React.FC<DetailPriceAdminEditProps> = ({ productId, currentPrice }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newPrice, setNewPrice] = useState(currentPrice);
   const { socket } = useWebSocketAmin(productId);
+  const { user } = useUserContext()
 
   const handleUpdatePrice = async () => {
     if (!socket || !socket.connected) {
@@ -35,6 +37,7 @@ export const DetailPriceEdit: React.FC<DetailPriceEditProps> = ({ productId, cur
     }
   };
 
+  if (!user?.isAdmin) return null
   if (!isEditing) {
     return (
       <div className="detail-product__price" onClick={() => setIsEditing(true)}>
@@ -48,7 +51,6 @@ export const DetailPriceEdit: React.FC<DetailPriceEditProps> = ({ productId, cur
       </div>
     );
   }
-
   return (
     <div className="detail-product__price-edit" data-product-admin-id={productId}>
       <input

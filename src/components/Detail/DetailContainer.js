@@ -18,7 +18,7 @@ import {bestSelling} from "@/configs/product";
 import {useWaitProductsQuery} from "@/hooks/useWaitProductsQuery";
 import {useWaitProductQuery} from "@/hooks/useWaitProductQuery";
 import {useWebSocket} from "@/hooks/useWebSocket";
-import {DetailPriceEdit} from "@/components/Detail/DetailPriceEdit";
+import {DetailPriceAdminEdit} from "@/components/Detail/DetailPriceAdminEdit";
 
 function DetailContainer() {
   const { user } = useUserContext();
@@ -551,7 +551,7 @@ function DetailContainer() {
                 Mua ngay
               </button>
             </div>
-            <DetailPriceEdit
+            <DetailPriceAdminEdit
               productId={id?.toString() ?? ''}
               currentPrice={item?.price ?? 0}
             />
