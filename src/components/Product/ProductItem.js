@@ -48,13 +48,13 @@ const ProductItem = function ({ item, similarDisPlay }) {
 
   return (
     <>
-      {isNavigating && <LinearProgress />}
       <Grid2
         xs={6}
         sm={similarDisPlay ? 3 : 4}
         md={similarDisPlay ? 2.4 : 3}
         lg={similarDisPlay ? 2 : 2.4}
       >
+        {isNavigating && <LinearProgress />}
         <div className="app__product-item">
           <button
             disabled={isInCart}
