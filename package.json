@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "sync-csp": "node scripts/sync-csp.js",
     "dev": "env-cmd -f .env.dev next dev",
     "node-dev": "NODE_OPTIONS='--inspect' env-cmd -f .env.dev next dev",
     "build:stg": "env-cmd -f .env.stg next build",
