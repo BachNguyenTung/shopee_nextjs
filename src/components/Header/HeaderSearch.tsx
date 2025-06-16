@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import HeaderCart from "./HeaderCart";
 import { Close } from "@mui/icons-material";
 import { Box, LinearProgress, Stack } from "@mui/material";
@@ -104,6 +104,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
       };
     }
   }, []);
+  console.log(isPending)
 
   return (
     <>
