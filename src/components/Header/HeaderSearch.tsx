@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import HeaderCart from "./HeaderCart";
 import { Close } from "@mui/icons-material";
-import { Box, Stack } from "@mui/material";
+import { Box, LinearProgress, Stack } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,7 +25,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   const { replace } = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { setPageIndex } = usePagination({})
-
+  const [isPending, startTransition] = useTransition();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const text = event.target.value.trim();
     setSearchInput(text);
@@ -39,7 +39,10 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
     const params = new URLSearchParams(searchParams);
     if (text) {
       params.set('query', text);
-      replace(`/search?${params.toString()}`);
+      startTransition(() => {
+        replace(`/search?${params.toString()}`);
+        // Optional: Reset state if navigation fails
+      });
       setFirstPage()
     } else {
       params.delete('query');
@@ -99,113 +102,117 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
       };
     }
   }, []);
+  console.log(isPending)
 
   return (
-    <div
-      className={classNames("header__search", {
-        "header__search--cart":
-          (isCartPage && !xsBreakpointMatches) ||
-          (isCheckoutPage && !xsBreakpointMatches),
-      })}
-    >
-      <div className="header__logo-wrapper">
-        <Link
-          href="/"
-          className={classNames("header__logo-link", {
-            "header__logo-link--notHome": isCartPage || isCheckoutPage,
-          })}
-        >
-          <img src={"/img/shoppe-logo.png"} alt="shoppe-logo" />
-        </Link>
-        {isCartPage && <div className="header__page-name">Giỏ hàng</div>}
-        {isCheckoutPage && <div className="header__page-name">Thanh Toán</div>}
-      </div>
-
-      {!isCheckoutPage && (
-        <>
-          <div
-            ref={wrapperRef}
-            className={classNames("header__search-content", {
-              "header__search-content--cart":
-                isCartPage && !xsBreakpointMatches,
+    <>
+      <div
+        className={classNames("header__search", {
+          "header__search--cart":
+            (isCartPage && !xsBreakpointMatches) ||
+            (isCheckoutPage && !xsBreakpointMatches),
+        })}
+      >
+        <div className="header__logo-wrapper">
+          <Link
+            href="/"
+            className={classNames("header__logo-link", {
+              "header__logo-link--notHome": isCartPage || isCheckoutPage,
             })}
           >
-            <div className="header__search-wrapper">
-              <input
-                type="text"
-                onChange={handleChange}
-                onClick={handleInputClick}
-                // onBlur={handleSearchBlur}
-                onKeyUp={inputOnKeyUp}
-                className="header__search-input"
-                placeholder="Tìm sản phẩm, thương hiệu, và tên shop"
-                defaultValue={searchParams.get('query')?.toString()}
-                ref={inputRef}
-              />
-              <div
-                onClick={handleSearchIconClick}
-                className="header__search-icon"
-              >
-                <SearchIcon sx={{ fontSize: '2rem', color: 'white' }}></SearchIcon>
-              </div>
-              {isHistory && (
-                <ul className="header__history-list">
-                  <li className="header__history-title">Lịch Sử Tìm Kiếm</li>
-                  {suggestions.map((item, index) => (
-                    <Stack
-                      sx={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        "&:hover": {
-                          backgroundColor: "var(--lighter-grey-color)",
-                        },
-                      }}
-                      key={index}
-                    >
-                      <li
-                        onClick={() => handleSuggestionClick(item)}
-                        className="header__history-item"
-                      >
-                        <a href="" className="header__history-link">
-                          {item}
-                        </a>
-                      </li>
-                      <Box
-                        sx={{
-                          marginRight: "0.6rem",
-                          "& :hover": { color: "var(--primary-color)" },
-                          cursor: "pointer",
-                          textAlign: "center",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Close
-                          onClick={() => handleHistoryDelete(item)}
-                        ></Close>
-                      </Box>
-                    </Stack>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <img src={"/img/shoppe-logo.png"} alt="shoppe-logo" />
+          </Link>
+          {isCartPage && <div className="header__page-name">Giỏ hàng</div>}
+          {isCheckoutPage && <div className="header__page-name">Thanh Toán</div>}
+        </div>
 
-            <ul className="header__search-list">
-              {/* list of recommends */}
-              {/*{[].map((item) => (*/}
-              {/*  <li className="header__search-item">*/}
-              {/*    <a href="# " className="header__item-link">*/}
-              {/*      {item}*/}
-              {/*    </a>*/}
-              {/*  </li>*/}
-              {/*))}*/}
-            </ul>
-          </div>
-          {!isCartPage && <HeaderCart></HeaderCart>}
-        </>
-      )}
-    </div>
+        {!isCheckoutPage && (
+          <>
+            <div
+              ref={wrapperRef}
+              className={classNames("header__search-content", {
+                "header__search-content--cart":
+                  isCartPage && !xsBreakpointMatches,
+              })}
+            >
+              <div className="header__search-wrapper">
+                <input
+                  type="text"
+                  onChange={handleChange}
+                  onClick={handleInputClick}
+                  // onBlur={handleSearchBlur}
+                  onKeyUp={inputOnKeyUp}
+                  className="header__search-input"
+                  placeholder="Tìm sản phẩm, thương hiệu, và tên shop"
+                  defaultValue={searchParams.get('query')?.toString()}
+                  ref={inputRef}
+                />
+                <div
+                  onClick={handleSearchIconClick}
+                  className="header__search-icon"
+                >
+                  <SearchIcon sx={{ fontSize: '2rem', color: 'white' }}></SearchIcon>
+                </div>
+                {isHistory && (
+                  <ul className="header__history-list">
+                    <li className="header__history-title">Lịch Sử Tìm Kiếm</li>
+                    {suggestions.map((item, index) => (
+                      <Stack
+                        sx={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          "&:hover": {
+                            backgroundColor: "var(--lighter-grey-color)",
+                          },
+                        }}
+                        key={index}
+                      >
+                        <li
+                          onClick={() => handleSuggestionClick(item)}
+                          className="header__history-item"
+                        >
+                          <a href="" className="header__history-link">
+                            {item}
+                          </a>
+                        </li>
+                        <Box
+                          sx={{
+                            marginRight: "0.6rem",
+                            "& :hover": { color: "var(--primary-color)" },
+                            cursor: "pointer",
+                            textAlign: "center",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Close
+                            onClick={() => handleHistoryDelete(item)}
+                          ></Close>
+                        </Box>
+                      </Stack>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <ul className="header__search-list">
+                {/* list of recommends */}
+                {/*{[].map((item) => (*/}
+                {/*  <li className="header__search-item">*/}
+                {/*    <a href="# " className="header__item-link">*/}
+                {/*      {item}*/}
+                {/*    </a>*/}
+                {/*  </li>*/}
+                {/*))}*/}
+              </ul>
+            </div>
+            {!isCartPage && <HeaderCart></HeaderCart>}
+          </>
+        )}
+      </div>
+      {isPending && <LinearProgress />}
+    </>
   );
 };
 export default HeaderSearch;
