@@ -33,23 +33,23 @@ ProductDetail.getLayout = function (page: ReactNode) {
   return <Layout>{page}</Layout>
 }
 
-export async function getStaticPaths() {
-  // Fetch all product IDs
-  const products = await fetchProducts();
+// export async function getStaticPaths() {
+//   // Fetch all product IDs
+//   const products = await fetchProducts();
+//
+//   // Generate paths for all products
+//   const paths = products.map((product: any) => ({
+//     params: { id: product.id.toString() },
+//   }));
+//
+//   return {
+//     paths,
+//     // Enable fallback for new products added after build
+//     fallback: 'blocking'
+//   };
+// }
 
-  // Generate paths for all products
-  const paths = products.map((product: any) => ({
-    params: { id: product.id.toString() },
-  }));
-
-  return {
-    paths,
-    // Enable fallback for new products added after build
-    fallback: 'blocking'
-  };
-}
-
-export async function getStaticProps({ params }: { params: { id: string } }) {
+export async function getServerSideProps({ params }: { params: { id: string } }) {
   const queryClient = new QueryClient();
 
   try {
@@ -68,8 +68,6 @@ export async function getStaticProps({ params }: { params: { id: string } }) {
       props: {
         dehydratedState: dehydrate(queryClient),
       },
-      // Regenerate page every 1 hour
-      revalidate: 3600,
     };
   } catch (error) {
     return {
