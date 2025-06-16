@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { NumericFormat } from 'react-number-format';
-import { useWebSocketAmin } from "@/hooks/useWebSocketAdmin";
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from "@/configs/firebase";
 import { useUserContext } from "@/context/UserProvider";
+import { useWebSocketAdmin } from "@/hooks/useWebSocketAdmin";
 
 interface DetailPriceAdminEditProps {
   productId: string;
@@ -13,11 +13,11 @@ interface DetailPriceAdminEditProps {
 export const DetailPriceAdminEdit: React.FC<DetailPriceAdminEditProps> = ({ productId, currentPrice }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newPrice, setNewPrice] = useState(currentPrice);
-  const { socket } = useWebSocketAmin(productId);
+  const { updatePrice, isConnected } = useWebSocketAdmin(productId);
   const { user } = useUserContext()
 
   const handleUpdatePrice = async () => {
-    if (!socket || !socket.connected) {
+    if (!isConnected) {
       console.error("❌ Cannot emit - socket not ready");
       return;
     }
@@ -25,11 +25,7 @@ export const DetailPriceAdminEdit: React.FC<DetailPriceAdminEditProps> = ({ prod
     try {
       await updateDoc(doc(db, 'products', productId), { price: newPrice });
 
-      socket.emit('price-update', {
-        productId,
-        newPrice,
-        timestamp: Date.now()
-      });
+      await updatePrice(newPrice);
 
       setIsEditing(false);
     } catch (error) {
