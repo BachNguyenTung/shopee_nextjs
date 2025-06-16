@@ -8,9 +8,16 @@ const cspHeader = `
         https://*.firebase.com
         https://*.firebaseio.com
         https://*.stripe.com
+        https://*.pusher.com
+        https://*.pusherapp.com
+        wss://*.pusher.com
+        wss://*.pusherapp.com
+        ws://*.pusher.com
+        ws://*.pusherapp.com
         http://localhost:*
         https://localhost:*;
     script-src 'self' 'unsafe-eval' 'unsafe-inline'
+        https://js.pusher.com
         https://*.stripe.com
         https://*.vercel.live;
     style-src 'self' 'unsafe-inline';
@@ -34,7 +41,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['res.cloudinary.com', 'fakestoreapi.com'],
+    domains: ['res.cloudinary.com', 'fakestoreapi.com', 'firebasestorage.googleapis.com'],
   },
   async headers() {
     return [

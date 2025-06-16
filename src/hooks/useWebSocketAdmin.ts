@@ -1,37 +1,39 @@
-import { useEffect } from 'react';
-import io, { Socket } from 'socket.io-client';
+import { useState } from 'react';
+import { pusherClient } from '@/configs/pusher';
 
-let socket: Socket | null = null;
+export const useWebSocketAdmin = (productId: string) => {
+  const [isConnected, setIsConnected] = useState(false);
 
-export const useWebSocketAmin = (productId: string) => {
-
-  // Initialize socket connection
-  useEffect(() => {
-    const initSocket = async () => {
-      await fetch('/api/socket');
-
-      socket = io({
-        path: '/api/socketio',
-        addTrailingSlash: false,
+  // Function to trigger price updates
+  const updatePrice = async (newPrice: number) => {
+    try {
+      await fetch('/api/socket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          newPrice,
+        }),
       });
-
-    };
-
-    if (!socket) {
-      initSocket();
+      return true;
+    } catch (error) {
+      console.error('Error updating price:', error);
+      return false;
     }
+  };
 
-    return () => {
-      // Only disconnect if this is the last component using the socket
-      if (socket && document.querySelectorAll('[data-product-admin-id]').length === 1) {
-        socket.disconnect();
-        socket = null;
-      }
-    };
-  }, [productId]);
+  // Connect to Pusher when the hook is initialized
+  if (!isConnected) {
+    const channel = pusherClient.subscribe('price-updates');
+    channel.bind('pusher:subscription_succeeded', () => {
+      setIsConnected(true);
+    });
+  }
 
   return {
-    socket,
-    isConnected: socket?.connected ?? false
+    isConnected,
+    updatePrice,
   };
 };
