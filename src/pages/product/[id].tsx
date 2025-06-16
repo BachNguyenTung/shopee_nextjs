@@ -1,19 +1,14 @@
-import React, { ReactNode, Suspense } from "react";
+import React, { ReactNode } from "react";
 import Head from "next/head";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { fetchProduct } from "@/services/fetchProductById";
-import { useRouter } from "next/router";
-import { useWaitProductQuery } from "@/hooks/useWaitProductQuery";
-import { ClipLoading } from "@/components/ClipLoading";
+import Link from "next/link";
+import { Product } from "@/types/types";
 
-export default function ProductDetail() {
-  const router = useRouter();
-  const { id } = router.query;
-
-  const { data: product } = useWaitProductQuery(id?.toString())
+export default function ProductDetail({ product }: { product: Product }) {
   return (
     <>
       <Head>
@@ -22,9 +17,27 @@ export default function ProductDetail() {
         <meta property="og:title" content={product?.name ?? 'Product Detail'} />
         <meta property="og:description" content={product?.description ?? 'Product description'} />
       </Head>
-      <Suspense fallback={<ClipLoading />}>
-        <DetailContainer />
-      </Suspense>
+      <div className="container bg-lighter-grey" data-product-id={product?.id}>
+        <div className="detail-breadcrumb">
+          <Link href="/" className="detail-breadcrumb__home">
+            Shopee
+          </Link>
+          <svg
+            enableBackground="new 0 0 11 11"
+            viewBox="0 0 11 11"
+            x="0"
+            y="0"
+            className="detail-breadcrumb__icon"
+          >
+            <path
+              d="m2.5 11c .1 0 .2 0 .3-.1l6-5c .1-.1.2-.3.2-.4s-.1-.3-.2-.4l-6-5c-.2-.2-.5-.1-.7.1s-.1.5.1.7l5.5 4.6-5.5 4.6c-.2.2-.2.5-.1.7.1.1.3.2.4.2z"></path>
+          </svg>
+          <span className="detail-breadcrumb__current">{product?.name}</span>
+        </div>
+        <div className="detail-product">
+          <DetailContainer />
+        </div>
+      </div>
     </>
   );
 }
@@ -64,8 +77,13 @@ export async function getServerSideProps({ params }: { params: { id: string } })
       })
     ]);
 
+    // Get the cached data directly after prefetching
+    const product = queryClient.getQueryData(['product', params.id]);
+    const products = queryClient.getQueryData(['products']);
+
     return {
       props: {
+        product,
         dehydratedState: dehydrate(queryClient),
       },
     };
