@@ -1,13 +1,14 @@
 import classNames from "classnames";
-import React, { useEffect, useRef, useState, useTransition } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HeaderCart from "./HeaderCart";
 import { Close } from "@mui/icons-material";
 import { Box, LinearProgress, Stack } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import useSearchHistory from "@/hooks/useSearchHistory";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
+import { useRouter } from "next/router";
 
 interface Props {
   isCartPage: boolean,
@@ -22,10 +23,10 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [isHistory, setIsHistory] = useState(false);
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { setPageIndex } = usePagination({})
-  const [isPending, startTransition] = useTransition();
+  const [isNavigating, setIsNavigating] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const text = event.target.value.trim();
     setSearchInput(text);
@@ -39,10 +40,11 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
     const params = new URLSearchParams(searchParams);
     if (text) {
       params.set('query', text);
-      startTransition(() => {
-        replace(`/search?${params.toString()}`);
-        // Optional: Reset state if navigation fails
-      });
+      setIsNavigating(true);
+      router.replace(`/search?${params.toString()}`);
+      // Optional: Reset state if navigation fails
+      router.events.on('routeChangeComplete', () => setIsNavigating(false));
+      router.events.on('routeChangeError', () => setIsNavigating(false));
       setFirstPage()
     } else {
       params.delete('query');
@@ -102,7 +104,6 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
       };
     }
   }, []);
-  console.log(isPending)
 
   return (
     <>
@@ -211,7 +212,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
           </>
         )}
       </div>
-      {isPending && <LinearProgress />}
+      {isNavigating && <LinearProgress />}
     </>
   );
 };
