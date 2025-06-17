@@ -22,7 +22,10 @@ export function getPusherClient(): PusherClient {
       {
         cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
         forceTLS: true,
-        enabledTransports: ['ws', 'wss'],
+        enabledTransports: ['ws'],
+        disabledTransports: ['xhr_streaming', 'xhr_polling', 'sockjs'],
+        wsHost: `ws-${process.env.NEXT_PUBLIC_PUSHER_CLUSTER!}.pusher.com`,
+        wsPort: 443,
       }
     );
   }
