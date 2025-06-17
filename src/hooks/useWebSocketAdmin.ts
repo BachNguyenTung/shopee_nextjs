@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { pusherClient } from '@/configs/pusher';
+import { getPusherClient } from '@/configs/pusher';
 
 export const useWebSocketAdmin = (productId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -33,8 +33,9 @@ export const useWebSocketAdmin = (productId?: string) => {
 
   // Initialize connection
   useEffect(() => {
+    const client = getPusherClient();
+
     const setupPusherConnection = () => {
-      // If no productId and we haven't exceeded max retries, retry after a delay
       if (!productId) {
         if (connectionAttempts.current < 3) {
           connectionAttempts.current++;
@@ -49,19 +50,19 @@ export const useWebSocketAdmin = (productId?: string) => {
         // Cleanup existing connection
         if (channelRef.current) {
           channelRef.current.unbind_all();
-          pusherClient.unsubscribe('price-updates');
+          client.unsubscribe('price-updates');
         }
 
         // Create new connection
-        channelRef.current = pusherClient.subscribe('price-updates');
+        channelRef.current = client.subscribe('price-updates');
 
         // Connection status handlers
-        pusherClient.connection.bind('connected', () => {
+        client.connection.bind('connected', () => {
           console.log('Admin Pusher connected');
           setIsConnected(true);
         });
 
-        pusherClient.connection.bind('disconnected', () => {
+        client.connection.bind('disconnected', () => {
           console.log('Admin Pusher disconnected');
           setIsConnected(false);
         });
@@ -72,8 +73,8 @@ export const useWebSocketAdmin = (productId?: string) => {
         });
 
         // Connect if not already connected
-        if (pusherClient.connection.state !== 'connected') {
-          pusherClient.connect();
+        if (client.connection.state !== 'connected') {
+          client.connect();
         }
       } catch (error) {
         console.error('Admin Pusher connection error:', error);
@@ -87,9 +88,14 @@ export const useWebSocketAdmin = (productId?: string) => {
     return () => {
       if (channelRef.current) {
         channelRef.current.unbind_all();
-        pusherClient.unsubscribe('price-updates');
+        client.unsubscribe('price-updates');
       }
-      pusherClient.connection.unbind_all();
+
+      // Clean up all Pusher connection bindings
+      client.connection.unbind('connected');
+      client.connection.unbind('disconnected');
+      client.connection.unbind_all();
+
       setIsConnected(false);
     };
   }, [productId]);

@@ -10,10 +10,25 @@ export const pusher = new Pusher({
   useTLS: true,
 });
 
-// Client-side Pusher instance
-export const pusherClient = new PusherClient(
-  process.env.NEXT_PUBLIC_PUSHER_KEY!,
-  {
-    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+let pusherClient: PusherClient | null = null;
+
+// Client-side Pusher instance (only initialized in browser)
+export function getPusherClient(): PusherClient {
+  if (typeof window === 'undefined') return null as any;
+
+  if (!pusherClient) {
+    pusherClient = new PusherClient(
+      process.env.NEXT_PUBLIC_PUSHER_KEY!,
+      {
+        cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+        forceTLS: true,
+        enabledTransports: ['ws', 'wss'],
+      }
+    );
   }
-);
+
+  return pusherClient;
+}
+
+// Helper to check if we're in a browser environment
+export const isBrowser = typeof window !== 'undefined';
