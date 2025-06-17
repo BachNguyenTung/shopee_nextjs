@@ -92,6 +92,13 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     2000 // Reduced debounce time
   );
 
+  // Cleanup debounced updates when component unmounts
+  useEffect(() => {
+    return () => {
+      cancelUpdate?.();
+    };
+  }, [cancelUpdate]);
+
   useEffect(() => {
     setDomLoaded(true);
   }, []);
