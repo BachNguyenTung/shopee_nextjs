@@ -39,9 +39,14 @@ function DetailContainer() {
   const [lookupShipPrice, setLookupShipPrice] = useState([]);
 
   // Initialize WebSocket connection for real-time price updates
-  useWebSocket(id?.toString());
+  const { isConnected } = useWebSocket(id?.toString());
 
-  // Rest of your existing code...
+  // For debugging connection status in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('WebSocket connected:', isConnected);
+    }
+  }, [isConnected]);
   const item = useMemo(() => {
     if (!fetchedItem) return null;
     return {

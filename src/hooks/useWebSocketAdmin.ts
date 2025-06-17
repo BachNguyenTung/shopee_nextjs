@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { pusherClient } from '@/configs/pusher';
 
-export const useWebSocketAdmin = (productId: string) => {
+export const useWebSocketAdmin = (productId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
   const channelRef = useRef<any>(null);
+  const connectionAttempts = useRef(0);
 
   // Function to trigger price updates
   const updatePrice = useCallback(async (newPrice: number) => {
@@ -32,9 +33,18 @@ export const useWebSocketAdmin = (productId: string) => {
 
   // Initialize connection
   useEffect(() => {
-    if (!productId) return;
-
     const setupPusherConnection = () => {
+      // If no productId and we haven't exceeded max retries, retry after a delay
+      if (!productId) {
+        if (connectionAttempts.current < 3) {
+          connectionAttempts.current++;
+          const retryDelay = Math.min(1000 * Math.pow(2, connectionAttempts.current), 5000);
+          console.log(`Admin: Retrying connection in ${retryDelay}ms (attempt ${connectionAttempts.current})`);
+          setTimeout(setupPusherConnection, retryDelay);
+        }
+        return;
+      }
+
       try {
         // Cleanup existing connection
         if (channelRef.current) {

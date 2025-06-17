@@ -2,16 +2,26 @@ import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { pusherClient } from '@/configs/pusher';
 
-export const useWebSocket = (productId: string) => {
+export const useWebSocket = (productId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
   const channelRef = useRef<any>(null);
+  const connectionAttempts = useRef(0);
   const queryClient = useQueryClient();
 
   // Initialize connection immediately
   useEffect(() => {
-    if (!productId) return;
-
     const setupPusherConnection = () => {
+      // If no productId and we haven't exceeded max retries, retry after a delay
+      if (!productId) {
+        if (connectionAttempts.current < 3) {
+          connectionAttempts.current++;
+          const retryDelay = Math.min(1000 * Math.pow(2, connectionAttempts.current), 5000);
+          console.log(`Retrying connection in ${retryDelay}ms (attempt ${connectionAttempts.current})`);
+          setTimeout(setupPusherConnection, retryDelay);
+        }
+        return;
+      }
+
       try {
         // Ensure previous connection is cleaned up
         if (channelRef.current) {
