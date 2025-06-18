@@ -12,7 +12,7 @@ const useSearchHistory = (searchInput) => {
         return item
           .trim()
           .toLowerCase()
-          .includes(searchInput.trim().toString().toLowerCase());
+          .includes(searchInput?.trim().toString().toLowerCase());
       }),
     [searchHistory, searchInput]
   );
