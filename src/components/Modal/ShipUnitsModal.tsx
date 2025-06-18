@@ -71,7 +71,7 @@ export const ShipUnitsModal: React.FC<Props> & ShipUnitsModalInterface = ({
   return (
     <BaseModal
       isOpen={isShipUnits}
-      handleClose={toggleShipUnits}
+      handleClose={handleBack}
       header={<div className="cart-product__modal-header">
           <span className="cart-product__shipunit-label">
             Chọn đơn vị vận chuyển
