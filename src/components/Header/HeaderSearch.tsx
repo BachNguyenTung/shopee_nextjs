@@ -17,9 +17,7 @@ interface Props {
 }
 
 const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpointMatches }) => {
-  const [searchInput, setSearchInput] = useState<string>('')
-  const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
-    useSearchHistory(searchInput);
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [isHistory, setIsHistory] = useState(false);
   const searchParams = useSearchParams();
@@ -27,10 +25,8 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { setPageIndex } = usePagination({})
   const [isNavigating, setIsNavigating] = useState(false);
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const text = event.target.value.trim();
-    setSearchInput(text);
-  };
+  const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
+    useSearchHistory(inputRef.current?.value);
 
   const setFirstPage = () => {
     setPageIndex(1); // Reset to first page when search changes
@@ -39,7 +35,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   const replaceUrlWithSearchText = (text: string) => {
     const params = new URLSearchParams(searchParams);
     if (text) {
-      params.set('query', text);
+      params.set('query', text.trim());
       setIsNavigating(true);
       router.replace(`/search?${params.toString()}`);
       // Optional: Reset state if navigation fails
@@ -65,8 +61,8 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   };
 
   const handleSearchIconClick = () => {
-    addToSearchHistory(searchInput);
-    replaceUrlWithSearchText(searchInput);
+    addToSearchHistory(inputRef.current?.value);
+    replaceUrlWithSearchText(inputRef.current?.value || '');
     setIsHistory(false);
   };
 
@@ -139,7 +135,6 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
               <div className="header__search-wrapper">
                 <input
                   type="text"
-                  onChange={handleChange}
                   onClick={handleInputClick}
                   // onBlur={handleSearchBlur}
                   onKeyUp={inputOnKeyUp}
