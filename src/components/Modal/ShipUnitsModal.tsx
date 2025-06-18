@@ -1,5 +1,5 @@
-import React, {useRef} from "react";
-import {BaseModal, BaseModalProps} from "@/components/base";
+import React, { useRef } from "react";
+import { BaseModal, BaseModalProps } from "@/components/base";
 
 interface Props extends BaseModalProps {
   shipChecked?: any
@@ -37,7 +37,7 @@ export const ShipUnitsModal: React.FC<Props> & ShipUnitsModalInterface = ({
     //setCheckedByShipUnit
     let checked: any[] = [];
     shipUnitList.forEach((item: any) => {
-      checked[item.id] = item.id === shipUnit.id;
+      checked[item.id] = item.id === shipUnit?.id ?? '';
     });
     setShipChecked(checked);
   };
@@ -85,6 +85,7 @@ export const ShipUnitsModal: React.FC<Props> & ShipUnitsModalInterface = ({
             <li className="cart-product__shipunit-item">
               <input
                 ref={inputRef}
+                id={`shipunit-${item.id}`}
                 name={item.name}
                 type="checkbox"
                 value={item}
@@ -92,7 +93,7 @@ export const ShipUnitsModal: React.FC<Props> & ShipUnitsModalInterface = ({
                 onChange={(e) => handleShipUnitChange(item, e)}
                 className="cart-product__shipunit-checkbox"
               />
-              <label className="cart-product__shipunit-name">
+              <label htmlFor={`shipunit-${item.id}`} className="cart-product__shipunit-name">
                 {item.name}
               </label>
               <span className="cart-product__shipunit-price">
