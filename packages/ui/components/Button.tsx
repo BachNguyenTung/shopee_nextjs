@@ -5,7 +5,8 @@ import { cn } from "@shoppe_nextjs/utils/utils";
 
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+  asChild?: boolean;
+  isLoading?: boolean;
 }
 
 const buttonVariants = cva(
@@ -30,12 +31,13 @@ const buttonVariants = cva(
   }
 )
 
-export default function Button({ asChild = false, className, size, variant, ...props }: ButtonProps) {
+export default function Button({ asChild = false, className, size, variant, isLoading, ...props }: ButtonProps) {
   const Comp = asChild ? Slot : "button"
 
   return (
     <Comp
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={isLoading}
       {...props}
     />
   )

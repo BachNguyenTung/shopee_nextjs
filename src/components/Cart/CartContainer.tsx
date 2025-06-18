@@ -1,4 +1,3 @@
-'use client'
 import React, { useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import Grid2 from "@mui/material/Unstable_Grid2";
@@ -26,6 +25,7 @@ import dynamic from "next/dynamic";
 import { formatValidationErrors, validateCart } from "@/services/validateCart";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { CartProduct } from "@/types/types";
+import { Button } from "@shoppe_nextjs/ui";
 
 const PopupModal = dynamic(() => import('@/components/Modal/PopupModal'), { ssr: false })
 
@@ -45,7 +45,7 @@ interface DebounceArgs {
 }
 
 function CartContainer({ isCartPage }: Partial<Props>) {
-  const {voucher} = useAtomValue(voucherStoreAtom)
+  const { voucher } = useAtomValue(voucherStoreAtom)
   const router = useRouter();
   const searchParams = useSearchParams()
   const { user } = useUserContext();
@@ -57,7 +57,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const cartProducts = useSelector((state: RootState) => state.cart.products);
   const [addCartToFireStore] = useAddCartToFireStoreMutation();
   const dispatch = useDispatch();
-  const {checkoutDispatch} = useCheckoutContext();
+  const { checkoutDispatch } = useCheckoutContext();
   const [variation, setVariation] = useState<string>("");
   const [isVariationChoose, setIsVariationChoose] = useState<boolean>(false);
   const [deleteID, setDeleteID] = useState<string>('');
@@ -181,7 +181,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
         return _item;
       }) || selectedProduct.map((item: any) => {
         // Fallback to original items if validation didn't return validatedItems
-        const _item = {...item}
+        const _item = { ...item }
         delete _item.similarDisPlay
         delete _item.variationDisPlay
         return _item;
@@ -324,7 +324,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       setSelectedIdVariation(newCheckedId);
       return;
     }
-    setSelectedIdVariation([...selectedIdVariation, {id: item.id, variation: item.variation},]);
+    setSelectedIdVariation([...selectedIdVariation, { id: item.id, variation: item.variation },]);
   };
 
   const isCheck = (item: any) => {
@@ -342,7 +342,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       setSelectedIdVariation([]);
     } else {
       const newCheckedId = cartProducts.map((e: any) => {
-        return {id: e.id, variation: e.variation};
+        return { id: e.id, variation: e.variation };
       });
       setSelectedIdVariation(newCheckedId);
     }
@@ -442,7 +442,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
                     changeAmountCartItem={changeAmountCartItem} handleVariationBack={handleVariationBack}
                     handleVariationClick={handleVariationClick} handlePopup={handlePopup} handleCheck={handleCheck}
                     handleDelete={handleDelete} handleVariationApply={handleVariationApply}
-                    incrCartItem={incrCartItem} isCheck={isCheck} isIDVariationExist={isIDVariationExist}/>))}
+                    incrCartItem={incrCartItem} isCheck={isCheck} isIDVariationExist={isIDVariationExist} />))}
         <div className="cart-product__footer">
           <div className="cart-product__anonymous-shopee"></div>
           <div className="cart-product__shopee-wrapper">
@@ -506,7 +506,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
                     Shopee Voucher
                   </span>
             </div>
-            <CartVoucher handleVoucherModal={handleVoucherModal} isVoucherShowing={isVoucherShowing}/>
+            <CartVoucher handleVoucherModal={handleVoucherModal} isVoucherShowing={isVoucherShowing} />
           </div>
           <div className="cart-product__checkout-wrapper">
             <input
@@ -561,18 +561,19 @@ function CartContainer({ isCartPage }: Partial<Props>) {
                     </span>
               </div>
             </div>
-            <button
+            <Button
               onClick={handleCheckout}
               className="btn cart-product__checkout-btn"
+              isLoading={isLoading}
             >
               Mua hàng
-            </button>
+            </Button>
           </div>
         </div>
       </Grid2>
     </Grid2>)}
     {cartProducts.length === 0 && !cartItemsLoading && (<div className="grid cart-empty">
-      <img src={'/img/no-cart.png'} alt="nocart-img" className="cart-empty__img"/>
+      <img src={'/img/no-cart.png'} alt="nocart-img" className="cart-empty__img" />
       <label className="cart-empty__label">
         Giỏ hàng của bạn còn trống
       </label>
@@ -599,7 +600,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       handleDeleteSelectionTrue={handleDeleteSelectionTrue}
       isDeleteSelected={isDeleteSelected}
       setIsDeleteSelected={setIsDeleteSelected}
-      //!TODO: using validationErrors
+      validationErrors={validationErrors}
     />
   </div>);
 }

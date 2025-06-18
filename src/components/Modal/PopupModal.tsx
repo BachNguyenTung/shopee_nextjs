@@ -1,4 +1,3 @@
-'use client'
 import React, { useEffect, useState } from "react";
 import { BaseModal } from "@/components/base";
 import { useRouter } from "next/navigation";
@@ -33,6 +32,7 @@ interface Props {
   shipInfos?: any[],
   togglePopup: () => void,
   isPopupShowing: boolean,
+  validationErrors?: string[],
 }
 
 export default function PopupModal(props: Props) {
@@ -78,6 +78,7 @@ export default function PopupModal(props: Props) {
     paymentMethod = '',
     isCardPayment = false,
     succeeded = false,
+    validationErrors = [],
   }
     = props;
 
@@ -131,7 +132,11 @@ export default function PopupModal(props: Props) {
         title = "Bạn vẫn chưa chọn loại hay kích cỡ sản phẩm để mua.";
       }
 
-      if (isCheckoutPage && shipInfos?.length <= 0) {
+      if (validationErrors?.length > 0) {
+        isBackBtnHidden = true;
+        console.log(validationErrors)
+        title = validationErrors.join('\n');
+      } else if (isCheckoutPage && shipInfos?.length <= 0) {
         isBackBtnHidden = true;
         title = "Bạn vẫn chưa nhập địa chỉ nhận hàng.";
       } else if (isCheckoutPage && !shipUnit) {

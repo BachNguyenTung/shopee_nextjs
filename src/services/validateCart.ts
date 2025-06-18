@@ -55,13 +55,13 @@ export function formatValidationErrors(errors: ValidationError[]): string[] {
   return errors.map(error => {
     if (error.name) {
       if (error.message === 'Price has changed') {
-        return `Price for "${error.name}" has changed from $${error.oldPrice} to $${error.newPrice}`;
+        return `Giá "${error.name}" đã thay đổi thành "₫${error.newPrice}". Vui lòng xoá "${error.name} "để tiếp tục mua hàng`;
       }
       if (error.message === 'Not enough stock') {
-        return `Only ${error.available} units of "${error.name}" available (you requested ${error.requested})`;
+        return `(${error.available} sản phẩm "${error.name}" trong kho. Vui lòng xoá "${error.name}" để tiếp tục mua hàng`;
       }
       if (error.message === 'Selected variation is no longer available') {
-        return `The variation "${error.variation}" for "${error.name}" is no longer available`;
+        return `Phân loại "${error.variation}" cho "${error.name}" đã hết. Vui lòng xoá "${error.name}" để tiếp tục mua hàng`;
       }
       return `${error.name}: ${error.message}`;
     }
