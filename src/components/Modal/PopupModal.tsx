@@ -206,18 +206,6 @@ export default function PopupModal(props: Props) {
   // Ok button
   const handleApplyClick = () => {
     togglePopup();
-    if (isCheckoutPage && shipInfos?.length <= 0) {
-      window.scrollTo({top: 0, left: 0, behavior: "smooth"});
-    }
-    if (isCheckoutPage && !shipUnit) {
-      window.scrollTo({top: 300, left: 0, behavior: "smooth"});
-    }
-    if (isCheckoutPage && defaultPaymentMethodID.length === 0) {
-      window.scrollTo({top: 700, left: 0, behavior: "smooth"});
-    }
-    if (isCheckoutPage && paymentMethod?.length === 0) {
-      window.scrollTo({top: 600, left: 0, behavior: "smooth"});
-    }
     if (isCheckoutPage && succeeded) {
       router.push("/account/purchase");
     }
