@@ -156,12 +156,10 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       // Show loading state
       setIsLoading(true);
 
-      console.log("Validating cart items:", selectedProduct);
 
       // Validate cart items api before proceeding
       const validationResult = await validateCart(selectedProduct);
 
-      console.log("Validation result:", validationResult);
 
       if (!validationResult.isValid) {
         // Handle validation errors

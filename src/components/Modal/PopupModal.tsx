@@ -134,7 +134,6 @@ export default function PopupModal(props: Props) {
 
       if (validationErrors?.length > 0) {
         isBackBtnHidden = true;
-        console.log(validationErrors)
         title = validationErrors.join('\n');
       } else if (isCheckoutPage && shipInfos?.length <= 0) {
         isBackBtnHidden = true;
