@@ -1,36 +1,90 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { pusherClient } from '@/configs/pusher';
+import { getPusherClient } from '@/configs/pusher';
 
-export const useWebSocket = (productId: string) => {
+export const useWebSocket = (productId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
+  const channelRef = useRef<any>(null);
+  const connectionAttempts = useRef(0);
   const queryClient = useQueryClient();
 
+  // Initialize connection immediately
   useEffect(() => {
-    // Subscribe to the price-updates channel
-    const channel = pusherClient.subscribe('price-updates');
-    setIsConnected(true);
+    const client = getPusherClient();
 
-    // Listen for price update events
-    const handlePriceUpdate = (data: { productId: string; newPrice: number }) => {
-      if (data.productId === productId) {
-        queryClient.setQueryData(['product', productId], (oldData: any) => ({
-          ...oldData,
-          price: data.newPrice,
-        }));
+    const setupPusherConnection = () => {
+      if (!productId) {
+        if (connectionAttempts.current < 3) {
+          connectionAttempts.current++;
+          const retryDelay = Math.min(1000 * Math.pow(2, connectionAttempts.current), 5000);
+          console.log(`Retrying connection in ${retryDelay}ms (attempt ${connectionAttempts.current})`);
+          setTimeout(setupPusherConnection, retryDelay);
+        }
+        return;
+      }
+
+      try {
+        // Ensure previous connection is cleaned up
+        if (channelRef.current) {
+          channelRef.current.unbind_all();
+          client.unsubscribe('price-updates');
+        }
+
+        // Create new connection
+        channelRef.current = client.subscribe('price-updates');
+
+        // Connection status handlers
+        client.connection.bind('connected', () => {
+          console.log('Pusher connected');
+          setIsConnected(true);
+        });
+
+        client.connection.bind('disconnected', () => {
+          console.log('Pusher disconnected');
+          setIsConnected(false);
+        });
+
+        // Price update handler
+        const handlePriceUpdate = (data: { productId: string; newPrice: number }) => {
+          if (data.productId === productId) {
+            queryClient.setQueryData(['product', productId], (oldData: any) => ({
+              ...oldData,
+              price: data.newPrice,
+            }));
+          }
+        };
+
+        channelRef.current.bind('product-price-updated', handlePriceUpdate);
+
+        // Connect if not already connected
+        if (client.connection.state !== 'connected') {
+          client.connect();
+        }
+      } catch (error) {
+        console.error('Pusher connection error:', error);
+        setIsConnected(false);
       }
     };
 
-    channel.bind('product-price-updated', handlePriceUpdate);
+    setupPusherConnection();
 
+    // Cleanup function
     return () => {
-      channel.unbind('product-price-updated', handlePriceUpdate);
-      pusherClient.unsubscribe('price-updates');
+      if (channelRef.current) {
+        channelRef.current.unbind_all();
+        client.unsubscribe('price-updates');
+      }
+
+      // Clean up all Pusher connection bindings
+      client.connection.unbind('connected');
+      client.connection.unbind('disconnected');
+      client.connection.unbind_all();
+
       setIsConnected(false);
     };
   }, [productId, queryClient]);
 
   return {
-    isConnected,
+    isConnected
   };
 };
