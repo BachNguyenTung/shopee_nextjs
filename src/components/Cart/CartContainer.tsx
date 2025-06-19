@@ -26,6 +26,7 @@ import { formatValidationErrors, validateCart } from "@/services/validateCart";
 import { useDebounceCallback } from "@/hooks/useDebounceCallback";
 import { CartProduct } from "@/types/types";
 import { Button } from "@shoppe_nextjs/ui";
+import { NoCartImage } from "@/components/Images/OptimizedImages";
 
 const PopupModal = dynamic(() => import('@/components/Modal/PopupModal'), { ssr: false })
 
@@ -571,7 +572,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       </Grid2>
     </Grid2>)}
     {cartProducts.length === 0 && !cartItemsLoading && (<div className="grid cart-empty">
-      <img src={'/img/no-cart.png'} alt="nocart-img" className="cart-empty__img" />
+      <NoCartImage className="cart-empty__img" />
       <label className="cart-empty__label">
         Giỏ hàng của bạn còn trống
       </label>

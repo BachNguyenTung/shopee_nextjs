@@ -4,7 +4,7 @@ import PopupModal from "../Modal/PopupModal";
 import CardInfoModal from "../Modal/CardInfoModal";
 import usePaymentMethodList from "../../hooks/usePaymentMethodList";
 import useDefaultPaymentMethodID from "../../hooks/useDefaultPaymentMethodID";
-import {getCardImgByBrand} from "@/services/getCardImgByBrand";
+import {getOptimizedCardByBrand} from "@/services/getOptimizedIcons";
 import {detachPaymentMethodID} from "@/services/detachPaymentMethodID";
 import {useUserContext} from "@/context/UserProvider";
 import getCustomerID from "../../services/getCustomerID";
@@ -97,12 +97,10 @@ const AccountPayment = () => {
         ) : (
           paymentMethodList.map((item, index) => (
             <div key={index} className="payment-profile__payment-content">
-              <img
-                src={getCardImgByBrand(item.card.brand)}
-                alt="card-brand"
-                className="payment-profile__card-logo"
-                loading={"lazy"}
-              />
+              {(() => {
+                const CardComponent = getOptimizedCardByBrand(item.card.brand);
+                return <CardComponent className="payment-profile__card-logo" />;
+              })()}
               <div className="payment-profile__card-name hidden md:block">
                 {item.card.brand}
               </div>

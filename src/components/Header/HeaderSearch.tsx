@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import useSearchHistory from "@/hooks/useSearchHistory";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 import { useRouter } from "next/router";
+import { ShoppeLogo } from "@/components/Images/OptimizedImages";
 
 interface Props {
   isCartPage: boolean,
@@ -117,7 +118,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
               "header__logo-link--notHome": isCartPage || isCheckoutPage,
             })}
           >
-            <img src={"/img/shoppe-logo.png"} alt="shoppe-logo" />
+            <ShoppeLogo priority />
           </Link>
           {isCartPage && <div className="header__page-name">Giỏ hàng</div>}
           {isCheckoutPage && <div className="header__page-name">Thanh Toán</div>}
