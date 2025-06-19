@@ -5,6 +5,7 @@ import { fetchProducts } from "@/services/fetchProducts";
 import { NextPageWithLayout } from "@/pages/_app";
 import Search from "@/components/Search/Search";
 import { ClipLoading } from "@/components/ClipLoading";
+import { GetServerSidePropsContext } from "next";
 
 const Page: NextPageWithLayout = () => {
   return (
@@ -18,13 +19,14 @@ Page.getLayout = function (page: ReactElement) {
 }
 export default Page;
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   // Fetch data from external API
   if (!context.query.query) {
     return {
       notFound: true,
     }
   }
+
   const queryClient = new QueryClient();
   try {
     await queryClient.prefetchQuery({
@@ -34,6 +36,14 @@ export async function getServerSideProps(context: any) {
   } catch (error) {
     console.error('Error prefetching products:', error);
     return 'Error prefetching products:' + error
+  }
+
+  // Set balanced caching headers for Vercel Edge Network
+  if (context.res) {
+    context.res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    context.res.setHeader('CDN-Cache-Control', 'max-age=60');
+    context.res.setHeader('Vercel-CDN-Cache-Control', 'max-age=60');
+    context.res.setHeader('Vary', 'Accept-Encoding, Accept-Language');
   }
 
   // Pass data to the page via props

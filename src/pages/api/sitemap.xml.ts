@@ -51,9 +51,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Generate sitemap XML
     const sitemap = generateSiteMap(products)
 
-    // Set appropriate headers
+    // Set aggressive caching headers for cost optimization
     res.setHeader('Content-Type', 'text/xml')
-    res.setHeader('Cache-Control', 'public, s-maxage=1200, stale-while-revalidate=600')
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=7200')
+    res.setHeader('CDN-Cache-Control', 'max-age=3600')
+    res.setHeader('Vercel-CDN-Cache-Control', 'max-age=3600')
 
     // Send the XML to the browser
     res.write(sitemap)
