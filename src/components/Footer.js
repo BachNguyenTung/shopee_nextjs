@@ -1,5 +1,6 @@
 import React from "react";
 import Grid from "./Grid";
+import {AppGalleryShopee, AppShopee, GooglePlayShopee, QRCodeHome} from "@/components/Images/OptimizedImages";
 
 export default function Footer() {
   return (
@@ -203,27 +204,11 @@ export default function Footer() {
             <div>
               <h3 className="footer__heading">TẢI ỨNG DỤNG SHOPEE NGAY THÔI</h3>
               <a href="# " className="footer__app-wrapper">
-                <img
-                  src={'/img/qr-code-home.png'}
-                  alt="qr-code"
-                  className="footer__qr-img"
-                />
+                <QRCodeHome className="footer__qr-img" />
                 <div className="footer__app">
-                  <img
-                    src={'/img/app-shopee.png'}
-                    alt="qr-code"
-                    className="footer__app-img"
-                  />
-                  <img
-                    src={'/img/gg-shopee.png'}
-                    alt="qr-code"
-                    className="footer__app-img"
-                  />
-                  <img
-                    src={'/img/app-gal-shopee.png'}
-                    alt="qr-code"
-                    className="footer__app-img"
-                  />
+                  <AppShopee className="footer__app-img" />
+                  <GooglePlayShopee className="footer__app-img" />
+                  <AppGalleryShopee className="footer__app-img" />
                 </div>
               </a>
             </div>

@@ -10,7 +10,7 @@ import useGetShipInfos from "../../hooks/useGetShipInfos";
 import usePaymentMethodList from "../../hooks/usePaymentMethodList";
 import useDefaultPaymentMethodID from "../../hooks/useDefaultPaymentMethodID";
 import useGetUserByObserver from "../../hooks/useGetUserByObserver";
-import { getCardImgByBrand } from "@/services/getCardImgByBrand";
+import { getOptimizedCardByBrand } from "@/services/getOptimizedIcons";
 import { getItemsPriceTotal } from "@/services/getItemsPriceTotal";
 import { getVoucherDiscount } from "@/services/getVoucherDiscount";
 import useNavigateAndRefreshBlocker from "../../hooks/useNavigateAndRefreshBlocker";
@@ -816,12 +816,10 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
                           className="checkout-product__radio-card"
                           disabled={updateDefaultPaymentMethodIDLoading}
                         />
-                        <img
-                          src={getCardImgByBrand(item.card.brand)} //if cardInfo.number => img
-                          alt="card"
-                          className="checkout-product__card-img"
-                          loading={"lazy"}
-                        ></img>
+                        {(() => {
+                          const CardComponent = getOptimizedCardByBrand(item.card.brand);
+                          return <CardComponent className="checkout-product__card-img" />;
+                        })()}
                         <span className="checkout-product__card-type">
                           {item.card.brand}
                         </span>
