@@ -12,7 +12,7 @@ import {addProducts, updateProducts} from "@/redux/cartSlice";
 import withContainer from "../withContainer";
 import {useRouter} from "next/router";
 import Link from "next/link";
-import {iconImg} from "@/services/getIcon";
+import {ProtectIcon} from "@/components/Images/OptimizedImages";
 import {DETAIL} from "@/constants/detail";
 import {bestSelling} from "@/configs/product";
 import {useWaitProductsQuery} from "@/hooks/useWaitProductsQuery";
@@ -545,12 +545,7 @@ function DetailContainer() {
             currentPrice={item?.price ?? 0}
           />
           <div className="detail-product__protect-wrapper">
-            <img
-              src={iconImg.protectIcon}
-              alt="protect"
-              className="detail-product__protect-icon"
-              loading={"lazy"}
-            />
+            <ProtectIcon className="detail-product__protect-icon" />
             <div className="detail-product__protect-label">
               Shopee Đảm Bảo
             </div>

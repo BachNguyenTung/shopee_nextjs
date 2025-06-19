@@ -8,8 +8,8 @@ import {useSelector} from "react-redux";
 import {useFetchCartQuery} from "@/services/cartApi";
 import {ShoppingCart} from "@mui/icons-material";
 import {usePathname, useRouter} from "next/navigation";
-import {iconImg} from "@/services/getIcon";
 import Link from "next/link";
+import {NoCartImage} from "@/components/Images/OptimizedImages";
 
 const HeaderCart = () => {
   const router = useRouter()
@@ -76,11 +76,7 @@ const HeaderCart = () => {
                 ))}
               </div>
             </div>
-            <img
-              src={iconImg.noCartIcon}
-              className="header__cart-empty-img"
-              alt="no-cart"
-            />
+            <NoCartImage className="header__cart-empty-img" />
             <div className="header__cart-empty-info">Chưa có sản phẩm</div>
             {/*<Link to="/cart" className="btn header__cart-button">*/}
             {/*  Xem giỏ hàng*/}

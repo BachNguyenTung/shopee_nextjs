@@ -5,7 +5,7 @@ import { useUserContext } from "@/context/UserProvider";
 import HeaderSearch from "./HeaderSearch";
 import classNames from "classnames";
 import Link from "next/link";
-import { iconImg } from "@/services/getIcon";
+import { AppGalleryShopee, AppShopee, GooglePlayShopee, QRCodeHome } from "@/components/Images/OptimizedImages";
 import { usePathname, useRouter } from "next/navigation";
 import MenuIcon from '@mui/icons-material/Menu';
 import { anchorElAtom } from "@/store/anchorEl.atom";
@@ -98,27 +98,11 @@ const Header = ({
                     Tải ứng dụng
                   </a>
                   <div className="header__nav-qr">
-                    <img
-                      src={iconImg.qrCodeNavImg}
-                      alt="qr-code"
-                      className="header__nav-qr-img"
-                    />
+                    <QRCodeHome className="header__nav-qr-img" />
                     <Link href="" className="header__nav-app">
-                      <img
-                        src={iconImg.appShopeeImg}
-                        alt="qr-code"
-                        className="header__nav-app-img"
-                      />
-                      <img
-                        src={iconImg.ggShopeeImg}
-                        alt="qr-code"
-                        className="header__nav-app-img"
-                      />
-                      <img
-                        src={iconImg.appGalShopeeImg}
-                        alt="qr-code"
-                        className="header__nav-app-img header__nav-app-img--smaller"
-                      />
+                      <AppShopee className="header__nav-app-img" />
+                      <GooglePlayShopee className="header__nav-app-img" />
+                      <AppGalleryShopee className="header__nav-app-img header__nav-app-img--smaller" />
                     </Link>
                   </div>
                 </li>
