@@ -39,7 +39,7 @@ export const NoCartImage: React.FC<{
   width?: number;
   height?: number;
   className?: string;
-}> = ({ width = 200, height = 200, className = '' }) => (
+}> = ({ width = 200, height = 160, className = '' }) => (
   <Image
     src={noCart}
     alt="Empty cart"
