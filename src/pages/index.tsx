@@ -1,4 +1,3 @@
-import DOMPurify from 'dompurify';
 import React, { ReactElement, Suspense } from "react";
 import Product from '@/components/Product'
 import { NextSeo } from 'next-seo';
@@ -80,7 +79,7 @@ const Home: NextPageWithLayout = () => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(JSON.stringify({
+          __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "Shopee",
@@ -97,7 +96,7 @@ const Home: NextPageWithLayout = () => {
               "https://www.facebook.com/Shopee",
               "https://twitter.com/ShopeePH"
             ]
-          }))
+          })
         }}
       />
     </>

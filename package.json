@@ -34,7 +34,6 @@
     "bootstrap-icons": "^1.4.1",
     "card-validator": "^8.1.1",
     "classnames": "^2.3.1",
-    "dompurify": "^3.2.6",
     "firebase": "9.17.1",
     "firebase-admin": "^13.4.0",
     "formik": "^2.2.9",
