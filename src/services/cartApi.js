@@ -1,8 +1,8 @@
 import {createApi, fakeBaseQuery} from "@reduxjs/toolkit/query/react";
 import {cartDocRef} from "@/db/dbRef";
 import {getDoc, setDoc, updateDoc} from "firebase/firestore";
-import {CART_SESSION_ID_LOCAL} from "@/configs/cart";
-import {getCartItemsFromSession, saveCartItemsToSession} from "@/redux/cartSlice";
+import {CART_PRODUCT_SESSION, CART_SESSION_ID_LOCAL} from "@/configs/cart";
+import {getCartItemsFromSession} from "@/redux/cartSlice";
 
 export const setCartSessionIdLocal = (sessionId) => localStorage.setItem(CART_SESSION_ID_LOCAL, sessionId);
 export const getCartSessionIdLocal = () => localStorage.getItem(CART_SESSION_ID_LOCAL) || null;
@@ -131,33 +131,37 @@ export const cartApi = createApi({
           const docRef = cartDocRef(uid);
           const snapshot = await getDoc(docRef);
           let userCart = [];
-          let userSessionId = ''
           if (snapshot.exists()) {
-            userCart = snapshot.data().basket;
-            userSessionId = snapshot.data().sessionId || '';
+            userCart = snapshot.data().basket || [];
           }
 
           const mergedCartMap = new Map();
+          // Add user's cart items to the map first
           userCart.forEach(item => mergedCartMap.set(`${item.id}-${item.variation}`, item));
+
+          // Then, merge guest cart items
           guestCart.forEach(guestItem => {
             const key = `${guestItem.id}-${guestItem.variation}`;
             const existingItem = mergedCartMap.get(key);
+
             if (existingItem) {
+              // If item exists, sum the amounts
               existingItem.amount += guestItem.amount;
             } else {
+              // If it's a new item, add it to the map
               const { similarDisPlay, variationDisPlay, ...rest } = guestItem;
-              mergedCartMap.set(key, rest);
+              mergedCartMap.set(key, { ...rest });
             }
           });
 
           const mergedCart = Array.from(mergedCartMap.values());
-          await setDoc(docRef, {
-            basket: mergedCart,
-            created: Date.now(),
-            sessionId: userSessionId || getCartSessionIdLocal()
-          });
-          setCartSessionIdLocal(userSessionId)
-          saveCartItemsToSession(mergedCart);
+
+          // Atomically update Firestore with the merged cart
+          await setDoc(docRef, { basket: mergedCart }, { merge: true });
+
+          // Crucially, clear the guest cart from session and local storage
+          sessionStorage.removeItem(CART_PRODUCT_SESSION);
+          localStorage.removeItem(CART_SESSION_ID_LOCAL);
 
           return { data: "ok" };
         } catch (error) {
