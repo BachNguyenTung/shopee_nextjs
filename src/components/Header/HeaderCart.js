@@ -17,14 +17,13 @@ const HeaderCart = () => {
   const [mergeAndClearGuestCart] = useMergeAndClearGuestCartMutation();
 
   const { isLoading: cartItemsLoading } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
-    refetchOnMountOrArgChange: true, // Refetch when component mounts or user changes
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true        // Refetch on network reconnection
   });
 
   useEffect(() => {
     if (userLoading || !user) return;
-    const guestCartExists = getCartItemsFromSession?.() !== null;
+    const guestCartExists = getCartItemsFromSession?.().length > 0;
     if (user && !userLoading && guestCartExists) {
       mergeAndClearGuestCart(user.uid);
     }
