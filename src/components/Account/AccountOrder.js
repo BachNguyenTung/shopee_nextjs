@@ -2,8 +2,8 @@ import React, {useCallback, useEffect, useState} from "react";
 // import { Link } from "react-router-dom";
 import {NumericFormat} from "react-number-format";
 import moment from "moment";
-import useGetOrderItems from "../../hooks/useGetOrderItems";
-import {useUserContext} from "../../context/UserProvider";
+import useGetOrderItems from "@/hooks/useGetOrderItems";
+import {useUserContext} from "@/context/UserProvider";
 import {ClipLoading} from "../ClipLoading";
 import Link from "next/link";
 import {useMediaQuery} from "@mui/material";
@@ -17,9 +17,13 @@ const AccountOrder = () => {
   const [searchOrderItems, setSearchOrderItems] = useState([]);
   const [filter, setFilter] = useState("all");
   const [searchOrderItemsFiltered, setSearchOrderItemsFiltered] = useState([]);
-  const { pageIndex } = usePagination({ items: searchOrderItemsFiltered, pageSize: orderPageSize });
+  const { pageIndex, setPageIndex } = usePagination({ items: searchOrderItemsFiltered, pageSize: orderPageSize });
   const currentOrderItems = [...searchOrderItemsFiltered].slice((pageIndex - 1) * orderPageSize, pageIndex * orderPageSize);
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
+
+  useEffect(() => {
+    setPageIndex(1)
+  }, []);
 
   const handleSearchInput = (e) => {
     const text = e.target.value;
