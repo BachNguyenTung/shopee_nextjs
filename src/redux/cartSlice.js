@@ -1,54 +1,35 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {cartApi} from "@/services/cartApi";
+import {CART_PRODUCT_SESSION, CART_SESSION_ID_LOCAL} from "@/configs/cart";
 
-const CART_STORAGE_KEY = "cartProduct";
-const saveCartItemsToStorage = (cartProduct) => {
-  const savedCartItems = cartProduct.map((item) => ({
+export const saveCartItemsToSession = (cartProduct) => {
+  const savedCartItems = cartProduct?.map((item) => ({
     ...item,
     similarDisPlay: undefined,
     variationDisPlay: undefined,
-  }));
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(savedCartItems));
-};
+  })) ?? [];
+  sessionStorage.setItem(CART_PRODUCT_SESSION, JSON.stringify(savedCartItems));
+}
 
-const getCartItemsFromStorage = () => {
-  if (typeof window === 'undefined') return []
-  let savedCartItems = localStorage.getItem(CART_STORAGE_KEY);
+export const getCartItemsFromSession = () => {
+  if (typeof window === 'undefined') return null
+  let savedCartItems = sessionStorage.getItem(CART_PRODUCT_SESSION);
   return savedCartItems ? JSON.parse(savedCartItems) : [];
 };
 
-const products = getCartItemsFromStorage()
-  ? getCartItemsFromStorage().map((item) => ({
-      ...item,
-      similarDisPlay: false,
-      variationDisPlay: false,
-    }))
+const products = getCartItemsFromSession()
+  ? getCartItemsFromSession().map((item) => ({
+    ...item,
+    similarDisPlay: false,
+    variationDisPlay: false,
+  }))
   : [];
 
 const initialState = {
   products,
 };
 
-// Create a store instance variable to use in the storage event listener
-let storeInstance = null;
 
-// Setup cross-tab synchronization if we're in the browser
-if (typeof window !== 'undefined') {
-  window.addEventListener('storage', (event) => {
-    // Only respond to changes in our cart storage key
-    if (event.key === CART_STORAGE_KEY && storeInstance) {
-      const newCartItems = JSON.parse(event.newValue || '[]');
-      // Format cart items with display properties
-      const formattedCartItems = newCartItems.map(item => ({
-        ...item,
-        similarDisPlay: false,
-        variationDisPlay: false,
-      }));
-      // Update the Redux store with the new cart from another tab
-      storeInstance.dispatch(updateFromOtherTab(formattedCartItems));
-    }
-  });
-}
 
 const cartSlice = createSlice({
   name: "cart",
@@ -56,29 +37,46 @@ const cartSlice = createSlice({
   reducers: {
     addProducts: (state, action) => {
       state.products.push(action.payload);
-      saveCartItemsToStorage(state.products);
+      // Only save to session storage for guest users
+      // For logged-in users, RTK Query will handle the persistence
+      saveCartItemsToSession(state.products);
+    },
+    addProductsAndSync: (state, action) => {
+      // This action is for logged-in users - it will be handled by middleware
+      // to trigger Firestore sync
+      state.products.push(action.payload);
     },
     updateProducts: (state, action) => {
       state.products = action.payload;
-      saveCartItemsToStorage(state.products);
+      // Only save to session storage for guest users
+      // For logged-in users, RTK Query will handle the persistence
     },
     resetCart: (state) => {
       state.products = [];
-      localStorage.removeItem(CART_STORAGE_KEY);
-    },
-    // New reducer to update cart from another tab
-    updateFromOtherTab: (state, action) => {
-      state.products = action.payload;
-      // Don't save to localStorage here to avoid infinite loop
+      sessionStorage.removeItem(CART_PRODUCT_SESSION);
+      localStorage.removeItem(CART_SESSION_ID_LOCAL);
     },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
       cartApi.endpoints.fetchCart.matchFulfilled,
       (state, action) => {
-        if (state.products.length === 0) {
-          state.products = action.payload;
-        }
+        // Always update the cart state with RTK Query data
+        state.products = action.payload;
+      }
+    );
+    builder.addMatcher(
+      cartApi.endpoints.addCartToFireStore.matchFulfilled,
+      (state, action) => {
+        // The cache has already been updated by the optimistic update
+        // This ensures the Redux store reflects the latest state
+      }
+    );
+    builder.addMatcher(
+      cartApi.endpoints.mergeAndClearGuestCart.matchFulfilled,
+      (state, action) => {
+        // After merging guest cart, the fetchCart query will be invalidated
+        // and will update the state with the merged cart
       }
     );
   },
@@ -89,11 +87,6 @@ export const {
   updateProducts,
   deleteProducts,
   resetCart,
-  updateFromOtherTab,
+  addProductsAndSync
 } = cartSlice.actions;
 export const cartReducer = cartSlice.reducer;
-
-// This function should be called when the store is created
-export const setStoreInstance = (store) => {
-  storeInstance = store;
-};

@@ -49,9 +49,8 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const { voucher } = useAtomValue(voucherStoreAtom)
   const router = useRouter();
   const searchParams = useSearchParams()
-  const { user } = useUserContext();
-  const { isLoading: cartItemsLoading } = useFetchCartQuery(user?.uid, {
-    refetchOnMountOrArgChange: true, // Refetch when component mounts or user changes
+  const { user, userLoading } = useUserContext();
+  const { isLoading: cartItemsLoading } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true        // Refetch on network reconnection
   });
@@ -79,8 +78,13 @@ function CartContainer({ isCartPage }: Partial<Props>) {
 
   // Helper function to update cart and sync with Firebase
   const updateCartAndSync = (updatedProducts: CartProduct[]) => {
-    dispatch(updateProducts(updatedProducts));
-    if (user?.uid && updatedProducts?.length >= 0) {
+    // For guest users, update session storage directly
+    if (!user?.uid) {
+      dispatch(updateProducts(updatedProducts));
+    } else {
+      // For logged-in users, let RTK Query handle the update
+      // The mutation will update the cache, which will update the Redux store via extraReducers
+      dispatch(updateProducts(updatedProducts));
       cancelUpdate?.();
       debounceAddCartToFireStore({ user, cartProducts: updatedProducts });
     }
@@ -284,7 +288,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
         }
         : item
     );
-    updateCartAndSync(newCartProducts);
+    dispatch(updateProducts(newCartProducts));
   };
 
   const changeCartItemsVariation = (oldVariation: string, id: string) => {

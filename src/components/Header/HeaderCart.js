@@ -1,26 +1,34 @@
-import React from "react";
+import React, {useEffect} from "react";
 import classNames from "classnames";
 // import { Link, useLocation, useNavigate } from "react-router-dom";
 import {NumericFormat} from "react-number-format";
 import {useMediaQuery} from "@mui/material";
 import {useUserContext} from "@/context/UserProvider";
 import {useSelector} from "react-redux";
-import {useFetchCartQuery} from "@/services/cartApi";
+import {useFetchCartQuery, useMergeAndClearGuestCartMutation} from "@/services/cartApi";
 import {ShoppingCart} from "@mui/icons-material";
-import {usePathname, useRouter} from "next/navigation";
 import Link from "next/link";
 import {NoCartImage} from "@/components/Images/OptimizedImages";
+import {getCartItemsFromSession} from "@/redux/cartSlice";
 
 const HeaderCart = () => {
-  const router = useRouter()
-  const pathname = usePathname();
-  const { user } = useUserContext();
+  const { user, userLoading } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
-  const { isLoading: cartItemsLoading } = useFetchCartQuery(user?.uid, {
-    refetchOnMountOrArgChange: true, // Refetch when component mounts or user changes
+  const [mergeAndClearGuestCart] = useMergeAndClearGuestCartMutation();
+
+  const { isLoading: cartItemsLoading } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true        // Refetch on network reconnection
   });
+
+  useEffect(() => {
+    if (userLoading || !user) return;
+    const guestCartExists = getCartItemsFromSession?.().length > 0;
+    if (user && !userLoading && guestCartExists) {
+      mergeAndClearGuestCart(user.uid);
+    }
+  }, [user, userLoading]);
+
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
   return (
     <div className="header__cart">
@@ -32,11 +40,9 @@ const HeaderCart = () => {
           <ShoppingCart className="header__cart-icon">
             {/* <!-- No cart: empty --> */}
           </ShoppingCart>
-          {user && (
-            <div className="header__cart-numb">
-              {!cartItemsLoading && cartProducts?.length}
-            </div>
-          )}
+          <div className="header__cart-numb">
+            {!cartItemsLoading && cartProducts?.length}
+          </div>
         </div>
         {!xsBreakpointMatches && user && (
           <div
