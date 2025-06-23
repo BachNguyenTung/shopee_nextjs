@@ -288,7 +288,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
         }
         : item
     );
-    updateCartAndSync(newCartProducts);
+    dispatch(updateProducts(newCartProducts));
   };
 
   const changeCartItemsVariation = (oldVariation: string, id: string) => {

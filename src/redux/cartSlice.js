@@ -50,7 +50,6 @@ const cartSlice = createSlice({
       state.products = action.payload;
       // Only save to session storage for guest users
       // For logged-in users, RTK Query will handle the persistence
-      saveCartItemsToSession(state.products);
     },
     resetCart: (state) => {
       state.products = [];
