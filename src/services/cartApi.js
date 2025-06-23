@@ -110,7 +110,6 @@ export const cartApi = createApi({
             return cartProducts;
           })
         );
-
         try {
           await queryFulfilled;
         } catch (error) {

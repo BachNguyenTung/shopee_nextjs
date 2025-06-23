@@ -85,6 +85,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     } else {
       // For logged-in users, let RTK Query handle the update
       // The mutation will update the cache, which will update the Redux store via extraReducers
+      dispatch(updateProducts(updatedProducts));
       cancelUpdate?.();
       debounceAddCartToFireStore({ user, cartProducts: updatedProducts });
     }
