@@ -12,12 +12,6 @@ export default function Document() {
         <meta name="copyright" content="Shopee © 2025" />
         <meta name="distribution" content="Global" />
         <meta name="revisit-after" content="1 days" />
-        <link
-          rel="preload"
-          href="/img/shoppe-logo.png"
-          as="image"
-          type="image/png"
-        />
         <link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials" />
       </Head>
       <body>

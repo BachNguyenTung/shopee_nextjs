@@ -2,13 +2,16 @@ import React, { ReactNode } from "react";
 import Head from "next/head";
 import DetailContainer from "../../components/Detail/DetailContainer";
 import Layout from "@/components/Layout/Layout";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { dehydrate, DehydratedState, QueryClient } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/fetchProducts";
 import { fetchProduct } from "@/services/fetchProductById";
 import Link from "next/link";
 import { Product } from "@/types/types";
+import { GetStaticPropsResult, InferGetStaticPropsType } from "next";
 
-export default function ProductDetail({ product }: { product: Product }) {
+export default function ProductDetail(
+  { product }: InferGetStaticPropsType<typeof getStaticProps>
+) {
   return (
     <>
       <Head>
@@ -62,7 +65,11 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }: { params: { id: string } }) {
+
+export async function getStaticProps({ params }: { params: { id: string } }): Promise<GetStaticPropsResult<{
+  product: Product,
+  dehydratedState: DehydratedState
+}>> {
   const queryClient = new QueryClient();
 
   try {
@@ -83,7 +90,7 @@ export async function getStaticProps({ params }: { params: { id: string } }) {
 
     return {
       props: {
-        product,
+        product: product as Product,
         dehydratedState: dehydrate(queryClient),
       },
       // Regenerate page every 1 hour
