@@ -42,8 +42,8 @@ const ProductItem = function ({ item, similarDisPlay }) {
 
   const handleNavigate = () => {
     setIsNavigating(true)
-    router.events.on('routeChangeComplete', () => setIsNavigating(false));
-    router.events.on('routeChangeError', () => setIsNavigating(false));
+    router?.events?.on('routeChangeComplete', () => setIsNavigating(false));
+    router?.events?.on('routeChangeError', () => setIsNavigating(false));
   }
 
   return (

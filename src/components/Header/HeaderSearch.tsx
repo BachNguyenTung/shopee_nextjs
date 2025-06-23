@@ -40,8 +40,8 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
       setIsNavigating(true);
       router.replace(`/search?${params.toString()}`);
       // Optional: Reset state if navigation fails
-      router.events.on('routeChangeComplete', () => setIsNavigating(false));
-      router.events.on('routeChangeError', () => setIsNavigating(false));
+      router?.events?.on('routeChangeComplete', () => setIsNavigating(false));
+      router?.events?.on('routeChangeError', () => setIsNavigating(false));
       setFirstPage()
     } else {
       params.delete('query');
