@@ -5,18 +5,20 @@ import Rating from "@mui/material/Rating";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import {useUserContext} from "@/context/UserProvider";
 import {useDispatch, useSelector} from "react-redux";
-import {addProducts} from "@/redux/cartSlice";
+import {addProducts, addProductsAndSync} from "@/redux/cartSlice";
 import Link from "next/link";
 import useModal from "@/hooks/useModal";
 import AddCartModal from "@/components/Modal/AddCartModal";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import {LinearProgress} from "@mui/material";
+import {useAddCartToFireStoreMutation} from "@/services/cartApi";
 
 const ProductItem = function ({ item, similarDisPlay }) {
   const router = useRouter()
   const { user } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
   const dispatch = useDispatch();
+  const [addCartToFireStore] = useAddCartToFireStoreMutation();
   const { id, metaTitle, imageUrl, name, price, soldAmount, location, rating } =
     item;
   const { isAddCartPopup, toggleIsAddCardPopup } = useModal();
@@ -29,14 +31,21 @@ const ProductItem = function ({ item, similarDisPlay }) {
     setIsClientSide(true);
   }, []);
 
-
-  const handleAddCart = () => {
-    if (!user) {
-      router.replace('/login')
-    }
+  const handleAddCart = async () => {
     const amount = 1;
     const variation = "";
-    dispatch(addProducts({ ...item, amount, variation }));
+    const productToAdd = { ...item, amount, variation };
+
+    if (user?.uid) {
+      // For logged-in users, use addProductsAndSync and trigger Firestore update
+      dispatch(addProductsAndSync(productToAdd));
+      // Trigger Firestore sync with 'add' operation to prevent overwrites
+      await addCartToFireStore({ user, cartProducts: [productToAdd], operation: 'add' });
+    } else {
+      // For guest users, use regular addProducts
+      dispatch(addProducts(productToAdd));
+    }
+
     toggleIsAddCardPopup(!isAddCartPopup);
   };
 

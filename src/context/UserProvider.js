@@ -22,7 +22,7 @@ const UserProvider = ({children}) => {
   const signOut = useCallback(async () => {
     dispatch(resetCart());
     await auth.signOut();
-    router.replace('/login')
+    router.replace('/')
   }, [dispatch, user]);
 
   useCheckFirebaseIdTokenAuthTime(user, signOut);
