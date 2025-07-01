@@ -21,6 +21,8 @@ const stripeWebhookSecret = stripeConfig.webhook_secret;
 const express = require("express");
 const cors = require("cors");
 const stripe = require("stripe")(stripeSecretKey);
+const cookieParser = require("cookie-parser");
+const crypto = require("crypto");
 
 // API
 
@@ -28,8 +30,11 @@ const stripe = require("stripe")(stripeSecretKey);
 const app = express();
 
 // Middleware configuration
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigin = isProduction ? ['http://localhost:3000', 'https://shopee-nextjs-ecru.vercel.app/'] : true; // <-- CHANGE to your frontend domain in prod
+
 app.use(cors({
-  origin: true, // Allow requests from any origin
+  origin: allowedOrigin, // Allow requests from any origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
     'Origin',
@@ -41,6 +46,8 @@ app.use(cors({
   ],
   credentials: true
 }));
+// Add cookie parser middleware after CORS
+app.use(cookieParser());
 
 // Special handling for Stripe webhook - must come BEFORE any other middleware
 app.post('/webhook',
@@ -470,6 +477,93 @@ async function handlePaymentIntentFailed(failedPaymentIntent) {
     throw error; // Propagate the error
   }
 }
+
+// --- CSRF Token Endpoint ---
+// Issues a CSRF token as a cookie and in the response
+app.get('/csrf-token', (req, res) => {
+  const csrfToken = crypto.randomBytes(32).toString('hex');
+  res.cookie('csrfToken', csrfToken, {
+    maxAge: 3600000, // 1 hour
+    httpOnly: false, // Client JS needs to read this
+    secure: isProduction, // false for localhost, true for prod
+    sameSite: isProduction ? 'Strict' : 'Lax', // Lax for localhost, Strict for prod
+    path: '/'
+  });
+  res.json({ csrfToken });
+});
+
+// --- Session Login Endpoint ---
+// Verifies CSRF and ID token, issues session cookie
+app.post('/session-login', async (req, res) => {
+  const { idToken, csrfToken } = req.body;
+  const csrfTokenCookie = req.cookies.csrfToken;
+  // 1. Verify CSRF token
+  if (!csrfTokenCookie || csrfTokenCookie !== csrfToken) {
+    return res.status(401).send('CSRF token mismatch');
+  }
+
+  try {
+    // 2. Verify ID token (validates user and expiration)
+    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
+    // Only process if the user just signed in in the last 5 minutes.
+    if (new Date().getTime() / 1000 - decodedIdToken.auth_time >= 5 * 60) {
+      return res.status(401).send('Recent sign in required!');
+    }
+    // 3. Create session cookie
+    const expiresIn = 60 * 60 * 24 * 14 * 1000; // 14 days (max allowed)
+    const sessionCookie = await admin.auth().createSessionCookie(idToken, { expiresIn });
+    // 4. Set secure session cookie
+    res.cookie('session', sessionCookie, {
+      maxAge: expiresIn,
+      httpOnly: true,
+      secure: isProduction, // false for localhost, true for prod
+      sameSite: isProduction ? 'Strict' : 'Lax', // Lax for localhost, Strict for prod
+      path: '/'
+    });
+    res.status(200).json({ status: 'success' });
+  } catch (error) {
+    console.log(error)
+    res.status(401).send('Authentication failed');
+  }
+});
+
+// --- Protected Profile Endpoint ---
+// Returns user info if session cookie is valid
+app.get('/profile', async (req, res) => {
+  const sessionCookie = req.cookies.session || '';
+  try {
+    const decodedClaims = await admin.auth().verifySessionCookie(
+      sessionCookie,
+      true // Check if user is revoked
+    );
+    res.json({
+      uid: decodedClaims.uid,
+      email: decodedClaims.email
+    });
+  } catch (error) {
+    res.status(401).send('Invalid session');
+  }
+});
+
+// --- Logout Endpoint ---
+// Clears the session cookie
+app.post('/session-logout', (req, res) => {
+  const sessionCookie = req.cookies.session || '';
+  res.clearCookie('session')
+  admin.auth()
+    .verifySessionCookie(sessionCookie)
+    .then((decodedClaims) => {
+      return admin.auth().revokeRefreshTokens(decodedClaims.sub);
+    })
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.log('Error during logout:', error);
+      res.sendStatus(401);
+    });
+
+});
 
 // Listen command
 const region = 'asia-east1';
