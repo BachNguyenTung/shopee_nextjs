@@ -187,10 +187,7 @@ const AccountOrder = () => {
               <tr key={basketItem.id}>
                 <td align={"center"} className={'flex flex-wrap gap-2'}>
                   <Link
-                    href={{
-                      pathname: `/product/${basketItem.metaTitle}/${basketItem.id}`,
-                      state: { id: basketItem.id },
-                    }}
+                    href={`/product/${basketItem.id}`}
                     className="flex items-center no-underline text-black"
                   >
                     <img
