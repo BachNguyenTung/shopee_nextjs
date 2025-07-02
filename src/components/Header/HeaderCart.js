@@ -18,9 +18,9 @@ const HeaderCart = () => {
 
   const { isLoading: cartItemsLoading } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
     refetchOnFocus: false,           // Refetch when window regains focus
-    refetchOnReconnect: true        // Refetch on network reconnection
+    refetchOnReconnect: true,  // Refetch on network reconnection
+    refetchOnMountOrArgChange: true // Refetch when component mounts or arguments change
   });
-
   useEffect(() => {
     if (userLoading || !user) return;
     const guestCartExists = getCartItemsFromSession?.().length > 0;
@@ -44,7 +44,7 @@ const HeaderCart = () => {
             {!cartItemsLoading && cartProducts?.length}
           </div>
         </div>
-        {!xsBreakpointMatches && user && (
+        {!xsBreakpointMatches && (
           <div
             className={classNames("header__cart-list", {
               "header__cart-list--empty": cartProducts?.length === 0,

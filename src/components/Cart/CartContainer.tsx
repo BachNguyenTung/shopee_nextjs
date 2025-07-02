@@ -52,7 +52,8 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const { user, userLoading } = useUserContext();
   const { isLoading: cartItemsLoading } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
     refetchOnFocus: false,           // Refetch when window regains focus
-    refetchOnReconnect: true        // Refetch on network reconnection
+    refetchOnReconnect: true,        // Refetch on network reconnection
+    refetchOnMountOrArgChange: true, // Refetch when component mounts or arguments change
   });
   const cartProducts = useSelector((state: RootState) => state.cart.products);
   const [addCartToFireStore] = useAddCartToFireStoreMutation();
