@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const publicRoutes = ["/register", '/login', '/']
+const publicRoutes = ["/register", '/login']
 const protectedRoutes = ['/account', '/checkout']
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const cookie = request.cookies.get('session')?.value
   // If there's a session, verify it for routes
   // 4. Redirect to /login if the user is not authenticated
-  if (isProtectedRoute && !cookie) {
+  if ((isProtectedRoute || request.nextUrl.pathname.startsWith('/account')) && !cookie) {
     const url = new URL('/', request.nextUrl)
     url.searchParams.set('forceLogout', '1')
     return NextResponse.redirect(url)
