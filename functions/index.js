@@ -31,7 +31,7 @@ const app = express();
 
 // Middleware configuration
 const isProduction = process.env.NODE_ENV === 'production';
-const allowedOrigin = isProduction ? ['http://localhost:3000', 'https://shopee-nextjs-ecru.vercel.app/'] : true; // <-- CHANGE to your frontend domain in prod
+const allowedOrigin = isProduction ? ['http://localhost:3000', 'https://shopee-nextjs-ecru.vercel.app'] : true; // <-- CHANGE to your frontend domain in prod
 
 app.use(cors({
   origin: allowedOrigin, // Allow requests from any origin
@@ -118,24 +118,6 @@ app.post('/webhook',
 app.use(express.json());
 
 // API routes
-
-// Verify id token from client
-app.post("/verify-id-token-by-firebase", async (req, res) => {
-  const idToken = req.body.idToken;
-  const checkRevoked = true;
-  try {
-    const result = await admin.auth().verifyIdToken(idToken, checkRevoked);
-    res.send({succeeded: true, idToken: result});
-  } catch (error) {
-    if (error.code == "auth/id-token-revoked") {
-      res.send({revoked: true, error: error.code});
-      // Token has been revoked. Inform the user to reauthenticate or signOut() the user.
-    } else {
-      res.send({invalid: true, error: error.code});
-      // Token is invalid.
-    }
-  }
-});
 
 app.post("/retrieve-customer-by-id", async (req, res) => {
   try {
@@ -524,24 +506,6 @@ app.post('/session-login', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(401).send('Authentication failed');
-  }
-});
-
-// --- Protected Profile Endpoint ---
-// Returns user info if session cookie is valid
-app.get('/profile', async (req, res) => {
-  const sessionCookie = req.cookies.session || '';
-  try {
-    const decodedClaims = await admin.auth().verifySessionCookie(
-      sessionCookie,
-      true // Check if user is revoked
-    );
-    res.json({
-      uid: decodedClaims.uid,
-      email: decodedClaims.email
-    });
-  } catch (error) {
-    res.status(401).send('Invalid session');
   }
 });
 

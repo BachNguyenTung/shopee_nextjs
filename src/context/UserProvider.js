@@ -1,10 +1,9 @@
 import React, {useCallback, useContext} from "react";
-import {useCheckFirebaseIdTokenAuthTime} from "@/hooks/useCheckFirebaseIdTokenAuthTime";
 import {useDispatch} from "react-redux";
 import {resetCart} from "@/redux/cartSlice";
 import useGetUserByObserver from "@/hooks/useGetUserByObserver";
 import useCheckPhotoURL from "@/hooks/useCheckPhotoURL";
-import {useRouter} from "next/navigation";
+import {useRouter} from "next/router";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth"
 import {auth} from "@/configs/firebase";
 import axios from "@/configs/axios";
@@ -39,8 +38,6 @@ const UserProvider = ({ children }) => {
     })
     router.replace('/')
   }, [dispatch, user]);
-
-  useCheckFirebaseIdTokenAuthTime(user, signOut);
 
   const signIn = async ({ email, password }) => {
     try {
