@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 // import { Link } from "react-router-dom";
 import {NumericFormat} from "react-number-format";
-import moment from "moment";
 import useGetOrderItems from "@/hooks/useGetOrderItems";
 import {useUserContext} from "@/context/UserProvider";
 import {ClipLoading} from "../ClipLoading";
@@ -10,6 +9,7 @@ import {useMediaQuery} from "@mui/material";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 import {orderPageSize} from "@/constants/pagination";
 import {MiniPageControl, Pagination} from "@shoppe_nextjs/ui";
+import dayjs from "dayjs";
 
 const AccountOrder = () => {
   const { user } = useUserContext();
@@ -144,9 +144,17 @@ const AccountOrder = () => {
           </div>
           <div className="grid__col order-product__time">
             Thời gian đặt:{" "}
-            {moment
-              .unix(item.data.created)
-              .format("MMMM Do YYYY, h:mm:ss a")}
+            {(() => {
+              const created = item.data.created;
+              if (!created || isNaN(created)) return <span>Không xác định</span>;
+              // If timestamp is in milliseconds, convert to seconds
+              const ts = Number(created);
+              const isMillis = ts > 1e10;
+              const dateObj = dayjs(isMillis ? ts : ts * 1000);
+              return dateObj.isValid()
+                ? dateObj.format("DD/MM/YYYY HH:mm:ss")
+                : <span>Không xác định</span>;
+            })()}
           </div>
           <div className="grid__col order-product__shipInfo">
             Địa chỉ nhận hàng: {item.data.shipInfo?.name},{" "}
