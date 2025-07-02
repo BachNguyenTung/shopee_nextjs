@@ -60,43 +60,37 @@ export const processCardPayment = async ({
   setSucceeded: (succeeded: boolean) => void;
 }) => {
   setProcessing(true);
-  try {
-    const customerID = await getCustomerID(user);
-    const response = await axios({
-      method: "POST",
-      url: `/charge-card-off-session?total=${getItemsPriceFinal(
-        checkoutItems,
-        shipUnit,
-        voucher
-      )}`,
-      data: {
-        paymentMethodID: defaultPaymentMethodID,
-        customerID,
-        email: user.email,
-        userId: user.uid,
-        orderItems: checkoutItems,
-        shipping: {
-          name: defaultShipInfo?.name,
-          phone: defaultShipInfo?.phone,
-          address: {
-            state: defaultShipInfo?.province.name,
-            city: defaultShipInfo?.district.name,
-            line1: defaultShipInfo?.ward.name,
-            line2: defaultShipInfo?.street,
-            country: "VN",
-            postal_code: 10000,
-          },
+  const customerID = await getCustomerID(user);
+  const response = await axios({
+    method: "POST",
+    url: `/charge-card-off-session?total=${getItemsPriceFinal(
+      checkoutItems,
+      shipUnit,
+      voucher
+    )}`,
+    data: {
+      paymentMethodID: defaultPaymentMethodID,
+      customerID,
+      email: user.email,
+      userId: user.uid,
+      orderItems: checkoutItems,
+      shipping: {
+        name: defaultShipInfo?.name,
+        phone: defaultShipInfo?.phone,
+        address: {
+          state: defaultShipInfo?.province.name,
+          city: defaultShipInfo?.district.name,
+          line1: defaultShipInfo?.ward.name,
+          line2: defaultShipInfo?.street,
+          country: "VN",
+          postal_code: 10000,
         },
       },
-    });
-
-    return response;
-  } catch (error) {
-    console.error("Error processing card payment:", error);
-    setSucceeded(false);
-    setProcessing(false);
-    return null;
-  }
+    },
+  });
+  setSucceeded(false);
+  setProcessing(false);
+  return response;
 };
 
 export const handleCardAuthentication = async ({
