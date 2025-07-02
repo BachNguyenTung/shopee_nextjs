@@ -2,8 +2,8 @@ import classNames from "classnames";
 import { NumericFormat } from "react-number-format";
 import React from "react";
 import { useMediaQuery } from "@mui/material";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
   item: any,
@@ -37,7 +37,6 @@ export default function CartItem({
                                    handleDelete
                                  }: Props) {
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
-  const router = useRouter()
   return (
     <div key={item.id}
          className="cart-product__item grid grid-cols-10 gap-3 place-items-center bg-white my-2 p-2 shadow-sm">
@@ -50,10 +49,8 @@ export default function CartItem({
       />
       <div className={'col-span-9 md:col-span-4'}>
         <div className={'flex justify-center items-center'}>
-          <div
-            onClick={(e) => {
-              router.push(`/product/${item.metaTitle}/${item.id}`)
-            }}
+          <Link
+            href={`/product/${item.id}`}
             // className="grid__col cart-product__overview"
             className="flex text no-underline text-black"
           >
@@ -150,7 +147,7 @@ export default function CartItem({
               }
             </div>
 
-          </div>
+          </Link>
           <div
             data-name="variation"
             onClick={() => handlePopup(item.variation, item.id)}

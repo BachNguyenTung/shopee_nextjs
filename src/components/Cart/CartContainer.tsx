@@ -95,7 +95,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     async ({ user, cartProducts }: DebounceArgs) => {
       await addCartToFireStore({ user, cartProducts });
     },
-    2000 // Reduced debounce time
+    1500 // Reduced debounce time
   );
 
   // Cleanup debounced updates when component unmounts
