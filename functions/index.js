@@ -468,7 +468,7 @@ app.get('/csrf-token', (req, res) => {
     maxAge: 3600000, // 1 hour
     httpOnly: false, // Client JS needs to read this
     secure: isProduction, // false for localhost, true for prod
-    sameSite: isProduction ? 'Strict' : 'Lax', // Lax for localhost, Strict for prod
+    sameSite: isProduction ? 'None' : 'Lax', // Lax for localhost, Strict for prod
     path: '/'
   });
   res.json({ csrfToken });
@@ -499,7 +499,7 @@ app.post('/session-login', async (req, res) => {
       maxAge: expiresIn,
       httpOnly: true,
       secure: isProduction, // false for localhost, true for prod
-      sameSite: isProduction ? 'Strict' : 'Lax', // Lax for localhost, Strict for prod
+      sameSite: isProduction ? 'None' : 'Lax', // Lax for localhost, Strict for prod
       path: '/'
     });
     res.status(200).json({ status: 'success' });
