@@ -16,7 +16,6 @@ export default function Product() {
       if (router.query.forceLogout) {
         dispatch(resetCart());
         await auth.signOut()
-        await router.replace('/')
         alert("Phiên đăng nhập đã hết hạn!")
       }
     }
