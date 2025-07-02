@@ -6,7 +6,6 @@ import useCheckPhotoURL from "@/hooks/useCheckPhotoURL";
 import {useRouter} from "next/router";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth"
 import {auth} from "@/configs/firebase";
-import axios from "@/configs/axios";
 
 const UserContext = React.createContext();
 export const useUserContext = () => {
@@ -32,32 +31,33 @@ const UserProvider = ({ children }) => {
   const signOut = useCallback(async () => {
     dispatch(resetCart());
     await auth.signOut();
-    await axios({
+    const response = await fetch('/api/session-logout', {
       method: 'POST',
-      url: '/session-logout',
-    })
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
     router.replace('/')
   }, [dispatch, user]);
 
   const signIn = async ({ email, password }) => {
     try {
       // 1. Get CSRF token from server
-      const csrfResponse = await axios({
-        url: '/csrf-token'
-      })
-      const { csrfToken } = csrfResponse.data;
+      const csrfResponse = await fetch('/api/csrf-token')
+      const csrfToken = await csrfResponse.json();
       // 2. Authenticate with Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
       // 3. Create session with CSRF protection
-      const response = await axios({
+      const response = await fetch('/api/session-login', {
         method: 'POST',
-        url: '/session-login',
-        data: {
-          idToken,
-          csrfToken
+        headers: {
+          'Content-Type': 'application/json',
         },
-      })
+        body: JSON.stringify({ idToken, csrfToken }),
+        credentials: 'include',
+      });
     } catch (e) {
       console.log(e)
     }
