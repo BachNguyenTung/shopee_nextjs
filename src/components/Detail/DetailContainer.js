@@ -13,7 +13,6 @@ import withContainer from "../withContainer";
 import {useRouter} from "next/router";
 import Link from "next/link";
 import {ProtectIcon} from "@/components/Images/OptimizedImages";
-import {DETAIL} from "@/constants/detail";
 import {bestSelling} from "@/configs/product";
 import {useWaitProductsQuery} from "@/hooks/useWaitProductsQuery";
 import {useWaitProductQuery} from "@/hooks/useWaitProductQuery";
@@ -151,24 +150,12 @@ function DetailContainer() {
   };
 
   const handleBuyNow = () => {
-    if (!user) {
-      // router.push("/login", {replace: true});
-      router.push("/login");
-      return;
-    }
     addToCartItems(item.id, item.variation, item.amount);
     // router.push("/cart", {replace: true, state: location});
-    router.push({
-      pathname: '/cart',
-      query: { name: DETAIL }
-    });
+    router.push('/cart');
   };
 
   const handleAddCart = () => {
-    if (!user) {
-      router.replace('/login')
-      return;
-    }
     addToCartItems();
     toggleIsAddCardPopup(!isAddCartPopup);
   };

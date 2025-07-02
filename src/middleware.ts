@@ -13,8 +13,7 @@ export async function middleware(request: NextRequest) {
   // If there's a session, verify it for routes
   // 4. Redirect to /login if the user is not authenticated
   if ((isProtectedRoute || request.nextUrl.pathname.startsWith('/account')) && !cookie) {
-    const url = new URL('/', request.nextUrl)
-    url.searchParams.set('forceLogout', '1')
+    const url = new URL('/login', request.nextUrl)
     return NextResponse.redirect(url)
   }
 

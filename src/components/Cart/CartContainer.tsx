@@ -151,6 +151,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     changeCartItemsVariation(variation, id);
   };
   const handleCheckout = async (event: any) => {
+    if (!user) return router.replace('/login')
     //Client cart validate
     if (selectedProduct?.length === 0 || !isVariationChoose) {
       event.preventDefault();
