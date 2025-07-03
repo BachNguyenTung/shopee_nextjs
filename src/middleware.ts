@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
   if (isAuthenticated) {
     // Redirect authenticated users away from auth pages
     if (isAuthPage) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/", request.nextUrl));
     }
 
     // Allow access to main or other pages (if required)
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect unauthenticated users trying to access protected pages
   if (isProtectedPage) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
 
   // Allow unauthenticated users to access public pages, including "/"
