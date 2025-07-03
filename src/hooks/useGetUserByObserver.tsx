@@ -1,22 +1,19 @@
 import { useEffect, useState } from "react";
 import { auth } from "@/configs/firebase";
 import { signOut, User } from "@firebase/auth";
+import { throttle } from "lodash";
 
 const useGetUserByObserver = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true;
-
     const refresh = async (user: User) => {
       try {
         const idToken = await user.getIdToken(true);
-
         // 1. Get CSRF token from server
         const csrfResponse = await fetch('/api/csrf-token')
         const csrfToken = await csrfResponse.json();
-
         const response = await fetch('/api/session-login', {
           method: 'POST',
           headers: {
@@ -27,7 +24,6 @@ const useGetUserByObserver = () => {
         });
         if (!response.ok) {
           console.warn("Session refresh failed. Redirecting to login.");
-
         }
       } catch (error) {
         await signOut(auth);
@@ -35,7 +31,11 @@ const useGetUserByObserver = () => {
       }
     };
 
-    const unsubscribeUserObserver = auth.onIdTokenChanged(
+    // Throttle refresh to once every 10 seconds
+    const throttledRefresh = throttle(refresh, 10000, { trailing: false });
+
+    let isMounted = true;
+    const unsubscribeUserObserver = auth.onAuthStateChanged(
       async (authUser) => {
         if (!isMounted) {
           return;
@@ -45,7 +45,7 @@ const useGetUserByObserver = () => {
           // authUser.updateProfile({ photoURL: null }).then(() => {
           // });
           setUser(authUser);
-          await refresh(authUser)
+          throttledRefresh(authUser);
           // cartItems = this.getCartItemsFromFirebase(authUser);
         } else {
           //user logged out
@@ -62,6 +62,7 @@ const useGetUserByObserver = () => {
     return () => {
       isMounted = false;
       unsubscribeUserObserver();
+      throttledRefresh.cancel && throttledRefresh.cancel();
     };
   }, []);
 

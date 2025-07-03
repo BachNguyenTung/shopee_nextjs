@@ -10,11 +10,11 @@ import { checkCardPaymentExist } from "@/services/checkCardPaymentExist";
 import { createSetupIntentAndCustomerIDInStripe } from "@/services/createSetupIntentAndCustomerIDInStripe";
 import { checkConfirmCardSetupToStripe } from "@/services/checkConfirmCardSetupToStripe";
 import { infoDocRef } from "@/db/dbRef";
-import useGetUserByObserver from "@/hooks/useGetUserByObserver";
 import useGetShipInfos from "@/hooks/useGetShipInfos";
 import { getDoc } from "firebase/firestore";
 import { BaseModal } from "@/components/base";
 import { ProtectIcon } from "@/components/Images/OptimizedImages";
+import { useUserContext } from "@/context/UserProvider";
 
 // const StyledInput = styled("input", {
 //   shouldForwardProp: (props) => props !== "isValid",
@@ -46,7 +46,7 @@ export default function CardInfoModal({
                                       }: CardInfoModalProps) {
   const stripe = useStripe();
   const elements = useElements();
-  const {user} = useGetUserByObserver();
+  const { user } = useUserContext();
   const {customerID} = useCustomerID(user);
   const {shipInfos} = useGetShipInfos(user);
   const [cardName, setCardName] = useState("");

@@ -9,7 +9,6 @@ import AddressModal from "../Modal/AddressModal";
 import useGetShipInfos from "../../hooks/useGetShipInfos";
 import usePaymentMethodList from "../../hooks/usePaymentMethodList";
 import useDefaultPaymentMethodID from "../../hooks/useDefaultPaymentMethodID";
-import useGetUserByObserver from "../../hooks/useGetUserByObserver";
 import { getOptimizedCardByBrand } from "@/services/getOptimizedIcons";
 import { getItemsPriceTotal } from "@/services/getItemsPriceTotal";
 import { getVoucherDiscount } from "@/services/getVoucherDiscount";
@@ -38,6 +37,7 @@ import {
   processDeliveryPayment,
   validateOrderRequirements
 } from "@/services/paymentService";
+import { useUserContext } from "@/context/UserProvider";
 
 interface CheckoutContainerProps {
   isCheckoutPage: boolean
@@ -81,7 +81,7 @@ function CheckoutContainer({isCheckoutPage}: CheckoutContainerProps) {
     toggleAddressAdd,
   } = useModal();
 
-  const {user} = useGetUserByObserver();
+  const { user } = useUserContext();
   const {defaultPaymentMethodID, setDefaultPaymentMethodID} =
     useDefaultPaymentMethodID(user);
   const {paymentMethodList, setPaymentMethodList} = usePaymentMethodList(
