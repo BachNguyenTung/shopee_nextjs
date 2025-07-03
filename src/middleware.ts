@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from "next/headers";
 
 const authPage = ["/register", '/login']
 const protectedPage = ['/account', '/checkout']
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-  const isAuthenticated = request.cookies.get("session");
+  const isAuthenticated = await cookies().get('session');
   const pathname = request.nextUrl.pathname;
 
   const isAuthPage = authPage.some((path) =>
