@@ -1,47 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const publicRoutes = ["/register", '/login']
-const protectedRoutes = ['/account', '/checkout']
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+const authPage = ["/register", '/login']
+const protectedPage = ['/account', '/checkout']
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-  const { pathname, origin } = request.nextUrl;
-  const isProtectedRoute = protectedRoutes.includes(pathname)
-  const isPublicRoute = publicRoutes.includes(pathname)
-  const cookie = request.cookies.get('session')?.value
-  // If there's a session, verify it for routes
-  // 4.When in protectedRoute, redirect to / if the user is not authenticated
-  if ((isProtectedRoute || request.nextUrl.pathname.startsWith('/account')) && !cookie) {
-    const url = new URL('/', request.nextUrl)
-    url.searchParams.set('forceLogout', '1')
-    return NextResponse.redirect(url);
-  }
+  const isAuthenticated = request.cookies.get("session");
+  const pathname = request.nextUrl.pathname;
 
-  // 5. When in publicRoute, redirect to / if the user is authenticated
-  if (
-    isPublicRoute &&
-    cookie &&
-    request.nextUrl.pathname !== '/'
-  ) {
-    return NextResponse.redirect(new URL('/', request.nextUrl))
-  }
+  const isAuthPage = authPage.some((path) =>
+    pathname.startsWith(path)
+  );
+  const isProtectedPage = protectedPage.some((path) =>
+    pathname.startsWith(path)
+  );
 
-  // 6. If the user is authenticated, verify the session with the API
-  if (cookie) {
-    const responseAPI = await fetch(`${BASE_URL}/profile`, {
-      headers: {
-        Cookie: `session=${cookie}`,
-      },
-    });
-    if (!responseAPI.ok) {
-      const url = new URL('/', request.nextUrl)
-      url.searchParams.set('forceLogout', '1')
-      return NextResponse.redirect(url);
+  if (isAuthenticated) {
+    // Redirect authenticated users away from auth pages
+    if (isAuthPage) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
+
+    // Allow access to main or other pages (if required)
+    return NextResponse.next();
   }
 
-  // Proceed with the request if it's a public route or if the session is valid for a protected route
+  // Redirect unauthenticated users trying to access protected pages
+  if (isProtectedPage) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Allow unauthenticated users to access public pages, including "/"
   return NextResponse.next();
 }
 

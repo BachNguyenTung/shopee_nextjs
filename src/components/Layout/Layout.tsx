@@ -1,9 +1,7 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import Head from "next/head";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer";
-import { useRouter } from "next/router";
-import { useUserContext } from "@/context/UserProvider";
 
 interface Props {
   children: ReactNode
@@ -26,18 +24,6 @@ export default function Layout({
                                  headerText = '',
                                  isAccountPage = false
                                }: Props) {
-  const router = useRouter();
-  const { signOut } = useUserContext()
-
-  useEffect(() => {
-    const handleAlert = async () => {
-      if (router?.query?.forceLogout) {
-        await signOut()
-        alert("Phiên đăng nhập đã hết hạn!")
-      }
-    }
-    handleAlert()
-  }, [router?.query?.forceLogout, signOut]);
   return (
     <>
       <Head>
