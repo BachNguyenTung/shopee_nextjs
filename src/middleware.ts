@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const publicRoutes = ["/register", '/login', '/cart']
+const publicRoutes = ["/register", '/login']
 const protectedRoutes = ['/account', '/checkout']
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 
@@ -11,19 +11,24 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.includes(pathname)
   const cookie = request.cookies.get('session')?.value
   // If there's a session, verify it for routes
-  // 4. Redirect to / if the user is not authenticated
+  // 4.When in protectedRoute, redirect to / if the user is not authenticated
   if ((isProtectedRoute || request.nextUrl.pathname.startsWith('/account')) && !cookie) {
     const url = new URL('/', request.nextUrl)
     url.searchParams.set('forceLogout', '1')
     return NextResponse.redirect(url);
   }
 
-  // 5. Redirect to / if the user is authenticated
+  // 5. When in publicRoute, redirect to / if the user is authenticated
   if (
     isPublicRoute &&
     cookie &&
     request.nextUrl.pathname !== '/'
   ) {
+    return NextResponse.redirect(new URL('/', request.nextUrl))
+  }
+
+  // 6. If the user is authenticated, verify the session with the API
+  if (cookie) {
     const responseAPI = await fetch(`${BASE_URL}/profile`, {
       headers: {
         Cookie: `session=${cookie}`,
@@ -34,7 +39,6 @@ export async function middleware(request: NextRequest) {
       url.searchParams.set('forceLogout', '1')
       return NextResponse.redirect(url);
     }
-    return NextResponse.redirect(new URL('/', request.nextUrl))
   }
 
   // Proceed with the request if it's a public route or if the session is valid for a protected route
