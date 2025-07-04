@@ -38,7 +38,7 @@ const UserProvider = ({ children }) => {
       },
       credentials: 'include',
     });
-    await router.replace('/');
+    window.location.href = '/'
   }, [dispatch, user]);
 
   const signIn = async ({ email, password }) => {

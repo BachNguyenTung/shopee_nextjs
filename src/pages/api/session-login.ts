@@ -23,6 +23,7 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await runMiddleware(req, res, cors);
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -40,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // }
     const expiresIn = 60 * 60 * 24 * 14 * 1000; // 14 days
     const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
-    res.setHeader('Set-Cookie', `session=${sessionCookie}; Max-Age=${expiresIn / 1000}; Path=/; HttpOnly; Secure=${isProduction}; SameSite=${isProduction ? 'Strict' : 'Lax'}`);
+    res.setHeader('Set-Cookie', `session=${sessionCookie}; Max-Age=${expiresIn / 1000}; Path=/; HttpOnly; Secure=${isProduction}; SameSite=${isProduction ? 'Strict' : 'Lax'}; Domain=${isProduction ? '.shopee-nextjs-ecru.vercel.app' : 'localhost'}`);
     res.status(200).json({ status: 'success' });
   } catch (error) {
     res.status(401).json('Authentication failed');
