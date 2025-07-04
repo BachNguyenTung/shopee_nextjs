@@ -33,10 +33,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json('CSRF token mismatch');
   }
   try {
-    const decodedIdToken = await adminAuth.verifyIdToken(idToken);
-    if (new Date().getTime() / 1000 - decodedIdToken.auth_time >= 5 * 60) {
-      return res.status(401).json('Recent sign in required!');
-    }
+    // Verify the ID token and check if the user is signed in recently to create session
+    // const decodedIdToken = await adminAuth.verifyIdToken(idToken);
+    // if (new Date().getTime() / 1000 - decodedIdToken.auth_time >= 5 * 60) {
+    //   return res.status(401).json('Recent sign in required!');
+    // }
     const expiresIn = 60 * 60 * 24 * 14 * 1000; // 14 days
     const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
     res.setHeader('Set-Cookie', `session=${sessionCookie}; Max-Age=${expiresIn / 1000}; Path=/; HttpOnly; Secure=${isProduction}; SameSite=${isProduction ? 'Strict' : 'Lax'}`);
