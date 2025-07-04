@@ -446,7 +446,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
           </>}
         </div>
         {cartProducts.map((item: any) => (
-          <CartItem key={item.id} item={item} decrCartItem={decrCartItem} variation={variation}
+          <CartItem key={item.id + item.variation} item={item} decrCartItem={decrCartItem} variation={variation}
                     changeAmountCartItem={changeAmountCartItem} handleVariationBack={handleVariationBack}
                     handleVariationClick={handleVariationClick} handlePopup={handlePopup} handleCheck={handleCheck}
                     handleDelete={handleDelete} handleVariationApply={handleVariationApply}

@@ -38,7 +38,7 @@ export default function CartItem({
                                  }: Props) {
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
   return (
-    <div key={item.id}
+    <div key={item.id + item.variation}
          className="cart-product__item grid grid-cols-10 gap-3 place-items-center bg-white my-2 p-2 shadow-sm">
       <input
         type="checkbox"

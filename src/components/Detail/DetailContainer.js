@@ -18,6 +18,7 @@ import {useWaitProductsQuery} from "@/hooks/useWaitProductsQuery";
 import {useWaitProductQuery} from "@/hooks/useWaitProductQuery";
 import {useWebSocket} from "@/hooks/useWebSocket";
 import {DetailPriceAdminEdit} from "@/components/Detail/DetailPriceAdminEdit";
+import {useAddCartToFireStoreMutation} from "@/services/cartApi";
 
 function DetailContainer() {
   const { user } = useUserContext();
@@ -39,6 +40,7 @@ function DetailContainer() {
 
   // Initialize WebSocket connection for real-time price updates
   const { isConnected } = useWebSocket(id?.toString());
+  const [addCartToFireStore] = useAddCartToFireStoreMutation();
 
   // For debugging connection status in development
   useEffect(() => {
@@ -131,7 +133,7 @@ function DetailContainer() {
     setVariation(e.target.innerText);
   };
 
-  const addToCartItems = () => {
+  const addToCartItems = async () => {
     let cartProductsUpdated = [];
     const isExistId = cartProducts.some((cartItem) => cartItem.id === item.id);
     const isExistVariation = cartProducts.some(
@@ -144,19 +146,21 @@ function DetailContainer() {
           : cartItem
       );
       dispatch(updateProducts(cartProductsUpdated));
+      await addCartToFireStore({ user, cartProducts: cartProductsUpdated, operation: 'add' });
     } else {
       dispatch(addProducts({ ...item, amount, variation }));
+      await addCartToFireStore({ user, cartProducts: [{ ...item, amount, variation }], operation: 'add' });
     }
   };
 
-  const handleBuyNow = () => {
-    addToCartItems(item.id, item.variation, item.amount);
+  const handleBuyNow = async () => {
+    await addToCartItems();
     // router.push("/cart", {replace: true, state: location});
-    router.push('/cart');
+    await router.push('/cart');
   };
 
-  const handleAddCart = () => {
-    addToCartItems();
+  const handleAddCart = async () => {
+    await addToCartItems();
     toggleIsAddCardPopup(!isAddCartPopup);
   };
 
