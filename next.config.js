@@ -58,52 +58,13 @@ const nextConfig = {
           }
         ],
       },
-      // Static assets caching
-      {
-        source: '/_next/static/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=31536000',
-          },
-          {
-            key: 'Vercel-CDN-Cache-Control',
-            value: 'max-age=31536000',
-          },
-        ],
-      },
-      {
-        source: '/_next/image(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=31536000',
-          },
-          {
-            key: 'Vercel-CDN-Cache-Control',
-            value: 'max-age=31536000',
-          },
-        ],
-      },
-      // API routes caching
+      // API routes caching - Next.js doesn't auto-cache these
       {
         source: '/api/products',
         headers: [
           {
             key: 'Cache-Control',
             value: 's-maxage=300, stale-while-revalidate=600',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=300',
           },
           {
             key: 'Vercel-CDN-Cache-Control',
@@ -149,17 +110,13 @@ const nextConfig = {
           },
         ],
       },
-      // Search page caching
+      // Search page caching - Override Next.js default no-cache for SSR
       {
         source: '/search',
         headers: [
           {
             key: 'Cache-Control',
             value: 's-maxage=60, stale-while-revalidate=300',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=60',
           },
           {
             key: 'Vercel-CDN-Cache-Control',
@@ -171,7 +128,7 @@ const nextConfig = {
           },
         ],
       },
-      // Static files caching
+      // Custom static files - Next.js doesn't auto-cache these
       {
         source: '/robots.txt',
         headers: [
@@ -182,10 +139,6 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 's-maxage=3600, stale-while-revalidate=7200',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=3600',
           },
           {
             key: 'Vercel-CDN-Cache-Control',
@@ -205,10 +158,6 @@ const nextConfig = {
             value: 's-maxage=3600, stale-while-revalidate=7200',
           },
           {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=3600',
-          },
-          {
             key: 'Vercel-CDN-Cache-Control',
             value: 'max-age=3600',
           },
@@ -226,30 +175,8 @@ const nextConfig = {
             value: 's-maxage=3600, stale-while-revalidate=7200',
           },
           {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=3600',
-          },
-          {
             key: 'Vercel-CDN-Cache-Control',
             value: 'max-age=3600',
-          },
-        ],
-      },
-      // General static assets
-      {
-        source: '/:path*.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'max-age=31536000',
-          },
-          {
-            key: 'Vercel-CDN-Cache-Control',
-            value: 'max-age=31536000',
           },
         ],
       },
