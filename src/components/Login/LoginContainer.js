@@ -89,78 +89,76 @@ function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
 
   return (
     <div className="main main--login">
-      <div className="grid grid--login">
-        <div className="login-content__img">
-          <form
-            className="login-content__input"
-            // onSubmit={isLoginPage ? handleLogin : handleRegister}
-            onSubmit={formik.handleSubmit}
-          >
-            <span className="login-content__title"> {submitText}</span>
-            <Stack mt="2rem" spacing="1rem">
-              <TextField
-                id="email"
-                type="text"
-                {...formik.getFieldProps("email")}
-                label="Email"
-                size="small"
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
-                InputProps={{ style: { fontSize: "1.3rem" } }}
-                InputLabelProps={{ style: { fontSize: "1.3rem" } }}
-                FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
-              />
+      <form
+        className="login-content"
+        // onSubmit={isLoginPage ? handleLogin : handleRegister}
+        onSubmit={formik.handleSubmit}
+      >
+        <span className="login-content__title"> {submitText}</span>
+        <Stack mt="2rem" spacing="1rem">
+          <TextField
+            id="email"
+            type="text"
+            {...formik.getFieldProps("email")}
+            label="Email"
+            size="small"
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
+            InputProps={{ style: { fontSize: "1.3rem" } }}
+            InputLabelProps={{ style: { fontSize: "1.3rem" } }}
+            FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
+          />
 
-              <TextField
-                id="password"
-                type="password"
-                {...formik.getFieldProps("password")}
-                label="Mật khẩu"
-                size="small"
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                helperText={formik.touched.password && formik.errors.password}
-                InputProps={{ style: { fontSize: "1.3rem" } }}
-                InputLabelProps={{ style: { fontSize: "1.3rem" } }}
-                FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
-              />
-              {isRegisterPage && (
-                <TextField
-                  id="confirmPassword"
-                  type="password"
-                  {...formik.getFieldProps("confirmPassword")}
-                  label="Nhập lại mật khẩu"
-                  size="small"
-                  error={
-                    formik.touched.confirmPassword &&
-                    Boolean(formik.errors.confirmPassword)
-                  }
-                  helperText={
-                    formik.touched.confirmPassword &&
-                    formik.errors.confirmPassword
-                  }
-                  InputProps={{ style: { fontSize: "1.3rem" } }}
-                  InputLabelProps={{ style: { fontSize: "1.3rem" } }}
-                  FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
-                />
-              )}
-            </Stack>
+          <TextField
+            id="password"
+            type="password"
+            {...formik.getFieldProps("password")}
+            label="Mật khẩu"
+            size="small"
+            error={
+              formik.touched.password && Boolean(formik.errors.password)
+            }
+            helperText={formik.touched.password && formik.errors.password}
+            InputProps={{ style: { fontSize: "1.3rem" } }}
+            InputLabelProps={{ style: { fontSize: "1.3rem" } }}
+            FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
+          />
+          {isRegisterPage && (
+            <TextField
+              id="confirmPassword"
+              type="password"
+              {...formik.getFieldProps("confirmPassword")}
+              label="Nhập lại mật khẩu"
+              size="small"
+              error={
+                formik.touched.confirmPassword &&
+                Boolean(formik.errors.confirmPassword)
+              }
+              helperText={
+                formik.touched.confirmPassword &&
+                formik.errors.confirmPassword
+              }
+              InputProps={{ style: { fontSize: "1.3rem" } }}
+              InputLabelProps={{ style: { fontSize: "1.3rem" } }}
+              FormHelperTextProps={{ style: { fontSize: "1.3rem" } }}
+            />
+          )}
+        </Stack>
 
-            <button
-              disabled={formik.isSubmitting}
-              type="submit"
-              className="btn login-content__submit"
-            >
-              {submitText}
-            </button>
-            {isRegisterPage && (
-              <span className="login-content__rule">
+        <button
+          disabled={formik.isSubmitting}
+          type="submit"
+          className="btn login-content__submit"
+        >
+          {submitText}
+        </button>
+        {isRegisterPage && (
+          <span className="login-content__rule">
                 Bằng việc đăng kí, bạn đã đồng ý với Shopee về Điều khoản dịch
                 vụ và Chính sách bảo mật
               </span>
-            )}
-            <span className="login-content__register-wrapper">
+        )}
+        <span className="login-content__register-wrapper">
               {isLoginPage && (
                 <>
                   Bạn mới biết đến Shopee?
@@ -169,18 +167,16 @@ function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
                   </Link>
                 </>
               )}
-              {isRegisterPage && (
-                <>
-                  Bạn đã có tài khoản?
-                  <Link href="/login" className="login-content__register">
-                    Đăng nhập
-                  </Link>
-                </>
-              )}
+          {isRegisterPage && (
+            <>
+              Bạn đã có tài khoản?
+              <Link href="/login" className="login-content__register">
+                Đăng nhập
+              </Link>
+            </>
+          )}
             </span>
-          </form>
-        </div>
-      </div>
+      </form>
     </div>
   );
 }

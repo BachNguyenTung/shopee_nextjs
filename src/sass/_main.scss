@@ -1252,6 +1252,7 @@ header {
 }
 
 .main--login {
+  display: flex;
   background-color: white;
   background-image: linear-gradient(0, #ff6333, #f53e2d);
 }
@@ -3208,16 +3209,8 @@ header {
   text-transform: capitalize;
 }
 
-.grid--login {
-  width: 100rem;
-}
-
-.login-content__img {
-  padding: 6rem 0;
-}
-
-.login-content__input {
-  margin-left: auto;
+.login-content {
+  margin: auto;
   padding: 3.2rem;
   display: flex;
   flex-direction: column;
@@ -3225,6 +3218,10 @@ header {
   max-width: 100%;
   min-height: 48rem;
   background: var(--white-color);
+
+  @include mobile {
+    margin: 0 2rem;
+  }
 }
 
 .login-content__title {
