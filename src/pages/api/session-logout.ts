@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   const isProduction = process.env.NODE_ENV === 'production';
   const sessionCookie = req.cookies.session || '';
-  res.setHeader('Set-Cookie', `session=; Max-Age=0; Path=/; HttpOnly; Secure=${isProduction}; SameSite=${isProduction ? 'Strict' : 'Lax'}`);
+  res.setHeader('Set-Cookie', `session=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; HttpOnly; Secure=${isProduction}; SameSite=${isProduction ? 'Strict' : 'Lax'}`);
   try {
     if (sessionCookie) {
       const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie);

@@ -78,7 +78,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Helper function to update cart and sync with Firebase
-  const updateCartAndSync = (updatedProducts: CartProduct[]) => {
+  const updateCartAndSync = (updatedProducts: CartProduct[], isDebounce?: boolean) => {
     // For guest users, update session storage directly
     if (!user?.uid) {
       dispatch(updateProducts(updatedProducts));
@@ -87,7 +87,10 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       // The mutation will update the cache, which will update the Redux store via extraReducers
       dispatch(updateProducts(updatedProducts));
       cancelUpdate?.();
-      debounceAddCartToFireStore({ user, cartProducts: updatedProducts });
+      isDebounce ? debounceAddCartToFireStore({ user, cartProducts: updatedProducts }) : addCartToFireStore({
+        user,
+        cartProducts: updatedProducts
+      });
     }
   };
 
@@ -95,7 +98,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
     async ({ user, cartProducts }: DebounceArgs) => {
       await addCartToFireStore({ user, cartProducts });
     },
-    1500 // Reduced debounce time
+    2000 // Reduced debounce time
   );
 
   // Cleanup debounced updates when component unmounts
@@ -265,7 +268,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
         ...newCartProducts[indexOfItem],
         amount: newCartProducts[indexOfItem].amount + 1,
       };
-      updateCartAndSync(newCartProducts);
+      updateCartAndSync(newCartProducts, true);
     }
   };
 
@@ -277,7 +280,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
         ...newCartProducts[indexOfItem],
         amount: newCartProducts[indexOfItem].amount - 1,
       };
-      updateCartAndSync(newCartProducts);
+      updateCartAndSync(newCartProducts, true);
     }
   };
 
