@@ -1,5 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Virtuoso} from 'react-virtuoso';
+import React, {Suspense, useEffect, useMemo, useRef, useState} from "react";
 import useModal from "../../hooks/useModal";
 import AddCartModal from "../Modal/AddCartModal";
 import ImageGallery from "react-image-gallery";
@@ -19,6 +18,11 @@ import {useWaitProductQuery} from "@/hooks/useWaitProductQuery";
 import {useWebSocket} from "@/hooks/useWebSocket";
 import {DetailPriceAdminEdit} from "@/components/Detail/DetailPriceAdminEdit";
 import {useAddCartToFireStoreMutation} from "@/services/cartApi";
+import {useInView} from "react-intersection-observer";
+import dynamic from "next/dynamic";
+import {ClipLoading} from "@/components/ClipLoading";
+
+const DynamicVirtuoso = dynamic(() => import('react-virtuoso').then(mod => mod.Virtuoso), { ssr: false });
 
 function DetailContainer() {
   const { user } = useUserContext();
@@ -171,6 +175,9 @@ function DetailContainer() {
   // const handleScrollTo = (e) => {
   //   scrolltoEl.current.scrollIntoView();
   // };
+
+  // InView for best selling section
+  const { ref: bestSellingRef, inView: bestSellingInView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
     <>
@@ -760,29 +767,33 @@ function DetailContainer() {
           <div className="detail-content__right-label">
             Top Sản Phẩm Bán Chạy
           </div>
-          <div className="detail-content__hot-list" style={{ height: '500px' }}> {/* Added height for Virtuoso */}
-            <Virtuoso
-              data={bestSellingItems}
-              itemContent={(index, item) => (
-                <Link
-                  onClick={handleScrollTop}
-                  key={index}
-                  className="detail-content__hot-item"
-                  href={`/product/${item.id}`}>
-                  <img
-                    src={item.imageUrl}
-                    alt="hot-img"
-                    className="detail-content__hot-img"
-                  />
-                  <div className="detail-content__hot-name">
-                    {item.name}
-                  </div>
-                  <div className="detail-content__hot-price">
-                    {item.price}
-                  </div>
-                </Link>
-              )}
-            />
+          <div ref={bestSellingRef} className="detail-content__hot-list" style={{ height: '500px' }}>
+            {bestSellingInView && (
+              <Suspense fallback={<ClipLoading />}>
+                <DynamicVirtuoso
+                  data={bestSellingItems}
+                  itemContent={(index, item) => (
+                    <Link
+                      onClick={handleScrollTop}
+                      key={index}
+                      className="detail-content__hot-item"
+                      href={`/product/${item.id}`}>
+                      <img
+                        src={item.imageUrl}
+                        alt="hot-img"
+                        className="detail-content__hot-img"
+                      />
+                      <div className="detail-content__hot-name">
+                        {item.name}
+                      </div>
+                      <div className="detail-content__hot-price">
+                        {item.price}
+                      </div>
+                    </Link>
+                  )}
+                />
+              </Suspense>
+            )}
           </div>
         </div>
       </div>
