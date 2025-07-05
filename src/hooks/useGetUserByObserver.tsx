@@ -16,9 +16,6 @@ const useGetUserByObserver = () => {
         const csrfToken = await csrfResponse.json();
         const response = await fetch('/api/session-login', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({ idToken, csrfToken }),
           credentials: 'include',
         });
@@ -50,6 +47,10 @@ const useGetUserByObserver = () => {
         } else {
           //user logged out
           console.log("No user logged in. Skipping session refresh.");
+          await fetch('/api/session-logout', {
+            method: 'POST',
+            credentials: 'include',
+          });
           setUser(null);
         }
         setLoading(false);
@@ -62,7 +63,7 @@ const useGetUserByObserver = () => {
     return () => {
       isMounted = false;
       unsubscribeUserObserver();
-      throttledRefresh.cancel && throttledRefresh.cancel();
+      throttledRefresh?.cancel();
     };
   }, []);
 
