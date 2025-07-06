@@ -16,6 +16,9 @@ const useGetUserByObserver = () => {
         const csrfToken = await csrfResponse.json();
         const response = await fetch('/api/session-login', {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({ idToken, csrfToken }),
           credentials: 'include',
         });
