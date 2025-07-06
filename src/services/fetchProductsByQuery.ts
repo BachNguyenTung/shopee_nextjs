@@ -16,18 +16,23 @@ export const fetchProductsByQuery = async (query: string) => {
     try {
       const trimmedQuery = query.toLowerCase().trim();
 
-      // Use Firestore's where clause for more efficient querying
+      // Since Firestore doesn't support native "contains" queries,
+      // we need to fetch all products and filter on the server side
       const snapshot = await adminDb
         .collection('products')
-        .where('name', '>=', trimmedQuery)
         .get();
 
-      const products = snapshot.docs.map(doc => ({
+      const allProducts = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
 
-      return products;
+      // Filter products that contain the query string in their name (case-insensitive)
+      const filteredProducts = allProducts.filter((product: any) =>
+        product.name.toLowerCase().includes(trimmedQuery)
+      );
+
+      return filteredProducts;
     } catch (error) {
       console.error('Error fetching products by query:', error);
       throw new Error('Failed to fetch products by query');
