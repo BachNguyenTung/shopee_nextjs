@@ -1,17 +1,14 @@
-import React, { ReactElement, Suspense } from "react";
+import React, { ReactElement } from "react";
 import Layout from "@/components/Layout/Layout";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { fetchProducts } from "@/services/fetchProducts";
+import { fetchProductsByQuery } from "@/services/fetchProductsByQuery";
 import { NextPageWithLayout } from "@/pages/_app";
-import Search from "@/components/Search/Search";
-import { ClipLoading } from "@/components/ClipLoading";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, InferGetStaticPropsType } from "next";
+import { Product } from "@/types/types";
+import ProductContainer from "@/components/Product/ProductContainer";
 
-const Page: NextPageWithLayout = () => {
+const Page: NextPageWithLayout<InferGetStaticPropsType<typeof getServerSideProps>> = ({ searchProducts }: InferGetStaticPropsType<typeof getServerSideProps>) => {
   return (
-    <Suspense fallback={<ClipLoading />}>
-      <Search />
-    </Suspense>
+    <ProductContainer items={searchProducts}></ProductContainer>
   )
 };
 Page.getLayout = function (page: ReactElement) {
@@ -20,23 +17,14 @@ Page.getLayout = function (page: ReactElement) {
 export default Page;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // Fetch data from external API
+  // Check if query parameter exists
   if (!context.query.query) {
     return {
       notFound: true,
     }
   }
-
-  const queryClient = new QueryClient();
-  try {
-    await queryClient.prefetchQuery({
-      queryKey: ['products'],
-      queryFn: fetchProducts,
-    })
-  } catch (error) {
-    console.error('Error prefetching products:', error);
-    return 'Error prefetching products:' + error
-  }
+  const query = context.query.query as string;
+  const searchProducts = await fetchProductsByQuery(query) as Product[];
 
   // Set balanced caching headers for Vercel Edge Network
   if (context.res) {
@@ -49,7 +37,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // Pass data to the page via props
   return {
     props: {
-      dehydratedState: dehydrate(queryClient),
+      searchProducts: searchProducts || [],
     },
   }
 }
