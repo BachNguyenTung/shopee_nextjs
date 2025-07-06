@@ -29,6 +29,13 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
   const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
     useSearchHistory(inputRef.current?.value);
 
+  useEffect(() => {
+    // Clear search input when on home page
+    if (!router.pathname.startsWith('/search') && inputRef?.current) {
+      inputRef.current.value = '';
+    }
+  }, [router.pathname]);
+
   const setFirstPage = () => {
     setPageIndex(1); // Reset to first page when search changes
   }
@@ -38,7 +45,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
     if (text) {
       params.set('query', text.trim());
       setIsNavigating(true);
-      router.replace(`/search?${params.toString()}`);
+      router.push(`/search?${params.toString()}`);
       // Optional: Reset state if navigation fails
       router?.events?.on('routeChangeComplete', () => setIsNavigating(false));
       router?.events?.on('routeChangeError', () => setIsNavigating(false));
