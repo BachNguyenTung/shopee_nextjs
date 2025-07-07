@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import HeaderCart from "./HeaderCart";
-import { Close } from "@mui/icons-material";
-import { Box, LinearProgress, Stack } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -10,6 +9,11 @@ import useSearchHistory from "@/hooks/useSearchHistory";
 import usePagination from "@shoppe_nextjs/utils/hooks/usePagination";
 import { useRouter } from "next/router";
 import { ShoppeLogo } from "@/components/Images/OptimizedImages";
+import dynamic from "next/dynamic";
+
+const DynamicHeaderSuggestion = dynamic(() => import('@/components/Header/HeaderSuggestion'), {
+  ssr: false,
+});
 
 interface Props {
   isCartPage: boolean,
@@ -20,14 +24,15 @@ interface Props {
 const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpointMatches }) => {
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [inputValue, setInputValue] = useState('');
   const [isHistory, setIsHistory] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { setPageIndex } = usePagination({})
   const [isNavigating, setIsNavigating] = useState(false);
-  const { addToSearchHistory, deleteFromSearchHistory, suggestions } =
-    useSearchHistory(inputRef.current?.value);
+  const { addToSearchHistory, deleteFromSearchHistory, searchHistory } =
+    useSearchHistory();
 
   useEffect(() => {
     // Clear search input when on home page
@@ -35,6 +40,10 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
       inputRef.current.value = '';
     }
   }, [router.pathname]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value.trim());
+  }
 
   const setFirstPage = () => {
     setPageIndex(1); // Reset to first page when search changes
@@ -132,88 +141,53 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
         </div>
 
         {!isCheckoutPage && (
-          <>
-            <div
-              ref={wrapperRef}
-              className={classNames("header__search-content", {
-                "header__search-content--cart":
-                  isCartPage && !xsBreakpointMatches,
-              })}
-            >
-              <div className="header__search-wrapper">
-                <input
-                  type="text"
-                  onClick={handleInputClick}
-                  // onBlur={handleSearchBlur}
-                  onKeyUp={inputOnKeyUp}
-                  className="header__search-input"
-                  placeholder="Tìm sản phẩm, thương hiệu, và tên shop"
-                  defaultValue={searchParams.get('query')?.toString()}
-                  ref={inputRef}
-                />
-                <div
-                  onClick={handleSearchIconClick}
-                  className="header__search-icon"
-                >
-                  <SearchIcon sx={{ fontSize: '2rem', color: 'white' }}></SearchIcon>
-                </div>
-                {isHistory && (
-                  <ul className="header__history-list">
-                    <li className="header__history-title">Lịch Sử Tìm Kiếm</li>
-                    {suggestions.map((item, index) => (
-                      <Stack
-                        sx={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          "&:hover": {
-                            backgroundColor: "var(--lighter-grey-color)",
-                          },
-                        }}
-                        key={index}
-                      >
-                        <li
-                          onClick={() => handleSuggestionClick(item)}
-                          className="header__history-item"
-                        >
-                          <a href="" className="header__history-link">
-                            {item}
-                          </a>
-                        </li>
-                        <Box
-                          sx={{
-                            marginRight: "0.6rem",
-                            "& :hover": { color: "var(--primary-color)" },
-                            cursor: "pointer",
-                            textAlign: "center",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Close
-                            onClick={() => handleHistoryDelete(item)}
-                          ></Close>
-                        </Box>
-                      </Stack>
-                    ))}
-                  </ul>
-                )}
+          <div
+            ref={wrapperRef}
+            className={classNames("header__search-content", {
+              "header__search-content--cart":
+                isCartPage && !xsBreakpointMatches,
+            })}
+          >
+            <div className="header__search-wrapper">
+              <input
+                type="text"
+                onClick={handleInputClick}
+                onKeyUp={inputOnKeyUp}
+                onChange={handleInputChange}
+                className="header__search-input"
+                placeholder="Tìm sản phẩm, thương hiệu, và tên shop"
+                defaultValue={searchParams.get('query')?.toString()}
+                ref={inputRef}
+              />
+              <div
+                onClick={handleSearchIconClick}
+                className="header__search-icon"
+              >
+                <SearchIcon sx={{ fontSize: '2rem', color: 'white' }}></SearchIcon>
               </div>
-
-              <ul className="header__search-list">
-                {/* list of recommends */}
-                {/*{[].map((item) => (*/}
-                {/*  <li className="header__search-item">*/}
-                {/*    <a href="# " className="header__item-link">*/}
-                {/*      {item}*/}
-                {/*    </a>*/}
-                {/*  </li>*/}
-                {/*))}*/}
-              </ul>
+              {isHistory && (
+                <DynamicHeaderSuggestion
+                  inputValue={inputValue}
+                  searchHistory={searchHistory}
+                  onSuggestionClick={handleSuggestionClick}
+                  onHistoryDelete={handleHistoryDelete}
+                />
+              )}
             </div>
-            {!isCartPage && <HeaderCart></HeaderCart>}
-          </>
+
+            <ul className="header__search-list">
+              {/* list of recommends */}
+              {/*{[].map((item) => (*/}
+              {/*  <li className="header__search-item">*/}
+              {/*    <a href="# " className="header__item-link">*/}
+              {/*      {item}*/}
+              {/*    </a>*/}
+              {/*  </li>*/}
+              {/*))}*/}
+            </ul>
+          </div>
         )}
+        {!isCartPage && <HeaderCart></HeaderCart>}
       </div>
       {isNavigating && <LinearProgress />}
     </>

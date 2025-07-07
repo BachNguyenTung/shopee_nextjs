@@ -1,21 +1,11 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {useUserContext} from "@/context/UserProvider";
 import {saveSearchHistoryToFirebase} from "@/services/saveSearchHistoryToFirebase";
 import getSearchHistoryFromFirebase from "@/services/getSearchHistoryFromFirebase";
 
-const useSearchHistory = (searchInput) => {
+const useSearchHistory = () => {
   const { user } = useUserContext();
   const [searchHistory, setSearchHistory] = useState([]);
-  const suggestions = useMemo(
-    () =>
-      searchHistory.filter((item) => {
-        return item
-          .trim()
-          .toLowerCase()
-          .includes(searchInput?.trim().toString().toLowerCase());
-      }),
-    [searchHistory, searchInput]
-  );
 
   useEffect(() => {
     (async () => {
@@ -50,7 +40,6 @@ const useSearchHistory = (searchInput) => {
 
   return {
     searchHistory,
-    suggestions,
     addToSearchHistory,
     deleteFromSearchHistory,
   };
