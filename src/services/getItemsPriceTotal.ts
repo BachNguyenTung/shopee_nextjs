@@ -1,4 +1,9 @@
-export const getItemsPriceTotal = (items) => {
+interface Item {
+  price?: number;
+  amount?: number;
+}
+
+export const getItemsPriceTotal = (items: Item[] | null | undefined): number => {
   if (!items || !items.length) {
     return 0;
   }
