@@ -16,7 +16,7 @@ const HeaderCart = () => {
   const cartProducts = useSelector((state) => state.cart.products);
   const [mergeAndClearGuestCart] = useMergeAndClearGuestCartMutation();
 
-  const { isLoading: cartItemsLoading } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
+  const { isFetching: cartFetching } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true,  // Refetch on network reconnection
     refetchOnMountOrArgChange: true // Refetch when component mounts or arguments change
@@ -41,7 +41,7 @@ const HeaderCart = () => {
             {/* <!-- No cart: empty --> */}
           </ShoppingCart>
           <div className="header__cart-numb">
-            {!cartItemsLoading && cartProducts?.length}
+            {!cartFetching && !userLoading && cartProducts?.length}
           </div>
         </div>
         {!xsBreakpointMatches && (

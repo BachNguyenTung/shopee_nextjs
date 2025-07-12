@@ -50,7 +50,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
   const router = useRouter();
   const searchParams = useSearchParams()
   const { user, userLoading } = useUserContext();
-  const { isLoading: cartItemsLoading } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
+  const { isFetching: cartFetching } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true,        // Refetch on network reconnection
     refetchOnMountOrArgChange: true, // Refetch when component mounts or arguments change
@@ -580,7 +580,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
         </div>
       </Grid2>
     </Grid2>)}
-    {cartProducts.length === 0 && !cartItemsLoading && (<div className="grid cart-empty">
+    {cartProducts.length === 0 && !cartFetching && !userLoading && (<div className="grid cart-empty">
       <NoCartImage className="cart-empty__img" />
       <label className="cart-empty__label">
         Giỏ hàng của bạn còn trống
@@ -590,7 +590,7 @@ function CartContainer({ isCartPage }: Partial<Props>) {
       </Link>
     </div>)}
 
-    {cartItemsLoading && <ClipLoading></ClipLoading>}
+    {(cartFetching || userLoading) && <ClipLoading></ClipLoading>}
 
     <AddCartModal
       isAddCartPopup={isAddCartPopup}
