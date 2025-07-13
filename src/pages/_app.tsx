@@ -20,8 +20,7 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
-
-
+const isDev = process.env.NODE_ENV === 'development'
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   // each page define a getLayout func to render itself and layout and pass it to const getLayout variable here
   // ?? -> still use the layout defined for each page, if getLayout not call at page
@@ -48,7 +47,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <CheckoutProvider>
                   {getLayout(
                     <>
-                      <StagewiseToolbar config={{ plugins: [ReactPlugin] }} />
+                      {isDev ? <StagewiseToolbar config={{ plugins: [ReactPlugin] }} /> : null}
                       <Component {...pageProps} />
                     </>
                   )}
