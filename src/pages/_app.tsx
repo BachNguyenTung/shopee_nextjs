@@ -1,6 +1,6 @@
 import '@/sass/style.scss'
 import "bootstrap-icons/font/bootstrap-icons.css";
-import React, { ReactElement, ReactNode } from 'react'
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { store } from "@/redux/store";
@@ -10,8 +10,7 @@ import { ThemeProvider } from "@mui/material";
 import UserProvider from "@/context/UserProvider";
 import CheckoutProvider from "@/context/CheckoutProvider";
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { StagewiseToolbar } from '@stagewise/toolbar-next';
-import ReactPlugin from '@stagewise-plugins/react';
+import { isDev } from "@/constants/constants";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -20,18 +19,38 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
-const isDev = process.env.NODE_ENV === 'development'
+
+
+const DynamicStagewiseToolbar = () => {
+  const [Toolbar, setToolbar] = useState<any>(null);
+  const [plugin, setPlugin] = useState<any>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    if (isDev && typeof window !== 'undefined') {
+      import('@stagewise/toolbar-next').then((mod) => {
+        if (mounted) setToolbar(() => mod.StagewiseToolbar);
+      });
+      import('@stagewise-plugins/react').then((mod) => {
+        if (mounted) setPlugin(() => mod.default);
+      });
+    }
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (!Toolbar || !plugin) return null;
+  return <Toolbar config={{ plugins: [plugin] }} />;
+};
+
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  // each page define a getLayout func to render itself and layout and pass it to const getLayout variable here
-  // ?? -> still use the layout defined for each page, if getLayout not call at page
   const getLayout = Component.getLayout ?? ((page) => page)
   const [queryClient] = React.useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
-            // With SSR, we usually want to set some default staleTime
-            // above 0 to avoid refetching immediately on the client
             staleTime: 60 * 1000,
           },
         },
@@ -47,7 +66,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <CheckoutProvider>
                   {getLayout(
                     <>
-                      {isDev ? <StagewiseToolbar config={{ plugins: [ReactPlugin] }} /> : null}
+                      {isDev ? <DynamicStagewiseToolbar /> : null}
                       <Component {...pageProps} />
                     </>
                   )}
