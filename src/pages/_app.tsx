@@ -8,9 +8,10 @@ import { theme } from "@/theme";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@mui/material";
 import UserProvider from "@/context/UserProvider";
-import Layout from "@/components/Layout/Layout";
 import CheckoutProvider from "@/context/CheckoutProvider";
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StagewiseToolbar } from '@stagewise/toolbar-next';
+import ReactPlugin from '@stagewise-plugins/react';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -24,7 +25,7 @@ type AppPropsWithLayout = AppProps & {
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   // each page define a getLayout func to render itself and layout and pass it to const getLayout variable here
   // ?? -> still use the layout defined for each page, if getLayout not call at page
-  const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>)
+  const getLayout = Component.getLayout ?? ((page) => page)
   const [queryClient] = React.useState(
     () =>
       new QueryClient({
@@ -45,16 +46,17 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <ThemeProvider theme={theme}>
             <UserProvider>
                 <CheckoutProvider>
-                  {/* use get layout variable here to return a page */}
-                  {/*Component -> each page*/}
-                  {getLayout(<Component {...pageProps} />)}
-                  {/*{Component.getLayout ?? ((page: ReactElement) => <Layout>{page}</Layout>)}*/}
+                  {getLayout(
+                    <>
+                      <StagewiseToolbar config={{ plugins: [ReactPlugin] }} />
+                      <Component {...pageProps} />
+                    </>
+                  )}
                 </CheckoutProvider>
             </UserProvider>
           </ThemeProvider>
         </Provider>
       </HydrationBoundary>
     </QueryClientProvider>
-  )
-
+  );
 }

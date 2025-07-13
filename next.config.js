@@ -3,6 +3,7 @@
 const cspHeader = `
     default-src 'self';
     connect-src 'self'
+        ws://localhost:*
         https://*.googleapis.com
         https://*.cloudfunctions.net
         https://*.firebase.com
@@ -17,17 +18,21 @@ const cspHeader = `
         http://localhost:*
         https://localhost:*;
     script-src 'self' 'unsafe-eval' 'unsafe-inline'
+        https://esm.sh
+        blob:
         https://js.pusher.com
         https://*.stripe.com
         https://*.vercel.live;
-    style-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline'
+        https://rsms.me;
     img-src 'self' blob: data:
         res.cloudinary.com
         fakestoreapi.com
         firebasestorage.googleapis.com
         *.googleusercontent.com
         storage.googleapis.com;
-    font-src 'self' data:;
+    font-src 'self' data:
+        https://rsms.me;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
