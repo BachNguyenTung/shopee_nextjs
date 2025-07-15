@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer>
       {/* <div className="footer__ads"></div> */}
-      <div className="footer">
+      <div className="footer dark:bg-black">
         <div className="container">
           <Grid col={5} mdCol={3} smCol={1} gap={2}>
             <div>

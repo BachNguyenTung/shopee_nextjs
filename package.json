@@ -67,8 +67,8 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
-    "@stagewise-plugins/react": "^0.5.2",
-    "@stagewise/toolbar-next": "^0.5.2",
+    "@stagewise-plugins/react": "^0.6.0",
+    "@stagewise/toolbar-next": "^0.6.0",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",

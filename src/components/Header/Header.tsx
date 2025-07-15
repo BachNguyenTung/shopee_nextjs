@@ -3,7 +3,6 @@ import { Box, Stack, useMediaQuery } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { useUserContext } from "@/context/UserProvider";
 import HeaderSearch from "./HeaderSearch";
-import classNames from "classnames";
 import Link from "next/link";
 import { AppGalleryShopee, AppShopee, GooglePlayShopee, QRCodeHome } from "@/components/Images/OptimizedImages";
 import { usePathname, useRouter } from "next/navigation";
@@ -12,6 +11,7 @@ import { anchorElAtom } from "@/store/anchorEl.atom";
 import BasicPopover from "@/components/base/Popover";
 import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import { useAtom } from "jotai";
+import clsx from "clsx";
 
 interface Props {
   isProductPage?: boolean,
@@ -57,15 +57,11 @@ const Header = ({
 
   return (
     <header
-      className={classNames(
-        "header",
-        {
-          "header--login": isLoginPage || isRegisterPage,
-        },
-        {
-          "header--checkout": isCheckoutPage,
-        }
-      )}
+      className={clsx("z-40 sticky top-0 left-0 [background-image:linear-gradient(0,var(--primary-light-color),var(--primary-color))] dark:[background-image:linear-gradient(0,var(--black-color),var(--primary-dark-color))]", {
+        "header--product": isProductPage,
+        "header--login": isLoginPage || isRegisterPage,
+        "header--checkout": isCheckoutPage,
+      })}
     >
       <div className={`container ${xsBreakpointMatches && isAccountPage && 'max-w-none p-0'} `}>
         <Stack

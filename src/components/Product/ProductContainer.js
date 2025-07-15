@@ -120,6 +120,7 @@ const ProductContainer = ({ items }) => {
         bgcolor="white"
         xs
         sm={2}
+        className="bg-white text-black dark:!bg-black dark:!text-white"
         sx={{
           position: { xs: "sticky", sm: "unset" },
           top: { xs: "6.5rem", sm: "unset" },

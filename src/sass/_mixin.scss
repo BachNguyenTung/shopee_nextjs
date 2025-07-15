@@ -18,4 +18,10 @@
   }
 }
 
+@mixin dark {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}
+
 
