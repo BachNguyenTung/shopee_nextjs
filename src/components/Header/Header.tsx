@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, useMediaQuery } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { useUserContext } from "@/context/UserProvider";
@@ -12,6 +12,7 @@ import BasicPopover from "@/components/base/Popover";
 import AccountLeftMenu from "@/components/Account/AccountLeftMenu";
 import { useAtom } from "jotai";
 import clsx from "clsx";
+import { z } from "zod";
 
 interface Props {
   isProductPage?: boolean,
@@ -22,6 +23,9 @@ interface Props {
   isAccountPage?: boolean,
   headerText?: string,
 }
+
+export const ThemeModeSchema = z.enum(["theme", "light", "dark"]);
+export type ThemeMode = z.infer<typeof ThemeModeSchema>;
 
 const Header = ({
                   isProductPage = false,
@@ -54,6 +58,37 @@ const Header = ({
   const handleLogout = () => {
     signOut();
   };
+  const [themeMode, setThemeMode] = useState<ThemeMode>('theme');
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme-mode');
+    const parsed = ThemeModeSchema.safeParse(stored);
+    if (parsed.success) {
+      setThemeMode(parsed.data);
+      addThemeClass(parsed.data);
+    }
+  }, []);
+
+  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const mode = e.target.value as 'theme' | 'light' | 'dark';
+    setThemeMode(mode);
+    localStorage.setItem('theme-mode', mode);
+    addThemeClass(mode)
+  };
+
+  const addThemeClass = (mode: string) => {
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else if (mode === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }
 
   return (
     <header
@@ -114,6 +149,18 @@ const Header = ({
                 </li>
               </div>
               <ul className="header__nav-list">
+                <li style={{ display: 'flex', alignItems: 'center' }}>
+                  <select
+                    value={themeMode}
+                    onChange={handleThemeChange}
+                    className="mr-2 rounded border px-2 py-1 text-sm bg-white dark:bg-zinc-900 dark:text-zinc-100 border-gray-300 dark:border-zinc-700"
+                    aria-label="Chọn chế độ giao diện"
+                  >
+                    <option value="theme">Theo hệ thống</option>
+                    <option value="light">Sáng</option>
+                    <option value="dark">Tối</option>
+                  </select>
+                </li>
                 {/* <li className="header__nav-item-right header__nav-item-right--notify">
                 <a href="# " className="header__nav-item-link">
                   <i className="header__nav-icon bi bi-bell"></i>Thông Báo
