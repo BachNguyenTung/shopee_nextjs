@@ -22,6 +22,20 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.nextUrl));
     }
 
+    if (isProtectedPage) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile`, { headers: { cookie: `session=${isAuthenticated.value}` } })
+        .then(response => {
+          if (!response.ok) {
+            // If the request fails, redirect to login
+            return NextResponse.redirect(new URL("/login", request.nextUrl));
+          }
+        })
+        .catch((reason) => {
+          // If the request fails, redirect to login
+          console.error("Error fetching profile:", reason);
+          return NextResponse.redirect(new URL("/login", request.nextUrl));
+        })
+    }
     // Allow access to main or other pages (if required)
     return NextResponse.next();
   }
