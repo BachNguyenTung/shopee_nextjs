@@ -12,6 +12,7 @@ import AddCartModal from "@/components/Modal/AddCartModal";
 import {useRouter} from "next/navigation";
 import {LinearProgress} from "@mui/material";
 import {useAddCartToFireStoreMutation} from "@/services/cartApi";
+import Image from "next/image";
 
 const ProductItem = function ({ item, similarDisPlay }) {
   const router = useRouter()
@@ -92,19 +93,20 @@ const ProductItem = function ({ item, similarDisPlay }) {
             <div className="app__product-top-text">Yêu thích</div>
           )} */}
             {/* <div className="app__product-top-text">Yêu thích</div> */}
-            <div className="app__product-sale-off">
-            <span className="app__product-sale-off-percent">
-              {item.discount}%
-            </span>
-              <span className="app__product-sale-off-label">Giảm</span>
+            <div className="app__product-img relative">
+              <div className="app__product-sale-off z-10">
+                <span className="app__product-sale-off-percent">
+                  {item.discount}%
+                </span>
+                <span className="app__product-sale-off-label">Giảm</span>
+              </div>
+              <Image
+                src={imageUrl}
+                className={'object-contain'}
+                alt="app__product-img"
+                fill
+              />
             </div>
-            <img
-              src={imageUrl}
-              alt="app__product-img"
-              className="app__product-img"
-              loading={"lazy"}
-            />
-
             <div className="app__product-info">
               <div className="app__product-name">{name}</div>
               {/* app__product-discount--disabled */}
