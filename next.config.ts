@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+import type { NextConfig } from 'next'
 
 const cspHeader = `
     default-src 'self';
@@ -42,10 +43,24 @@ const cspHeader = `
     upgrade-insecure-requests;
 `;
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['res.cloudinary.com', 'fakestoreapi.com', 'firebasestorage.googleapis.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'fakestoreapi.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
   async headers() {
     return [
