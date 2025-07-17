@@ -59,6 +59,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
