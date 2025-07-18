@@ -205,6 +205,34 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Homepage caching (ISR: 5 minutes)
+      {
+        source: '/',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 's-maxage=3600, stale-while-revalidate=7200',
+          },
+          {
+            key: 'Vercel-CDN-Cache-Control',
+            value: 'max-age=3600',
+          },
+        ],
+      },
+      // Product detail page caching (ISR: 1 hour)
+      {
+        source: '/product/:id',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 's-maxage=3600, stale-while-revalidate=3600',
+          },
+          {
+            key: 'Vercel-CDN-Cache-Control',
+            value: 'max-age=3600',
+          },
+        ],
+      },
     ]
   },
 };

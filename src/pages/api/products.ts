@@ -17,9 +17,9 @@ export default async function handler(
     }));
 
     // Set balanced caching headers for Vercel Edge Network
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
-    res.setHeader('CDN-Cache-Control', 'max-age=300');
-    res.setHeader('Vercel-CDN-Cache-Control', 'max-age=300');
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=3600');
+    res.setHeader('CDN-Cache-Control', 'max-age=3600');
+    res.setHeader('Vercel-CDN-Cache-Control', 'max-age=3600');
     res.setHeader('Vary', 'Accept-Encoding');
 
     return res.status(200).json(products);
