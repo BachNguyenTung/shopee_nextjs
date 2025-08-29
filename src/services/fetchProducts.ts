@@ -1,15 +1,14 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/configs/firebase";
 
 export const fetchProducts = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/products`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch products');
-    }
-    const data = await response.json();
-    return data;
+    const productsCollection = collection(db, 'products');
+    const productsSnapshot = await getDocs(productsCollection);
+    const productsList = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return productsList;
   } catch (error) {
-    console.error('Error fetching products:', error);
-    throw error;
+    console.error("Error fetching products:", error);
+    throw new Error("Failed to fetch products");
   }
 };
