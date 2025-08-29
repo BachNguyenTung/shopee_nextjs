@@ -37,7 +37,7 @@ export const ShipUnitsModal: React.FC<Props> & ShipUnitsModalInterface = ({
     //setCheckedByShipUnit
     let checked: any[] = [];
     shipUnitList.forEach((item: any) => {
-      checked[item.id] = item.id === shipUnit?.id ?? '';
+      checked[item.id] = item.id === shipUnit.id;
     });
     setShipChecked(checked);
   };
