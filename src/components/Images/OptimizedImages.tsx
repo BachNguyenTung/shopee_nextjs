@@ -1,25 +1,21 @@
 import Image from 'next/image';
 import React from 'react';
-
-/** Static assets under `public/img` (avoid missing `src/assets` in CI / fresh clones). */
-const IMG = {
-  shoppeLogo: '/img/shoppe-logo.png',
-  noCart: '/img/no-cart.png',
-  visa: '/img/visa.png',
-  master: '/img/master.png',
-  jcb: '/img/jcb.png',
-  express: '/img/express.png',
-  nobrand: '/img/nobrand.png',
-  protect: '/img/protect.png',
-  qrCodeHome: '/img/qr-code-home.png',
-  appShopee: '/img/app-shopee.png',
-  googlePlayShopee: '/img/gg-shopee.png',
-  appGalleryShopee: '/img/app-gal-shopee.png',
-  cimbBank: '/img/ic_cimb_bank@4x.png',
-  mbBank: '/img/ic_MBBank@4x.png',
-  socialShare: '/img/1876c121524255f7eb6a64b4d8d0b7e3.png',
-  paymentShipping: '/img/payment-shipping.png',
-} as const;
+import shoppeLogo from '@/assets/images/shoppe-logo.png';
+import noCart from '@/assets/images/no-cart.png';
+import visa from '@/assets/images/visa.png';
+import master from '@/assets/images/master.png';
+import jcb from '@/assets/images/jcb.png';
+import express from '@/assets/images/express.png';
+import nobrand from '@/assets/images/nobrand.png';
+import protect from '@/assets/images/protect.png';
+import qrCodeHome from '@/assets/images/qr-code-home.png';
+import appShopee from '@/assets/images/app-shopee.png';
+import googlePlayShopee from '@/assets/images/gg-shopee.png';
+import appGalleryShopee from '@/assets/images/app-gal-shopee.png';
+import cimbBank from '@/assets/images/ic_cimb_bank@4x.png';
+import mbBank from '@/assets/images/ic_MBBank@4x.png';
+import socialShare from '@/assets/images/1876c121524255f7eb6a64b4d8d0b7e3.png';
+import paymentShipping from '@/assets/images/payment&shipping.png';
 
 // Logo Images
 export const ShoppeLogo: React.FC<{
@@ -29,7 +25,7 @@ export const ShoppeLogo: React.FC<{
   className?: string;
 }> = ({ width = 150, height = 50, priority = false, className = '' }) => (
   <Image
-    src={IMG.shoppeLogo}
+    src={shoppeLogo}
     alt="Shopee Logo"
     width={width}
     height={height}
@@ -45,7 +41,7 @@ export const NoCartImage: React.FC<{
   className?: string;
 }> = ({ width = 200, height = 160, className = '' }) => (
   <Image
-    src={IMG.noCart}
+    src={noCart}
     alt="Empty cart"
     width={width}
     height={height}
@@ -60,7 +56,7 @@ export const VisaCard: React.FC<{
   className?: string;
 }> = ({ width = 65, height = 40, className = '' }) => (
   <Image
-    src={IMG.visa}
+    src={visa}
     alt="Visa Card"
     width={width}
     height={height}
@@ -74,7 +70,7 @@ export const MasterCard: React.FC<{
   className?: string;
 }> = ({ width = 60, height = 40, className = '' }) => (
   <Image
-    src={IMG.master}
+    src={master}
     alt="Mastercard"
     width={width}
     height={height}
@@ -88,7 +84,7 @@ export const JCBCard: React.FC<{
   className?: string;
 }> = ({ width = 60, height = 40, className = '' }) => (
   <Image
-    src={IMG.jcb}
+    src={jcb}
     alt="JCB Card"
     width={width}
     height={height}
@@ -102,7 +98,7 @@ export const ExpressCard: React.FC<{
   className?: string;
 }> = ({ width = 60, height = 40, className = '' }) => (
   <Image
-    src={IMG.express}
+    src={express}
     alt="American Express Card"
     width={width}
     height={height}
@@ -116,7 +112,7 @@ export const NoBrandCard: React.FC<{
   className?: string;
 }> = ({ width = 60, height = 40, className = '' }) => (
   <Image
-    src={IMG.nobrand}
+    src={nobrand}
     alt="No Brand Card"
     width={width}
     height={height}
@@ -131,7 +127,7 @@ export const ProtectIcon: React.FC<{
   className?: string;
 }> = ({ width = 20, height = 20, className = '' }) => (
   <Image
-    src={IMG.protect}
+    src={protect}
     alt="Protection Icon"
     width={width}
     height={height}
@@ -146,7 +142,7 @@ export const QRCodeHome: React.FC<{
   className?: string;
 }> = ({ width = 80, height = 80, className = '' }) => (
   <Image
-    src={IMG.qrCodeHome}
+    src={qrCodeHome}
     alt="QR Code"
     width={width}
     height={height}
@@ -160,7 +156,7 @@ export const AppShopee: React.FC<{
   className?: string;
 }> = ({ width = 80, height = 20, className = '' }) => (
   <Image
-    src={IMG.appShopee}
+    src={appShopee}
     alt="Shopee App"
     width={width}
     height={height}
@@ -174,7 +170,7 @@ export const GooglePlayShopee: React.FC<{
   className?: string;
 }> = ({ width = 80, height = 20, className = '' }) => (
   <Image
-    src={IMG.googlePlayShopee}
+    src={googlePlayShopee}
     alt="Google Play Shopee"
     width={width}
     height={height}
@@ -188,7 +184,7 @@ export const AppGalleryShopee: React.FC<{
   className?: string;
 }> = ({ width = 80, height = 20, className = '' }) => (
   <Image
-    src={IMG.appGalleryShopee}
+    src={appGalleryShopee}
     alt="App Gallery Shopee"
     width={width}
     height={height}
@@ -203,7 +199,7 @@ export const CIMBBank: React.FC<{
   className?: string;
 }> = ({ width = 84, height = 32, className = '' }) => (
   <Image
-    src={IMG.cimbBank}
+    src={cimbBank}
     alt="CIMB Bank"
     width={width}
     height={height}
@@ -217,7 +213,7 @@ export const MBBank: React.FC<{
   className?: string;
 }> = ({ width = 84, height = 32, className = '' }) => (
   <Image
-    src={IMG.mbBank}
+    src={mbBank}
     alt="MB Bank"
     width={width}
     height={height}
@@ -232,7 +228,7 @@ export const SocialShareImage: React.FC<{
   className?: string;
 }> = ({ width = 26, height = 26, className = '' }) => (
   <Image
-    src={IMG.socialShare}
+    src={socialShare}
     alt="Social Share"
     width={width}
     height={height}
@@ -247,7 +243,7 @@ export const PaymentShippingSprite: React.FC<{
   className?: string;
 }> = ({ width = 55, height = 29, className = '' }) => (
   <Image
-    src={IMG.paymentShipping}
+    src={paymentShipping}
     alt="Payment and Shipping Methods"
     width={width}
     height={height}
