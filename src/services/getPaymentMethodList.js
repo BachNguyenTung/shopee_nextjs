@@ -1,5 +1,4 @@
 import getCustomerID from "./getCustomerID";
-import axios from "../configs/axios";
 
 export const getPaymentMethodList = async (user) => {
   const customerID = await getCustomerID(user);
@@ -8,12 +7,15 @@ export const getPaymentMethodList = async (user) => {
     return paymentMethodList;
   }
   try {
-    const result = await axios({
+    const result = await fetch('/api/stripe/get-payment-method-list', {
       method: "POST",
-      url: "/api/stripe/get-payment-method-list",
-      data: { customerID: customerID },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ customerID }),
     });
-    paymentMethodList = result.data.paymentMethodList;
+    const data = await result.json();
+    paymentMethodList = data.paymentMethodList;
   } catch (error) {
     alert(error.message);
   }

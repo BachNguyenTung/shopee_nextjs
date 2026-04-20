@@ -1,4 +1,3 @@
-import axios from "../configs/axios";
 import getCustomerID from "./getCustomerID";
 
 export const updateDefaultPaymentMethodIDToStripe = async (
@@ -11,16 +10,19 @@ export const updateDefaultPaymentMethodIDToStripe = async (
     return defaultPaymentMethodID;
   }
   try {
-    const result = await axios({
+    const result = await fetch("/api/stripe/update-customer-payment-method", {
       method: "POST",
-      url: "/api/stripe/update-customer-payment-method",
-      data: {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         customerID: customerID,
         paymentMethodID: paymentMethodID,
-      },
+      }),
     });
+    const data = await result.json();
     defaultPaymentMethodID =
-      result.data.customer.invoice_settings.default_payment_method;
+      data.customer.invoice_settings.default_payment_method;
   } catch (error) {
     alert(error.message);
   }

@@ -1,17 +1,18 @@
-import axios from "../configs/axios";
-
 export const detachPaymentMethodID = async (customerID, paymentMethodID) => {
   let paymentMethod;
   if (!customerID || !paymentMethodID) {
     return paymentMethod;
   }
   try {
-    const result = await axios({
+    const result = await fetch("/api/stripe/detach-payment-method", {
       method: "POST",
-      url: "/api/stripe/detach-payment-method",
-      data: { paymentMethodID: paymentMethodID, customerID: customerID },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ paymentMethodID: paymentMethodID, customerID: customerID }),
     });
-    paymentMethod = result.data.paymentMethod;
+    const data = await result.json();
+    paymentMethod = data.paymentMethod;
   } catch (error) {
     alert(error.message);
   }

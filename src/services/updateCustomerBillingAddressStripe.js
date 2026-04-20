@@ -1,4 +1,3 @@
-import axios from "../configs/axios";
 import getCustomerID from "./getCustomerID";
 import {getDefaultPaymentMethodID} from "./getDefaultPaymentMethodID";
 import {getPaymentMethodList} from "./getPaymentMethodList";
@@ -24,10 +23,12 @@ export const updateCustomerBillingAddressStripe = async (user, shipInfos) => {
     });
 
     try {
-      await axios({
+      await fetch("/api/stripe/update-customer-billing-address", {
         method: "POST",
-        url: "/api/stripe/update-customer-billing-address",
-        data: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           customerID: customerID,
           userName: cardName.length > 0 ? cardName : defaultshipInfo.name,
           shipName: defaultshipInfo.name,
@@ -36,7 +37,7 @@ export const updateCustomerBillingAddressStripe = async (user, shipInfos) => {
           district: defaultshipInfo.district.name,
           ward: defaultshipInfo.ward.name,
           street: defaultshipInfo.street,
-        },
+        }),
       });
     } catch (error) {
       alert(error);

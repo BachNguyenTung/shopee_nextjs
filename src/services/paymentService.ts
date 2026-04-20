@@ -1,4 +1,3 @@
-import axios from "../configs/axios";
 import { getItemsPriceTotal } from "./getItemsPriceTotal";
 import { getVoucherDiscount } from "./getVoucherDiscount";
 import getCustomerID from "./getCustomerID";
@@ -61,14 +60,16 @@ export const processCardPayment = async ({
 }) => {
   setProcessing(true);
   const customerID = await getCustomerID(user);
-  const response = await axios({
-    method: "POST",
-    url: `/api/stripe/charge-card-off-session?total=${getItemsPriceFinal(
+  const response = await fetch(`/api/stripe/charge-card-off-session?total=${getItemsPriceFinal(
       checkoutItems,
       shipUnit,
       voucher
-    )}`,
-    data: {
+  )}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       paymentMethodID: defaultPaymentMethodID,
       customerID,
       email: user.email,
@@ -86,11 +87,12 @@ export const processCardPayment = async ({
           postal_code: 10000,
         },
       },
-    },
+    }),
   });
+  const data = await response.json();
   setSucceeded(false);
   setProcessing(false);
-  return response;
+  return { data };
 };
 
 export const handleCardAuthentication = async ({

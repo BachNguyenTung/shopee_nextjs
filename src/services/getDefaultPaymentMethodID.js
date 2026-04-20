@@ -1,4 +1,3 @@
-import axios from "../configs/axios";
 import getCustomerID from "./getCustomerID";
 
 export const getDefaultPaymentMethodID = async (user) => {
@@ -8,16 +7,19 @@ export const getDefaultPaymentMethodID = async (user) => {
     return defaultPaymentMethodID;
   }
   try {
-    const result = await axios({
+    const result = await fetch('/api/stripe/retrieve-customer-by-id', {
       method: "POST",
-      url: "/api/stripe/retrieve-customer-by-id",
-      data: { customerID: customerID },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ customerID }),
     });
+    const data = await result.json();
     defaultPaymentMethodID =
-      result.data.customer.invoice_settings.default_payment_method;
+      data.customer.invoice_settings.default_payment_method;
     defaultPaymentMethodID = defaultPaymentMethodID
       ? defaultPaymentMethodID
-      : result.data.customer.default_source;
+      : data.customer.default_source;
   } catch (error) {
     alert(error.message);
   }

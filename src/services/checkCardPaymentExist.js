@@ -1,5 +1,3 @@
-import axios from "../configs/axios";
-
 export const checkCardPaymentExist = async (
   stripe,
   cardEl,
@@ -8,12 +6,15 @@ export const checkCardPaymentExist = async (
   try {
     const tokenClientSide = await stripe.createToken(cardEl);
     //create card object to retrieve fingerprint since can't get it from client side token(even with sk)
-    const tokenServerSideRes = await axios({
+    const tokenServerSideRes = await fetch("/api/stripe/create-token-server-side", {
       method: "POST",
-      url: "/api/stripe/create-token-server-side",
-      data: { tokenClientSideID: tokenClientSide.token.id },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tokenClientSideID: tokenClientSide.token.id }),
     });
-    const tokenServerSide = tokenServerSideRes.data.tokenResult;
+    const data = await tokenServerSideRes.json();
+    const tokenServerSide = data.tokenResult;
     return paymentMethodList.some(
       (item) =>
         item.card.fingerprint === tokenServerSide.card.fingerprint &&
