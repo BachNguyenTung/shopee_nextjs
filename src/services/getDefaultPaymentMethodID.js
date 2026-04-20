@@ -10,7 +10,7 @@ export const getDefaultPaymentMethodID = async (user) => {
   try {
     const result = await axios({
       method: "POST",
-      url: "/retrieve-customer-by-id",
+      url: "/api/stripe/retrieve-customer-by-id",
       data: { customerID: customerID },
     });
     defaultPaymentMethodID =

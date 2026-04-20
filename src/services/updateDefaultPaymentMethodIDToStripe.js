@@ -13,7 +13,7 @@ export const updateDefaultPaymentMethodIDToStripe = async (
   try {
     const result = await axios({
       method: "POST",
-      url: "/update-customer-payment-method",
+      url: "/api/stripe/update-customer-payment-method",
       data: {
         customerID: customerID,
         paymentMethodID: paymentMethodID,

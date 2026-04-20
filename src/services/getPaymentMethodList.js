@@ -10,7 +10,7 @@ export const getPaymentMethodList = async (user) => {
   try {
     const result = await axios({
       method: "POST",
-      url: "/get-payment-method-list",
+      url: "/api/stripe/get-payment-method-list",
       data: { customerID: customerID },
     });
     paymentMethodList = result.data.paymentMethodList;

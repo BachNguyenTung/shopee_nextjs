@@ -63,7 +63,7 @@ export const processCardPayment = async ({
   const customerID = await getCustomerID(user);
   const response = await axios({
     method: "POST",
-    url: `/charge-card-off-session?total=${getItemsPriceFinal(
+    url: `/api/stripe/charge-card-off-session?total=${getItemsPriceFinal(
       checkoutItems,
       shipUnit,
       voucher

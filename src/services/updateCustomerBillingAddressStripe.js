@@ -26,7 +26,7 @@ export const updateCustomerBillingAddressStripe = async (user, shipInfos) => {
     try {
       await axios({
         method: "POST",
-        url: "/update-customer-billing-address",
+        url: "/api/stripe/update-customer-billing-address",
         data: {
           customerID: customerID,
           userName: cardName.length > 0 ? cardName : defaultshipInfo.name,

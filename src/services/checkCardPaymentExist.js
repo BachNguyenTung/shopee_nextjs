@@ -10,7 +10,7 @@ export const checkCardPaymentExist = async (
     //create card object to retrieve fingerprint since can't get it from client side token(even with sk)
     const tokenServerSideRes = await axios({
       method: "POST",
-      url: "/create-token-server-side",
+      url: "/api/stripe/create-token-server-side",
       data: { tokenClientSideID: tokenClientSide.token.id },
     });
     const tokenServerSide = tokenServerSideRes.data.tokenResult;

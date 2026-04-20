@@ -8,7 +8,7 @@ export const detachPaymentMethodID = async (customerID, paymentMethodID) => {
   try {
     const result = await axios({
       method: "POST",
-      url: "/detach-payment-method",
+      url: "/api/stripe/detach-payment-method",
       data: { paymentMethodID: paymentMethodID, customerID: customerID },
     });
     paymentMethod = result.data.paymentMethod;

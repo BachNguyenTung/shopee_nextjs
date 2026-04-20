@@ -8,7 +8,7 @@ export const createSetupIntentAndCustomerIDInStripe = async (
   try {
     const response = await axios({
       method: "POST",
-      url: "/create-setup-intent",
+      url: "/api/stripe/create-setup-intent",
       data: {
         name: cardName,
         email: user.email,
