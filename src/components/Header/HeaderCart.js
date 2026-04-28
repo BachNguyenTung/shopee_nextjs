@@ -1,33 +1,24 @@
-import React, {useEffect} from "react";
+import React from "react";
 import classNames from "classnames";
 // import { Link, useLocation, useNavigate } from "react-router-dom";
 import {NumericFormat} from "react-number-format";
 import {useMediaQuery} from "@mui/material";
 import {useUserContext} from "@/context/UserProvider";
 import {useSelector} from "react-redux";
-import {useFetchCartQuery, useMergeAndClearGuestCartMutation} from "@/services/cartApi";
+import {useFetchCartQuery} from "@/services/cartApi";
 import {ShoppingCart} from "@mui/icons-material";
 import Link from "next/link";
 import {NoCartImage} from "@/components/Images/OptimizedImages";
-import {getCartItemsFromSession} from "@/redux/cartSlice";
 
 const HeaderCart = () => {
   const { user, userLoading } = useUserContext();
   const cartProducts = useSelector((state) => state.cart.products);
-  const [mergeAndClearGuestCart] = useMergeAndClearGuestCartMutation();
 
   const { isFetching: cartFetching } = useFetchCartQuery({ uid: user?.uid, loading: userLoading }, {
     refetchOnFocus: false,           // Refetch when window regains focus
     refetchOnReconnect: true,  // Refetch on network reconnection
     refetchOnMountOrArgChange: true // Refetch when component mounts or arguments change
   });
-  useEffect(() => {
-    if (userLoading || !user) return;
-    const guestCartExists = getCartItemsFromSession?.().length > 0;
-    if (user && !userLoading && guestCartExists) {
-      mergeAndClearGuestCart(user.uid);
-    }
-  }, [user, userLoading]);
 
   const xsBreakpointMatches = useMediaQuery("(max-width:600px)");
   return (

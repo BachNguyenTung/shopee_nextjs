@@ -150,10 +150,14 @@ function DetailContainer() {
           : cartItem
       );
       dispatch(updateProducts(cartProductsUpdated));
-      await addCartToFireStore({ user, cartProducts: cartProductsUpdated, operation: 'add' });
+      if (user?.uid) {
+        await addCartToFireStore({ user, cartProducts: cartProductsUpdated, operation: 'add' });
+      }
     } else {
       dispatch(addProducts({ ...item, amount, variation }));
-      await addCartToFireStore({ user, cartProducts: [{ ...item, amount, variation }], operation: 'add' });
+      if (user?.uid) {
+        await addCartToFireStore({ user, cartProducts: [{ ...item, amount, variation }], operation: 'add' });
+      }
     }
   };
 

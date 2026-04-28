@@ -24,6 +24,7 @@ const checkoutDocRef = (userId: string) => {
 }
 
 const cartDocRef = (userId: string) => doc(db, 'users', userId, 'cart', 'cartItems')
+const sessionDocRef = (userId: string) => doc(db, 'sessions', userId)
 
 const orderRef = (userId: string) => {
   return query(collection(db, 'users', userId, 'orders'),
@@ -42,6 +43,7 @@ export {
   shipInfoDocRef,
   checkoutDocRef,
   cartDocRef,
+  sessionDocRef,
   userDocRef,
   orderRef,
   searchHistoryDocRef,
