@@ -5,15 +5,6 @@
   "rewrites": [],
   "headers": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; connect-src 'self' https://*.googleapis.com https://*.cloudfunctions.net https://*.firebase.com https://*.firebaseio.com https://*.stripe.com https://*.pusher.com https://*.pusherapp.com wss://*.pusher.com wss://*.pusherapp.com ws://*.pusher.com ws://*.pusherapp.com http://localhost:* https://localhost:*; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.pusher.com https://*.stripe.com https://*.vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: res.cloudinary.com fakestoreapi.com firebasestorage.googleapis.com *.googleusercontent.com storage.googleapis.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src https://*.stripe.com; frame-ancestors 'none'; upgrade-insecure-requests;"
-        }
-      ]
-    },
-    {
       "source": "/_next/static/(.*)",
       "headers": [
         {
