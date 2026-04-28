@@ -34,6 +34,17 @@ export const useWebSocketAdmin = (productId?: string) => {
   // Initialize connection
   useEffect(() => {
     const client = getPusherClient();
+    if (!client) return;
+
+    const handleConnected = () => {
+      console.log('Admin Pusher connected');
+      setIsConnected(true);
+    };
+
+    const handleDisconnected = () => {
+      console.log('Admin Pusher disconnected');
+      setIsConnected(false);
+    };
 
     const setupPusherConnection = () => {
       if (!productId) {
@@ -57,15 +68,8 @@ export const useWebSocketAdmin = (productId?: string) => {
         channelRef.current = client.subscribe('price-updates');
 
         // Connection status handlers
-        client.connection.bind('connected', () => {
-          console.log('Admin Pusher connected');
-          setIsConnected(true);
-        });
-
-        client.connection.bind('disconnected', () => {
-          console.log('Admin Pusher disconnected');
-          setIsConnected(false);
-        });
+        client.connection.bind('connected', handleConnected);
+        client.connection.bind('disconnected', handleDisconnected);
 
         // Subscribe success handler
         channelRef.current.bind('pusher:subscription_succeeded', () => {
@@ -75,6 +79,8 @@ export const useWebSocketAdmin = (productId?: string) => {
         // Connect if not already connected
         if (client.connection.state !== 'connected') {
           client.connect();
+        } else {
+          setIsConnected(true);
         }
       } catch (error) {
         console.error('Admin Pusher connection error:', error);
@@ -91,10 +97,9 @@ export const useWebSocketAdmin = (productId?: string) => {
         client.unsubscribe('price-updates');
       }
 
-      // Clean up all Pusher connection bindings
-      client.connection.unbind('connected');
-      client.connection.unbind('disconnected');
-      client.connection.unbind_all();
+      // Unbind only this hook's handlers
+      client.connection.unbind('connected', handleConnected);
+      client.connection.unbind('disconnected', handleDisconnected);
 
       setIsConnected(false);
     };

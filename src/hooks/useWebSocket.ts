@@ -11,6 +11,17 @@ export const useWebSocket = (productId?: string) => {
   // Initialize connection immediately
   useEffect(() => {
     const client = getPusherClient();
+    if (!client) return;
+
+    const handleConnected = () => {
+      console.log('Pusher connected');
+      setIsConnected(true);
+    };
+
+    const handleDisconnected = () => {
+      console.log('Pusher disconnected');
+      setIsConnected(false);
+    };
 
     const setupPusherConnection = () => {
       if (!productId) {
@@ -34,15 +45,8 @@ export const useWebSocket = (productId?: string) => {
         channelRef.current = client.subscribe('price-updates');
 
         // Connection status handlers
-        client.connection.bind('connected', () => {
-          console.log('Pusher connected');
-          setIsConnected(true);
-        });
-
-        client.connection.bind('disconnected', () => {
-          console.log('Pusher disconnected');
-          setIsConnected(false);
-        });
+        client.connection.bind('connected', handleConnected);
+        client.connection.bind('disconnected', handleDisconnected);
 
         // Price update handler
         const handlePriceUpdate = (data: { productId: string; newPrice: number }) => {
@@ -55,10 +59,15 @@ export const useWebSocket = (productId?: string) => {
         };
 
         channelRef.current.bind('product-price-updated', handlePriceUpdate);
+        channelRef.current.bind('pusher:subscription_succeeded', () => {
+          setIsConnected(true);
+        });
 
         // Connect if not already connected
         if (client.connection.state !== 'connected') {
           client.connect();
+        } else {
+          setIsConnected(true);
         }
       } catch (error) {
         console.error('Pusher connection error:', error);
@@ -75,10 +84,9 @@ export const useWebSocket = (productId?: string) => {
         client.unsubscribe('price-updates');
       }
 
-      // Clean up all Pusher connection bindings
-      client.connection.unbind('connected');
-      client.connection.unbind('disconnected');
-      client.connection.unbind_all();
+      // Unbind only this hook's handlers
+      client.connection.unbind('connected', handleConnected);
+      client.connection.unbind('disconnected', handleDisconnected);
 
       setIsConnected(false);
     };
