@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import React, { useEffect, useRef, useState } from "react";
-import HeaderCart from "./HeaderCart";
 import { LinearProgress } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Link from "next/link";
@@ -12,6 +11,10 @@ import { ShoppeLogo } from "@/components/Images/OptimizedImages";
 import dynamic from "next/dynamic";
 
 const DynamicHeaderSuggestion = dynamic(() => import('@/components/Header/HeaderSuggestion'), {
+  ssr: false,
+});
+
+const HeaderCart = dynamic(() => import("./HeaderCart"), {
   ssr: false,
 });
 
