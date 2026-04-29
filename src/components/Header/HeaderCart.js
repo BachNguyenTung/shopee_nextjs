@@ -73,7 +73,7 @@ const HeaderCart = () => {
                 ))}
               </div>
             </div>
-            <NoCartImage className="header__cart-empty-img" />
+            <NoCartImage className="header__cart-empty-img" height={96} width={150} />
             <div className="header__cart-empty-info">Chưa có sản phẩm</div>
             {/*<Link to="/cart" className="btn header__cart-button">*/}
             {/*  Xem giỏ hàng*/}

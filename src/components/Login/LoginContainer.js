@@ -7,16 +7,18 @@ import Link from "next/link";
 import {useUserContext} from "@/context/UserProvider";
 import withContainer from "@/components/withContainer";
 import {useRouter} from "next/navigation";
+import {Button} from "@shoppe_nextjs/ui";
 
 function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
   const { signIn, register } = useUserContext();
   const router = useRouter()
   const [isPending, startTranstion] = useTransition()
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     if (isRegisterPage) {
-      handleReg(values)
+      await handleReg(values)
+      return
     }
-    handleLogin(values)
+    await handleLogin(values)
   };
 
   const handleReg = async (values) => {
@@ -41,7 +43,6 @@ function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
         alert(errorMessage);
       }
     } finally {
-      formik.setSubmitting(false);
       router.push("/");
     }
   }
@@ -60,7 +61,6 @@ function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
         alert(errorMessage);
       }
     } finally {
-      formik.setSubmitting(false);
       router.push("/");
     }
   }
@@ -145,13 +145,13 @@ function LoginContainer({ isRegisterPage, isLoginPage, submitText }) {
           )}
         </Stack>
 
-        <button
-          disabled={formik.isSubmitting}
+        <Button
+          isLoading={isPending}
           type="submit"
           className="btn login-content__submit"
         >
           {submitText}
-        </button>
+        </Button>
         {isRegisterPage && (
           <span className="login-content__rule">
                 Bằng việc đăng kí, bạn đã đồng ý với Shopee về Điều khoản dịch
