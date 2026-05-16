@@ -164,7 +164,7 @@ const HeaderSearch: React.FC<Props> = ({ isCartPage, isCheckoutPage, xsBreakpoin
               />
               <div
                 onClick={handleSearchIconClick}
-                className="header__search-icon"
+                className="header__search-icon dark:bg-black"
               >
                 <SearchIcon sx={{ fontSize: '2rem', color: 'white' }}></SearchIcon>
               </div>

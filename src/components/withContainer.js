@@ -7,7 +7,7 @@ const withContainer = (WrappedContainer, IsBackgroundColorChange) => {
     return (
       <div
         className={cn(
-          "container",
+          "container dark:bg-black dark:text-white",
           IsBackgroundColorChange ? "bg-[#f5f5f5]" : ""
         )}
       >

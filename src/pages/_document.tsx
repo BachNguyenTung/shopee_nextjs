@@ -14,7 +14,7 @@ export default function Document() {
         <meta name="revisit-after" content="1 days" />
         <link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials" />
       </Head>
-      <body>
+      <body className="dark:bg-background">
       <Main />
       <NextScript />
       </body>
